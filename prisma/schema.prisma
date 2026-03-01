@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String    @id @default(uuid())
+  publicId        String    @unique @default(cuid())
+  name            String?
+  email           String    @unique
+  passwordHash    String
+  phoneEncrypted  String?   // AES-256-GCM encrypted phone number
+  emailNotif      Boolean   @default(true)
+  smsNotif        Boolean   @default(false) // Only enabled if phone + Twilio configured
+  role                 String    @default("OWNER") // OWNER | ADMIN
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  plan                 String    @default("FREE")  // FREE | PREMIUM
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  vehicles        Vehicle[]
+  notifications   Notification[]
+
+  @@map("users")
+}
+
+model Vehicle {
+  id               String    @id @default(uuid())
+  publicId         String    @unique @default(cuid())
+  ownerId          String
+  licensePlate     String?   // Plain text (optional, owner's choice)
+  licensePlateHash String?   // SHA-256 hash for search/indexing
+  model            String
+  color            String
+  year             String?
+  notes            String?   // Private notes for owner
+  isActive         Boolean   @default(true)
+  towPreventionMode Boolean  @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  owner            User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  tags             Tag[]
+  autoReplies      AutoReply[]
+
+  @@map("vehicles")
+}
+
+model Tag {
+  id          String    @id @default(uuid())
+  publicId    String    @unique @default(cuid())
+  vehicleId   String
+  shortCode   String    @unique
+  nfcPayload  String?   // Full URL written to NFC chip
+  label       String?   // Owner-facing label, e.g. "Windshield tag"
+  status      String    @default("ACTIVE") // ACTIVE | DISABLED | FLAGGED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  vehicle      Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  interactions Interaction[]
+
+  @@map("tags")
+}
+
+model Interaction {
+  id          String     @id @default(uuid())
+  tagId       String
+  // SCAN_VIEW | CONTACT_SMS | CONTACT_CALL | TOW_ALERT | EMERGENCY
+  actionType  String
+  ipHash      String?
+  userAgent   String?
+  message     String?    // Optional message from scanner
+  cityGuess   String?    // Approximate city from IP geo (privacy-safe)
+  timestamp   DateTime   @default(now())
+
+  tag          Tag           @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  notification Notification?
+
+  @@map("interactions")
+}
+
+model Notification {
+  id            String     @id @default(uuid())
+  userId        String
+  interactionId String     @unique
+  // SMS_RECEIVED | CALL_RECEIVED | EMERGENCY | TOW_ALERT
+  type          String
+  title         String
+  body          String
+  isRead        Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interaction   Interaction @relation(fields: [interactionId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model AutoReply {
+  id          String    @id @default(uuid())
+  vehicleId   String
+  label       String    // e.g. "I'll move in 5 minutes"
+  message     String
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@map("auto_replies")
+}
+

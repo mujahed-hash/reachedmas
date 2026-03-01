@@ -1,0 +1,47 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "SmartSafe" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img [ref=e6]
+          - generic [ref=e8]: SmartSafe
+        - navigation [ref=e9]:
+          - link "Login" [ref=e10] [cursor=pointer]:
+            - /url: /login
+            - button "Login" [ref=e11]
+          - link "Get Tags" [ref=e12] [cursor=pointer]:
+            - /url: /register
+            - button "Get Tags" [ref=e13]
+    - main [ref=e14]:
+      - generic [ref=e17]:
+        - generic [ref=e18]: Now available in the US
+        - heading "Contact without Compromise." [level=1] [ref=e20]:
+          - text: Contact without
+          - text: Compromise.
+        - paragraph [ref=e21]: The privacy-first vehicle tag. Notify owners about parking issues, lights left on, or emergencies without ever sharing your phone number.
+        - generic [ref=e22]:
+          - button "Scan a Tag" [ref=e23]
+          - button "Learn How it Works" [ref=e24]
+      - generic [ref=e26]:
+        - generic [ref=e28]:
+          - img [ref=e30]
+          - heading "Instant Scan" [level=3] [ref=e36]
+          - paragraph [ref=e37]: No app required. Anyone can scan your vehicle's tag to notify you instantly.
+        - generic [ref=e39]:
+          - img [ref=e41]
+          - heading "100% Private" [level=3] [ref=e44]
+          - paragraph [ref=e45]: Your phone number is never revealed. Calls and messages are masked through our secure relay.
+        - generic [ref=e47]:
+          - img [ref=e49]
+          - heading "Two-Way Chat" [level=3] [ref=e51]
+          - paragraph [ref=e52]: Respond to alerts with pre-set quick replies or anonymous voice calls.
+    - contentinfo [ref=e53]:
+      - paragraph [ref=e55]: © 2026 SmartSafe. Designed for privacy.
+  - button "Open Next.js Dev Tools" [ref=e61] [cursor=pointer]:
+    - img [ref=e62]
+  - alert [ref=e65]
+```

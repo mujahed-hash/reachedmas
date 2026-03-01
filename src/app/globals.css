@@ -1,0 +1,173 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0
+    }
+
+    to {
+      height: var(--radix-accordion-content-height)
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height)
+    }
+
+    to {
+      height: 0
+    }
+  }
+}
+
+/* ============================================
+   LIGHT MODE (Default)
+   ============================================ */
+:root {
+  --radius: 0.75rem;
+
+  /* Core */
+  --background: #F8FAFC;
+  /* Slate 50 - Light background */
+  --foreground: #0F172A;
+  /* Slate 900 - Dark text */
+
+  /* Cards */
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+
+  /* Popovers */
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+
+  /* Primary - Electric Indigo */
+  --primary: #6366F1;
+  --primary-foreground: #FFFFFF;
+
+  /* Secondary */
+  --secondary: #E2E8F0;
+  /* Slate 200 */
+  --secondary-foreground: #0F172A;
+
+  /* Muted */
+  --muted: #F1F5F9;
+  /* Slate 100 */
+  --muted-foreground: #64748B;
+  /* Slate 500 */
+
+  /* Accent */
+  --accent: #EEF2FF;
+  /* Indigo 50 */
+  --accent-foreground: #4F46E5;
+  /* Indigo 600 */
+
+  /* Destructive */
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  /* Borders & Inputs */
+  --border: #E2E8F0;
+  /* Slate 200 */
+  --input: #E2E8F0;
+  --ring: #6366F1;
+}
+
+/* ============================================
+   DARK MODE (Guardian Glass Theme)
+   ============================================ */
+.dark {
+  /* Core */
+  --background: #0B1120;
+  /* Deep Navy */
+  --foreground: #F8FAFC;
+  /* Slate 50 - Light text */
+
+  /* Cards - Glassmorphism */
+  --card: rgba(255, 255, 255, 0.05);
+  --card-foreground: #F8FAFC;
+
+  /* Popovers */
+  --popover: #111827;
+  --popover-foreground: #F8FAFC;
+
+  /* Primary - Electric Indigo */
+  --primary: #6366F1;
+  --primary-foreground: #FFFFFF;
+
+  /* Secondary */
+  --secondary: #1E293B;
+  /* Slate 800 */
+  --secondary-foreground: #F8FAFC;
+
+  /* Muted */
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  /* Slate 400 */
+
+  /* Accent */
+  --accent: #1E293B;
+  --accent-foreground: #A5B4FC;
+  /* Indigo 300 */
+
+  /* Destructive */
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  /* Borders & Inputs */
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #6366F1;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

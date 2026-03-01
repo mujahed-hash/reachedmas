@@ -1,0 +1,73 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - generic [ref=e12]:
+    - banner [ref=e13]:
+      - generic [ref=e14]:
+        - link "SmartSafe" [ref=e15] [cursor=pointer]:
+          - /url: /
+          - img [ref=e16]
+          - generic [ref=e18]: SmartSafe
+        - navigation [ref=e19]:
+          - generic [ref=e20]: vehicle-1770421402250@smartsafe.app
+          - button [ref=e21]:
+            - img
+          - button [ref=e22]:
+            - img
+          - button [ref=e24]:
+            - img
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - heading "Dashboard" [level=1] [ref=e28]
+          - paragraph [ref=e29]: Manage your vehicles and tags
+        - button "Add Vehicle" [active] [ref=e30]:
+          - img
+          - text: Add Vehicle
+      - generic [ref=e31]:
+        - generic [ref=e33]:
+          - img [ref=e35]
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: Vehicles
+            - paragraph [ref=e41]: "1"
+        - generic [ref=e43]:
+          - img [ref=e45]
+          - generic [ref=e51]:
+            - paragraph [ref=e52]: Total Scans
+            - paragraph [ref=e53]: "0"
+        - generic [ref=e55]:
+          - img [ref=e57]
+          - generic [ref=e59]:
+            - paragraph [ref=e60]: Active Tags
+            - paragraph [ref=e61]: "1"
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - heading "Your Vehicles" [level=2] [ref=e64]
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - generic [ref=e69]:
+                - img [ref=e71]
+                - generic [ref=e75]:
+                  - heading "Blue Honda Civic" [level=3] [ref=e76]
+                  - paragraph [ref=e77]: 1 tag
+              - button [ref=e78]:
+                - img
+            - generic [ref=e79]:
+              - generic [ref=e80]: "Tag: MEFHCGJ"
+              - generic [ref=e81]:
+                - link "QR Code" [ref=e82] [cursor=pointer]:
+                  - /url: /dashboard/tags/5e51067f-4d85-433c-a92d-8588f737e1e7
+                  - button "QR Code" [ref=e83]:
+                    - img
+                    - text: QR Code
+                - link "Preview" [ref=e84] [cursor=pointer]:
+                  - /url: /t/MEFHCGJ
+                  - button "Preview" [ref=e85]
+        - generic [ref=e86]:
+          - heading "Recent Activity" [level=2] [ref=e87]
+          - paragraph [ref=e90]: No activity yet
+```

@@ -1,0 +1,60 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - generic [ref=e12]:
+    - banner [ref=e13]:
+      - generic [ref=e14]:
+        - link "SmartSafe" [ref=e15] [cursor=pointer]:
+          - /url: /
+          - img [ref=e16]
+          - generic [ref=e18]: SmartSafe
+        - navigation [ref=e19]:
+          - generic [ref=e20]: vehicle-1770421399146@smartsafe.app
+          - button [ref=e21]:
+            - img
+          - button [ref=e22]:
+            - img
+          - button [ref=e24]:
+            - img
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - heading "Dashboard" [level=1] [ref=e28]
+          - paragraph [ref=e29]: Manage your vehicles and tags
+        - button "Add Vehicle" [ref=e30]:
+          - img
+          - text: Add Vehicle
+      - generic [ref=e31]:
+        - generic [ref=e33]:
+          - img [ref=e35]
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: Vehicles
+            - paragraph [ref=e41]: "0"
+        - generic [ref=e43]:
+          - img [ref=e45]
+          - generic [ref=e51]:
+            - paragraph [ref=e52]: Total Scans
+            - paragraph [ref=e53]: "0"
+        - generic [ref=e55]:
+          - img [ref=e57]
+          - generic [ref=e59]:
+            - paragraph [ref=e60]: Active Tags
+            - paragraph [ref=e61]: "0"
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - heading "Your Vehicles" [level=2] [ref=e64]
+          - generic [ref=e66]:
+            - img [ref=e67]
+            - heading "No vehicles yet" [level=3] [ref=e71]
+            - paragraph [ref=e72]: Add your first vehicle to get started with SmartSafe
+            - button "Add Vehicle" [ref=e73]:
+              - img
+              - text: Add Vehicle
+        - generic [ref=e74]:
+          - heading "Recent Activity" [level=2] [ref=e75]
+          - paragraph [ref=e78]: No activity yet
+```
