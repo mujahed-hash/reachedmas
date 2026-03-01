@@ -1,0 +1,80 @@
+{
+  "node": {
+    "00387d762c9d513b102ba6e37f53f0950fe828c9b1": {
+      "workers": {
+        "app/settings/page": {
+          "moduleId": 91208,
+          "async": true,
+          "exportedName": "getSettingsData",
+          "filename": "src/app/actions/settings.ts"
+        }
+      },
+      "layer": {
+        "app/settings/page": "rsc"
+      },
+      "exportedName": "getSettingsData",
+      "filename": "src/app/actions/settings.ts"
+    },
+    "4022ab67397c3702e9f045e6d4884de2eea1e78228": {
+      "workers": {
+        "app/settings/page": {
+          "moduleId": 91208,
+          "async": true,
+          "exportedName": "updateProfile",
+          "filename": "src/app/actions/settings.ts"
+        }
+      },
+      "layer": {
+        "app/settings/page": "rsc"
+      },
+      "exportedName": "updateProfile",
+      "filename": "src/app/actions/settings.ts"
+    },
+    "402bfa9b74195fd48af23a60056ec97112cfe02dea": {
+      "workers": {
+        "app/settings/page": {
+          "moduleId": 91208,
+          "async": true,
+          "exportedName": "changePassword",
+          "filename": "src/app/actions/settings.ts"
+        }
+      },
+      "layer": {
+        "app/settings/page": "rsc"
+      },
+      "exportedName": "changePassword",
+      "filename": "src/app/actions/settings.ts"
+    },
+    "40527302ef183ac5620833b370baf23b2492a1bb8b": {
+      "workers": {
+        "app/settings/page": {
+          "moduleId": 91208,
+          "async": true,
+          "exportedName": "updateNotificationPrefs",
+          "filename": "src/app/actions/settings.ts"
+        }
+      },
+      "layer": {
+        "app/settings/page": "rsc"
+      },
+      "exportedName": "updateNotificationPrefs",
+      "filename": "src/app/actions/settings.ts"
+    },
+    "40e83587a483055ef10e7c9a6344b24c0284457639": {
+      "workers": {
+        "app/settings/page": {
+          "moduleId": 91208,
+          "async": true,
+          "exportedName": "updatePhone",
+          "filename": "src/app/actions/settings.ts"
+        }
+      },
+      "layer": {
+        "app/settings/page": "rsc"
+      },
+      "exportedName": "updatePhone",
+      "filename": "src/app/actions/settings.ts"
+    }
+  },
+  "edge": {}
+}

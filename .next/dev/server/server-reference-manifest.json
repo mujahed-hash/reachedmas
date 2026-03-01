@@ -1,0 +1,87 @@
+{
+  "node": {
+    "406c740047295ed8f712ed8ebd36b62d3982fdf72c": {
+      "workers": {
+        "app/login/page": {
+          "moduleId": "[project]/.next-internal/server/app/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": true,
+          "exportedName": "login",
+          "filename": "src/app/actions/auth.ts"
+        }
+      },
+      "layer": {
+        "app/login/page": "action-browser"
+      },
+      "filename": "src/app/actions/auth.ts",
+      "exportedName": "login"
+    },
+    "40bdc98214498acea3096c9718d9f985ffb7f0c0ed": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/vehicle.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": true,
+          "exportedName": "addVehicle",
+          "filename": "src/app/actions/vehicle.ts"
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "action-browser"
+      },
+      "filename": "src/app/actions/vehicle.ts",
+      "exportedName": "addVehicle"
+    },
+    "004ce46384392fd9817d99586475108f1688f6288c": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/vehicle.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": true,
+          "exportedName": "logout",
+          "filename": "src/app/actions/auth.ts"
+        },
+        "app/dashboard/tags/[tagId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/tags/[tagId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": true,
+          "exportedName": "logout",
+          "filename": "src/app/actions/auth.ts"
+        },
+        "app/dashboard/vehicles/[vehicleId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/vehicles/[vehicleId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": true,
+          "exportedName": "logout",
+          "filename": "src/app/actions/auth.ts"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": true,
+          "exportedName": "logout",
+          "filename": "src/app/actions/auth.ts"
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "action-browser",
+        "app/dashboard/tags/[tagId]/page": "action-browser",
+        "app/dashboard/vehicles/[vehicleId]/page": "action-browser",
+        "app/page": "action-browser"
+      },
+      "filename": "src/app/actions/auth.ts",
+      "exportedName": "logout"
+    },
+    "4074ac37090584f23b428925452e0a4c3b199a6e73": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/vehicle.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": true,
+          "exportedName": "deleteVehicle",
+          "filename": "src/app/actions/vehicle.ts"
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "action-browser"
+      },
+      "filename": "src/app/actions/vehicle.ts",
+      "exportedName": "deleteVehicle"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "eHFFgEygRHCtbO/GqBM5wp4tSZmYg7rly5zvXIAVeZw="
+}
