@@ -47,7 +47,7 @@ export default function StripeCheckoutButton({
                     Please wait
                 </>
             ) : (
-                "Upgrade to Premium"
+                "Subscribe Now"
             )}
         </Button>
     );

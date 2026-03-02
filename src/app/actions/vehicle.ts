@@ -26,6 +26,18 @@ export async function addVehicle(formData: FormData): Promise<AddVehicleResult> 
         return { success: false, message: "Not authenticated" };
     }
 
+    // ── Enforce 1 vehicle (tag) per account ──
+    const existingCount = await prisma.vehicle.count({
+        where: { ownerId: session.user.id },
+    });
+
+    if (existingCount >= 1) {
+        return {
+            success: false,
+            message: "Your plan includes 1 vehicle tag. Please remove the existing vehicle first to add a new one.",
+        };
+    }
+
     const model = formData.get("model") as string;
     const color = formData.get("color") as string;
     const licensePlate = formData.get("licensePlate") as string;

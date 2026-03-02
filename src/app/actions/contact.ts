@@ -6,6 +6,7 @@ import { sendSMS, initiateCall, getAlertMessage } from "@/lib/twilio";
 import { sendEmail, getAlertEmailHTML } from "@/lib/email";
 import { checkRateLimit, hashIP, rateLimitConfigs } from "@/lib/rate-limit";
 import { decryptPhone } from "@/lib/crypto";
+import { sendPushToUser } from "@/lib/push";
 
 export type ContactAction =
     | "blocking_driveway"
@@ -167,6 +168,19 @@ export async function initiateContact(
             },
         });
 
+        // ── Send push notification to mobile app (FREE via Expo Push) ──
+        await sendPushToUser(
+            owner.id,
+            actionTitles[action] + towExtra,
+            fullMessage,
+            { interactionId: interaction.id, type: notifyType[action] }
+        );
+
+        // ── Create chat thread for scanner ↔ owner messaging ──
+        await prisma.chatThread.create({
+            data: { interactionId: interaction.id },
+        });
+
         // ── Send email ──
         const emailContent = getAlertEmailHTML(
             action,
@@ -183,21 +197,23 @@ export async function initiateContact(
             console.error("Failed to send email:", emailResult.error);
         }
 
-        // ── Send SMS (decrypt phone, check preference) ──
+        // ── SMS & Voice (Admin-enabled only — saves Twilio costs) ──
+        // By default users get FREE in-app alerts + email.
+        // Admin can enable smsNotif for specific users who need SMS/Voice.
         const ownerPhone = owner.phoneEncrypted
             ? decryptPhone(owner.phoneEncrypted)
             : null;
 
         if (ownerPhone && owner.smsNotif) {
+            // Admin-enabled: send Twilio SMS
             await sendSMS({ to: ownerPhone, message: fullMessage });
-        }
 
-        // ── For emergencies and tow alerts, also try voice call ──
-        if (
-            (action === "emergency" || (isTowAlert && vehicle.towPreventionMode)) &&
-            ownerPhone
-        ) {
-            await initiateCall(ownerPhone);
+            // Admin-enabled: for emergencies/tow, also initiate voice call
+            if (
+                action === "emergency" || (isTowAlert && vehicle.towPreventionMode)
+            ) {
+                await initiateCall(ownerPhone);
+            }
         }
 
         // ── Build success response ──

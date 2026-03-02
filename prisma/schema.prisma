@@ -24,6 +24,7 @@ model User {
 
   vehicles        Vehicle[]
   notifications   Notification[]
+  pushTokens      PushToken[]
 
   @@map("users")
 }
@@ -80,6 +81,7 @@ model Interaction {
 
   tag          Tag           @relation(fields: [tagId], references: [id], onDelete: Cascade)
   notification Notification?
+  chatThread   ChatThread?
 
   @@map("interactions")
 }
@@ -112,5 +114,40 @@ model AutoReply {
   vehicle     Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 
   @@map("auto_replies")
+}
+
+model PushToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique   // Expo push token
+  platform  String              // "ios" | "android"
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("push_tokens")
+}
+
+model ChatThread {
+  id            String        @id @default(uuid())
+  interactionId String        @unique
+  createdAt     DateTime      @default(now())
+
+  interaction   Interaction   @relation(fields: [interactionId], references: [id], onDelete: Cascade)
+  messages      ChatMessage[]
+
+  @@map("chat_threads")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  threadId  String
+  sender    String              // "SCANNER" | "OWNER"
+  text      String
+  createdAt DateTime @default(now())
+
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
 }
 

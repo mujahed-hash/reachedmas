@@ -141,59 +141,35 @@ export default async function Home() {
                 Simple Pricing
               </h2>
               <p className="mt-3 text-muted-foreground text-lg">
-                One tag, full protection. No subscriptions required.
+                One tag, full protection. Comprehensive privacy.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-              {/* Free Tier */}
-              <Card className="border-border bg-card relative">
-                <CardContent className="p-8">
-                  <h3 className="text-xl font-bold text-foreground">Starter</h3>
-                  <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-4xl font-extrabold text-foreground">Free</span>
-                  </div>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Get started with email notifications.
-                  </p>
-                  <ul className="mt-6 space-y-3">
-                    <PricingItem>1 vehicle tag</PricingItem>
-                    <PricingItem>Email notifications</PricingItem>
-                    <PricingItem>Auto-reply messages</PricingItem>
-                    <PricingItem>Scan history</PricingItem>
-                  </ul>
-                  <Link href="/register" className="mt-8 block">
-                    <Button variant="outline" className="w-full">
-                      Sign Up Free
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-
-              {/* Pro Tier */}
-              <Card className="border-primary/30 bg-primary/5 relative ring-1 ring-primary/20">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-xs font-semibold text-primary-foreground">
-                  Most Popular
+            <div className="flex justify-center w-full max-w-5xl mx-auto">
+              <Card className="flex flex-col border-primary/50 bg-primary/5 relative shadow-xl max-w-md w-full ring-1 ring-primary/20">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-xs font-semibold text-primary-foreground shadow-sm">
+                  Standard Plan
                 </div>
                 <CardContent className="p-8">
-                  <h3 className="text-xl font-bold text-foreground">Pro</h3>
-                  <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-4xl font-extrabold text-foreground">$4.99</span>
-                    <span className="text-muted-foreground">/mo</span>
+                  <div className="mt-4 flex flex-col items-center">
+                    <div className="flex items-baseline text-6xl font-extrabold text-foreground">
+                      $24.99
+                    </div>
+                    <span className="mt-2 text-lg font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">first year</span>
+                    <p className="text-sm text-muted-foreground mt-3 font-medium">Then $4.99/mo starting the second year.</p>
                   </div>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Full protection with SMS & voice relay.
-                  </p>
-                  <ul className="mt-6 space-y-3">
-                    <PricingItem>Unlimited vehicle tags</PricingItem>
-                    <PricingItem>SMS + voice masked relay</PricingItem>
-                    <PricingItem>Tow-prevention mode</PricingItem>
-                    <PricingItem>Priority emergency calls</PricingItem>
-                    <PricingItem>NFC-enabled tags</PricingItem>
+                  <ul className="mt-8 space-y-4">
+                    <PricingItem>1 Vehicle Tag</PricingItem>
+                    <PricingItem>Real-time In-App Alerts & Alarms</PricingItem>
+                    <PricingItem>Browser Push Notifications</PricingItem>
+                    <PricingItem>Email Notifications</PricingItem>
+                    <PricingItem>Tag Ownership Control (Disable/Lock)</PricingItem>
+                    <PricingItem>Scan History & Analytics</PricingItem>
+                    <PricingItem>Tow Prevention Alerts</PricingItem>
                   </ul>
                   <Link href="/register" className="mt-8 block">
-                    <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                      Start Free Trial
+                    <Button className="w-full h-12 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all">
+                      Subscribe Now
                     </Button>
                   </Link>
                 </CardContent>
@@ -226,8 +202,8 @@ export default async function Home() {
                 a="Yes. From your dashboard, you can disable any tag at any time. Disabled tags show a 'Tag Not Found' message to scanners."
               />
               <FaqItem
-                q="What does the free plan include?"
-                a="1 vehicle tag, email notifications for all contact events, auto-reply messages, and full scan history. Upgrade to Pro for SMS/voice relay and tow-prevention."
+                q="What does the standard plan include?"
+                a="Everything you need: unlimited tags, SMS and email alerts, real-time dashboard notifications, masked contact relay, and tow-prevention mode."
               />
             </div>
           </div>

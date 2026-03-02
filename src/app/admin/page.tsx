@@ -77,14 +77,14 @@ export default async function AdminDashboard() {
             {/* Header */}
             <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-xl">
                 <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                    <Link href="/admin" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+                    <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
                         <Shield className="h-6 w-6 text-red-500" />
                         <span className="text-lg font-bold tracking-tight text-foreground">
                             ReachMasked Admin
                         </span>
                     </Link>
                     <nav className="flex items-center gap-2">
-                        <Link href="/dashboard">
+                        <Link href="https://reachmasked.com/dashboard">
                             <Button variant="outline" size="sm">
                                 User Dashboard
                             </Button>
@@ -172,7 +172,7 @@ export default async function AdminDashboard() {
 
                 {/* Quick Links */}
                 <div className="grid md:grid-cols-3 gap-6 mb-8">
-                    <Link href="/admin/users">
+                    <Link href="/users">
                         <Card className="border-border bg-card hover:bg-accent/50 transition cursor-pointer">
                             <CardHeader>
                                 <CardTitle className="flex items-center justify-between">
@@ -191,7 +191,7 @@ export default async function AdminDashboard() {
                         </Card>
                     </Link>
 
-                    <Link href="/admin/tags">
+                    <Link href="/tags">
                         <Card className="border-border bg-card hover:bg-accent/50 transition cursor-pointer">
                             <CardHeader>
                                 <CardTitle className="flex items-center justify-between">
@@ -210,7 +210,7 @@ export default async function AdminDashboard() {
                         </Card>
                     </Link>
 
-                    <Link href="/admin/analytics">
+                    <Link href="/analytics">
                         <Card className="border-border bg-card hover:bg-accent/50 transition cursor-pointer">
                             <CardHeader>
                                 <CardTitle className="flex items-center justify-between">

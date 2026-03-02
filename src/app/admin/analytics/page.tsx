@@ -79,7 +79,7 @@ export default async function AdminAnalyticsPage() {
             {/* Header */}
             <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-xl">
                 <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                    <Link href="/admin" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+                    <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
                         <Shield className="h-6 w-6 text-red-500" />
                         <span className="text-lg font-bold tracking-tight text-foreground">
                             ReachMasked Admin
@@ -91,7 +91,7 @@ export default async function AdminAnalyticsPage() {
             {/* Main Content */}
             <main className="container mx-auto px-4 py-8">
                 <div className="flex items-center gap-4 mb-8">
-                    <Link href="/admin">
+                    <Link href="/">
                         <Button variant="ghost" size="icon">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>

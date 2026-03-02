@@ -29,86 +29,54 @@ export default async function PricingPage() {
                         Simple, transparent pricing
                     </h1>
                     <p className="text-lg text-muted-foreground">
-                        Protect your vehicle&apos;s privacy for free, or upgrade for premium notification features like Tow Prevention SMS.
+                        Protect your vehicle&apos;s privacy with comprehensive notification features and masked contact relay.
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-8 w-full max-w-5xl">
-                    {/* Free Tier */}
-                    <Card className="flex flex-col border-border bg-card">
+                <div className="flex justify-center w-full max-w-5xl">
+                    <Card className="flex flex-col border-primary/50 bg-primary/5 relative shadow-xl max-w-md w-full">
                         <CardHeader>
-                            <CardTitle className="text-2xl">Standard</CardTitle>
-                            <CardDescription>Everything you need for basic vehicle privacy.</CardDescription>
-                            <div className="mt-4 flex items-baseline text-5xl font-extrabold">
-                                $0
-                                <span className="ml-1 text-xl font-medium text-muted-foreground">/mo</span>
+                            <CardTitle className="text-3xl text-primary text-center">Standard Plan</CardTitle>
+                            <CardDescription className="text-center text-md mt-2">Comprehensive vehicle privacy and instant alerts.</CardDescription>
+                            <div className="mt-6 flex flex-col items-center">
+                                <div className="flex items-baseline text-6xl font-extrabold text-foreground">
+                                    $24.99
+                                </div>
+                                <span className="mt-2 text-lg font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">first year</span>
+                                <p className="text-sm text-muted-foreground mt-3 font-medium">Then $4.99/mo starting the second year.</p>
                             </div>
                         </CardHeader>
-                        <CardContent className="flex-1">
-                            <ul className="space-y-3">
+                        <CardContent className="flex-1 mt-6">
+                            <ul className="space-y-4">
                                 {[
-                                    "Unlimited Tag Generations",
+                                    "1 Vehicle Tag",
+                                    "Real-time In-App Alerts & Alarms",
+                                    "Browser Push Notifications",
                                     "Email Notifications",
-                                    "Masked Contact Relay",
-                                    "Dashboard Scan History",
-                                    "Basic Analytics",
-                                ].map((feature) => (
-                                    <li key={feature} className="flex items-center gap-3">
-                                        <Check className="h-4 w-4 text-emerald-500" />
-                                        <span className="text-sm">{feature}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-                        <CardFooter>
-                            <Link href={session ? "/dashboard" : "/register"} className="w-full">
-                                <Button className="w-full" variant="outline">
-                                    {session ? "Current Plan" : "Get Started Free"}
-                                </Button>
-                            </Link>
-                        </CardFooter>
-                    </Card>
-
-                    {/* Premium Tier */}
-                    <Card className="flex flex-col border-primary/50 bg-primary/5 relative shadow-lg">
-                        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4">
-                            <span className="bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-full shadow-sm">
-                                Recommended
-                            </span>
-                        </div>
-                        <CardHeader>
-                            <CardTitle className="text-2xl text-primary">Premium</CardTitle>
-                            <CardDescription>Advanced protection with instant SMS alerts.</CardDescription>
-                            <div className="mt-4 flex items-baseline text-5xl font-extrabold">
-                                $5
-                                <span className="ml-1 text-xl font-medium text-muted-foreground">/mo</span>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="flex-1">
-                            <ul className="space-y-3">
-                                {[
-                                    "Everything in Standard",
-                                    "Instant SMS Notifications",
+                                    "Tag Ownership Control (Disable/Lock)",
+                                    "Scan History & Analytics",
                                     "Tow Prevention Alerts",
-                                    "Priority Email Support",
-                                    "Custom Tag Labels",
                                 ].map((feature) => (
                                     <li key={feature} className="flex items-center gap-3">
-                                        <Check className="h-4 w-4 text-primary" />
-                                        <span className="text-sm font-medium">{feature}</span>
+                                        <div className="bg-primary/20 p-1 rounded-full">
+                                            <Check className="h-4 w-4 text-primary" />
+                                        </div>
+                                        <span className="text-base font-medium text-foreground/90">{feature}</span>
                                     </li>
                                 ))}
                             </ul>
                         </CardContent>
-                        <CardFooter>
+                        <CardFooter className="pt-6">
                             {session ? (
                                 <StripeCheckoutButton
-                                    className="w-full"
+                                    className="w-full h-12 text-lg"
                                     priceId="price_placeholder_123"
                                 />
                             ) : (
                                 <Link href="/register?redirect=/pricing" className="w-full">
-                                    <Button className="w-full">Create Account to Subscribe</Button>
+                                    <Button className="w-full h-12 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all">
+                                        Create Account to Subscribe
+                                    </Button>
                                 </Link>
                             )}
                         </CardFooter>
