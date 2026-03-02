@@ -46,7 +46,7 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 
     if (authToken) {
         headers["Authorization"] = `Bearer ${authToken}`;
-        headers["Cookie"] = `authjs.session-token=${authToken}`;
+        headers["Cookie"] = `${getSessionCookieName()}=${authToken}`;
     }
 
     const fullUrl = `${baseUrl}${path}`;
@@ -71,61 +71,39 @@ async function apiFetch(path: string, options: RequestInit = {}) {
     }
 }
 
+// Cookie name for session token (HTTPS uses __Secure- prefix)
+const getSessionCookieName = () =>
+    getBaseUrl().startsWith("https") ? "__Secure-authjs.session-token" : "authjs.session-token";
+
 // ── Auth ──
+// Uses dedicated mobile-login API (returns token in JSON) - no cookie/CSRF flow needed
 export async function login(email: string, password: string) {
     const baseUrl = getBaseUrl();
 
     try {
         console.log(`[AUTH] Starting login at ${baseUrl}...`);
 
-        // 1. Get CSRF
-        const csrfUrl = `${baseUrl}/api/auth/csrf`;
-        console.log(`[AUTH] Fetching CSRF from ${csrfUrl}`);
-        const csrfRes = await fetch(csrfUrl);
-        if (!csrfRes.ok) throw new Error(`CSRF Fetch failed: ${csrfRes.status}`);
-        const { csrfToken } = await csrfRes.json();
-        console.log("[AUTH] CSRF Token obtained");
-
-        // 2. Perform Login
-        const callbackUrl = `${baseUrl}/api/auth/callback/credentials`;
-        console.log(`[AUTH] Posting to ${callbackUrl}`);
-        const res = await fetch(callbackUrl, {
+        const res = await fetch(`${baseUrl}/api/auth/mobile-login`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Accept": "application/json"
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "User-Agent": "ReachMasked-Mobile/1.0",
             },
-            body: new URLSearchParams({
-                csrfToken,
-                email,
-                password,
-                redirect: "false",
-            }).toString(),
+            body: JSON.stringify({ email: email.trim(), password }),
         });
 
-        console.log(`[AUTH] Login Response: ${res.status}`);
-        const setCookie = res.headers.get("set-cookie") || "";
+        const data = await res.json().catch(() => ({}));
 
-        // Auth.js v5 uses "authjs.session-token" by default
-        let match = setCookie.match(/authjs\.session-token=([^;]+)/);
-        if (!match) {
-            match = setCookie.match(/__Secure-authjs\.session-token=([^;]+)/);
+        if (!res.ok) {
+            throw new Error(data.error || `Login failed: ${res.status}`);
         }
 
-        // Legacy fallback
-        if (!match) {
-            match = setCookie.match(/next-auth\.session-token=([^;]+)/);
+        const token = data.token;
+        if (!token) {
+            throw new Error("Login failed: No token in response");
         }
 
-        if (!match) {
-            console.error("[AUTH] No session token found in headers. Set-Cookie:", setCookie);
-            if (res.url.includes("error=")) {
-                throw new Error("Invalid email or password");
-            }
-            throw new Error("Login failed: Session token missing.");
-        }
-
-        const token = match[1];
         await saveToken(token);
         console.log("[AUTH] Login Successful, token saved.");
         return token;
