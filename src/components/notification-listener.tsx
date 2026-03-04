@@ -3,16 +3,17 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { NotificationToastContainer } from "./notification-toast";
 
-interface PollNotification {
+interface SSENotification {
     id: string;
     type: string;
     title: string;
     body: string;
-    vehicle: string;
+    asset: string;
+    tagCode: string;
     createdAt: string;
 }
 
-// ── Web Audio API alarm sounds ──
+// ── Web Audio API alert sounds ──
 function playAlertSound(type: string) {
     try {
         const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
@@ -34,8 +35,8 @@ function playAlertSound(type: string) {
                 osc.stop(start + 0.18);
             }
         } else {
-            // Regular alert: pleasant double-beep
-            for (let i = 0; i < 2; i++) {
+            // Regular alert: pleasant triple-beep (more noticeable)
+            for (let i = 0; i < 3; i++) {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.connect(gain);
@@ -43,7 +44,7 @@ function playAlertSound(type: string) {
 
                 osc.type = "sine";
                 osc.frequency.value = 800;
-                gain.gain.value = 0.1;
+                gain.gain.value = 0.12;
 
                 const start = ctx.currentTime + i * 0.15;
                 osc.start(start);
@@ -56,15 +57,15 @@ function playAlertSound(type: string) {
 }
 
 // ── Browser Notification API ──
-function showBrowserNotification(notification: PollNotification) {
+function showBrowserNotification(notification: SSENotification) {
     if (typeof window === "undefined") return;
     if (!("Notification" in window)) return;
 
     if (Notification.permission === "granted") {
         new Notification(notification.title, {
-            body: `${notification.vehicle} — ${notification.body}`,
+            body: `${notification.asset} — ${notification.body}`,
             icon: "/favicon.ico",
-            tag: notification.id, // Prevents duplicates
+            tag: notification.id,
             requireInteraction: notification.type === "EMERGENCY",
         });
     } else if (Notification.permission !== "denied") {
@@ -73,12 +74,74 @@ function showBrowserNotification(notification: PollNotification) {
 }
 
 export function NotificationListener() {
-    const [toasts, setToasts] = useState<PollNotification[]>([]);
+    const [toasts, setToasts] = useState<SSENotification[]>([]);
     const seenIdsRef = useRef<Set<string>>(new Set());
     const initialLoadRef = useRef(true);
+    const eventSourceRef = useRef<EventSource | null>(null);
+    const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const dismissToast = useCallback((id: string) => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, []);
+
+    const connectSSE = useCallback(() => {
+        // Close existing connection
+        if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+        }
+
+        const es = new EventSource("/api/notifications/stream");
+        eventSourceRef.current = es;
+
+        es.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+
+                // Initial load: batch of existing notifications
+                if (data.type === "initial") {
+                    if (initialLoadRef.current) {
+                        initialLoadRef.current = false;
+                        data.notifications?.forEach((n: SSENotification) =>
+                            seenIdsRef.current.add(n.id)
+                        );
+                        updateBadge(data.unreadCount || 0);
+                    }
+                    return;
+                }
+
+                // Single real-time notification
+                const notification = data as SSENotification;
+                if (seenIdsRef.current.has(notification.id)) return;
+
+                seenIdsRef.current.add(notification.id);
+
+                // 🔊 Play sound on EVERY notification
+                playAlertSound(notification.type);
+
+                // 📢 Browser notification
+                showBrowserNotification(notification);
+
+                // Show toast (max 3 at once)
+                setToasts((prev) => [notification, ...prev].slice(0, 3));
+
+                // Update badge count
+                const currentBadge = document.getElementById("notification-badge");
+                const currentCount = parseInt(currentBadge?.textContent || "0", 10);
+                updateBadge(currentCount + 1);
+            } catch {
+                // Invalid JSON — skip
+            }
+        };
+
+        es.onerror = () => {
+            es.close();
+            eventSourceRef.current = null;
+
+            // Reconnect after 3 seconds
+            reconnectTimeoutRef.current = setTimeout(() => {
+                connectSSE();
+            }, 3000);
+        };
     }, []);
 
     useEffect(() => {
@@ -87,59 +150,15 @@ export function NotificationListener() {
             Notification.requestPermission();
         }
 
-        const poll = async () => {
-            try {
-                const res = await fetch("/api/notifications/poll", {
-                    cache: "no-store",
-                });
-                if (!res.ok) return;
+        connectSSE();
 
-                const data: { unreadCount: number; notifications: PollNotification[] } =
-                    await res.json();
-
-                // On initial load, just record existing IDs without alerting
-                if (initialLoadRef.current) {
-                    initialLoadRef.current = false;
-                    data.notifications.forEach((n) => seenIdsRef.current.add(n.id));
-
-                    // Update badge
-                    updateBadge(data.unreadCount);
-                    return;
-                }
-
-                // Find genuinely new notifications
-                const newOnes = data.notifications.filter(
-                    (n) => !seenIdsRef.current.has(n.id)
-                );
-
-                if (newOnes.length > 0) {
-                    newOnes.forEach((n) => {
-                        seenIdsRef.current.add(n.id);
-
-                        // Play sound
-                        playAlertSound(n.type);
-
-                        // Browser notification
-                        showBrowserNotification(n);
-                    });
-
-                    // Show toasts (max 3 at once)
-                    setToasts((prev) => [...newOnes, ...prev].slice(0, 3));
-                }
-
-                // Update badge
-                updateBadge(data.unreadCount);
-            } catch {
-                // Network error — silently retry next cycle
+        return () => {
+            eventSourceRef.current?.close();
+            if (reconnectTimeoutRef.current) {
+                clearTimeout(reconnectTimeoutRef.current);
             }
         };
-
-        // Poll immediately, then every 5 seconds
-        poll();
-        const interval = setInterval(poll, 5000);
-
-        return () => clearInterval(interval);
-    }, []);
+    }, [connectSSE]);
 
     return (
         <NotificationToastContainer toasts={toasts} onDismiss={dismissToast} />

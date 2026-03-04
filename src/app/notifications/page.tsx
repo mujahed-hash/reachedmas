@@ -27,6 +27,8 @@ const typeColors: Record<string, string> = {
     SMS_RECEIVED: "bg-primary/10 text-primary border-primary/20",
     CALL_RECEIVED: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
     TOW_ALERT: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    DELIVERY_KNOCK: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    FOUND_REPORT: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
 };
 
 const typeLabel: Record<string, string> = {
@@ -34,6 +36,8 @@ const typeLabel: Record<string, string> = {
     SMS_RECEIVED: "Message",
     CALL_RECEIVED: "Call",
     TOW_ALERT: "Tow Alert",
+    DELIVERY_KNOCK: "Delivery",
+    FOUND_REPORT: "Found Report",
 };
 
 export default async function NotificationsPage() {
@@ -49,7 +53,7 @@ export default async function NotificationsPage() {
                 include: {
                     tag: {
                         include: {
-                            vehicle: { select: { model: true, color: true } },
+                            asset: { select: { name: true, subtitle: true, type: true } },
                         },
                     },
                 },
@@ -106,11 +110,11 @@ export default async function NotificationsPage() {
                     </Card>
                 ) : (
                     <div className="space-y-3">
-                        {notifications.map((notif) => {
-                            const vehicle = notif.interaction?.tag?.vehicle;
-                            const vehicleLabel = vehicle
-                                ? `${vehicle.color} ${vehicle.model}`
-                                : "Unknown vehicle";
+                        {notifications.map((notif: any) => {
+                            const asset = notif.interaction?.tag?.asset;
+                            const assetLabel = asset
+                                ? `${asset.name}${asset.subtitle ? ` (${asset.subtitle})` : ""}`
+                                : "Unknown asset";
 
                             return (
                                 <div
@@ -134,7 +138,7 @@ export default async function NotificationsPage() {
                                             <p className="text-sm font-semibold text-foreground">{notif.title}</p>
                                             <p className="text-sm text-muted-foreground mt-0.5">{notif.body}</p>
                                             <div className="flex items-center gap-2 mt-2">
-                                                <span className="text-xs text-muted-foreground">{vehicleLabel}</span>
+                                                <span className="text-xs text-muted-foreground">{assetLabel}</span>
                                                 <span className="text-xs text-muted-foreground">·</span>
                                                 <span className="text-xs text-muted-foreground">
                                                     {new Date(notif.createdAt).toLocaleString()}

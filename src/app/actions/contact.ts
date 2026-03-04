@@ -7,6 +7,7 @@ import { sendEmail, getAlertEmailHTML } from "@/lib/email";
 import { checkRateLimit, hashIP, rateLimitConfigs } from "@/lib/rate-limit";
 import { decryptPhone } from "@/lib/crypto";
 import { sendPushToUser } from "@/lib/push";
+import { emitNotification } from "@/lib/notification-emitter";
 
 export type ContactAction =
     | "blocking_driveway"
@@ -180,7 +181,7 @@ export async function initiateContact(
 
         for (const recipientId of allRecipients) {
             // Create notification in DB
-            await prisma.notification.create({
+            const dbNotif = await prisma.notification.create({
                 data: {
                     userId: recipientId,
                     interactionId: interaction.id,
@@ -188,6 +189,17 @@ export async function initiateContact(
                     title: actionTitles[action] + towExtra,
                     body: fullMessage,
                 },
+            });
+
+            // Emit real-time SSE event
+            emitNotification(recipientId, {
+                id: dbNotif.id,
+                type: dbNotif.type,
+                title: dbNotif.title,
+                body: dbNotif.body,
+                asset: assetDescription,
+                tagCode: tag.shortCode,
+                createdAt: dbNotif.createdAt.toISOString(),
             });
 
             // Send push to mobile

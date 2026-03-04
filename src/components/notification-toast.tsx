@@ -9,7 +9,7 @@ interface NotificationToastData {
     type: string;
     title: string;
     body: string;
-    vehicle: string;
+    asset: string;
 }
 
 interface NotificationToastProps {
@@ -93,7 +93,7 @@ export function NotificationToast({ notification, onDismiss }: NotificationToast
                     </p>
                     <div className="flex items-center justify-between mt-2">
                         <span className="text-xs text-muted-foreground">
-                            {notification.vehicle}
+                            {notification.asset}
                         </span>
                         <Link
                             href="/notifications"
