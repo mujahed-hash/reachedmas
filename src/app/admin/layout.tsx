@@ -13,14 +13,23 @@ export default async function AdminLayout({
 }) {
     // Detect if we're on a public admin page (login/setup)
     const headersList = await headers();
+    const path = headersList.get("x-path") || "";
     const url = headersList.get("x-url") || headersList.get("referer") || "";
-    const isPublicPage = url.includes("/login") || url.includes("/setup");
+
+    // Check both x-path (reliable) and url (fallback)
+    const isPublicPage =
+        path.endsWith("/login") ||
+        path.endsWith("/setup") ||
+        url.includes("/login") ||
+        url.includes("/setup");
 
     const session = await auth();
 
     // SECURITY: Enforce auth for non-public admin pages
     if (!session?.user?.id && !isPublicPage) {
-        redirect("/login");
+        // If we're on an admin page, redirect to the admin login
+        // If we're on a subdomain, "/login" usually maps to the admin login
+        redirect("/admin/login");
     }
 
     // SECURITY: Enforce ADMIN role
