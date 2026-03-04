@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Shield, Loader2, Lock } from "lucide-react";
 import Link from "next/link";
-import { login } from "@/app/actions/auth";
+import { adminLogin } from "@/app/actions/auth";
 
 export default function AdminLoginPage() {
     const [error, setError] = useState<string | null>(null);
@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
         setLoading(true);
         setError(null);
 
-        const result = await login(formData);
+        const result = await adminLogin(formData);
 
         if (result?.error) {
             setError(result.error);

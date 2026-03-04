@@ -12,29 +12,42 @@ export default auth(async (req) => {
         return NextResponse.redirect(new URL(`https://admin.reachmasked.com${pathname.replace("/admin", "")}`, req.url));
     }
 
-    // 2. Handle admin subdomain
+    // 2. Handle admin subdomain — STRICT WHITELIST
     if (host.startsWith("admin.")) {
-        // If they still access /admin/..., strip it to avoid /admin/admin internally
-        if (pathname.startsWith("/admin")) {
-            return NextResponse.redirect(new URL(pathname.replace("/admin", "") || "/", req.url));
+        // Strip /admin prefix if present (legacy links)
+        const cleanPath = pathname.startsWith("/admin") ? pathname.replace("/admin", "") || "/" : pathname;
+
+        // WHITELIST: Only these paths are valid on the admin subdomain
+        const allowedAdminPaths = ["/", "/users", "/tags", "/analytics", "/setup", "/login"];
+        const isAllowed = allowedAdminPaths.some(p => cleanPath === p);
+
+        // BLOCK: Any path not in the whitelist → redirect to admin root
+        // This prevents /dashboard, /pricing, /settings, etc. from ever loading
+        if (!isAllowed) {
+            return NextResponse.redirect(new URL("/", req.url));
         }
 
-        // Allow login page to be shared but rewrite to admin-specific version
-        if (pathname === "/login") {
-            return NextResponse.rewrite(new URL("/admin/login", req.url));
+        // Public paths that don't require auth
+        const publicPaths = ["/login", "/setup"];
+        const isPublic = publicPaths.includes(cleanPath);
+
+        // Auth guard: unauthenticated users go to admin login
+        if (!req.auth && !isPublic) {
+            return NextResponse.redirect(new URL("/login", req.url));
         }
 
-        // Internal rewrite to /admin
-        return NextResponse.rewrite(new URL(`/admin${pathname === "/" ? "" : pathname}`, req.url));
+        // Rewrite to internal /admin/* file structure
+        const internalPath = cleanPath === "/" ? "/admin" : `/admin${cleanPath}`;
+        return NextResponse.rewrite(new URL(internalPath, req.url));
     }
 
-    // Authentication Guard
+    // 4. Default Authentication Guard (for main domain)
     const session = req.auth;
     const isProtected = [
         "/dashboard",
         "/settings",
         "/notifications",
-        "/admin",
+        "/admin", // This handles reachmasked.com/admin if not redirected
     ].some(path => pathname.startsWith(path));
 
     if (isProtected && !session) {

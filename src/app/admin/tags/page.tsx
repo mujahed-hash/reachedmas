@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Shield, ArrowLeft, QrCode, ExternalLink, Eye } from "lucide-react";
+import { Shield, ArrowLeft, QrCode, ExternalLink, Eye, Mail } from "lucide-react";
 import { TagActions, TagStatusBadge } from "@/components/admin/tag-actions";
 
 async function getTags() {
@@ -30,137 +30,108 @@ async function getTags() {
 }
 
 export default async function AdminTagsPage() {
-    const session = await auth();
-
-    if (!session?.user?.id) {
-        redirect("/login");
-    }
-
-    // Check if user is admin
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session.user.id },
-    });
-
-    if (currentUser?.role !== "ADMIN") {
-        redirect("/dashboard");
-    }
-
     const tags = await getTags();
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
-            {/* Header */}
-            <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-xl">
-                <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                    <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-                        <Shield className="h-6 w-6 text-red-500" />
-                        <span className="text-lg font-bold tracking-tight text-foreground">
-                            ReachMasked Admin
-                        </span>
-                    </Link>
-                </div>
-            </header>
-
-            {/* Main Content */}
-            <main className="container mx-auto px-4 py-8">
-                <div className="flex items-center gap-4 mb-8">
+        <div className="space-y-8">
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
                     <Link href="/">
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-bold">Tag Management</h1>
-                        <p className="text-muted-foreground">
-                            {tags.length} tags • Real-time data from database
+                        <h1 className="text-3xl font-bold text-white">Tag Management</h1>
+                        <p className="text-slate-500">
+                            {tags.length} security tags active in database
                         </p>
                     </div>
                 </div>
+            </div>
 
-                {/* Tags Table */}
-                <div className="rounded-lg border border-border overflow-x-auto">
-                    <table className="w-full min-w-[800px]">
-                        <thead className="bg-muted/50">
+            {/* Tags Grid (Refined for Command Center) */}
+            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden shadow-2xl">
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[900px]">
+                        <thead className="bg-white/5 border-b border-white/10">
                             <tr>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                    Tag Code
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                    Digital ID
                                 </th>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                    Vehicle
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                    Linked Vehicle
                                 </th>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                    Owner
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                    Owner Ident
                                 </th>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                    Status
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                    Security Status
                                 </th>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                    Scans
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">
+                                    Total Scans
                                 </th>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                                     Last Activity
                                 </th>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                                    Created
-                                </th>
-                                <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-border">
+                        <tbody className="divide-y divide-white/5">
                             {tags.map((tag) => (
-                                <tr key={tag.id} className="bg-card hover:bg-accent/30 transition">
-                                    <td className="px-4 py-3">
-                                        <code className="px-2 py-1 rounded bg-muted text-sm font-mono">
+                                <tr key={tag.id} className="hover:bg-white/[0.02] transition-colors group">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <code className="px-2 py-1 rounded bg-indigo-500/10 text-indigo-400 text-sm font-mono border border-indigo-500/20">
                                             {tag.shortCode}
                                         </code>
                                     </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-6 py-4">
                                         <div>
-                                            <span className="text-sm font-medium">
+                                            <span className="text-sm font-medium text-white">
                                                 {tag.vehicle.color} {tag.vehicle.model}
                                             </span>
                                             {tag.vehicle.licensePlateHash && (
-                                                <span className="text-xs text-muted-foreground block">
-                                                    {tag.vehicle.licensePlateHash}
+                                                <span className="text-xs text-slate-500 block font-mono uppercase">
+                                                    #{tag.vehicle.licensePlateHash}
                                                 </span>
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3 text-sm text-muted-foreground">
-                                        {tag.vehicle.owner.email}
+                                    <td className="px-6 py-4 text-sm text-slate-400">
+                                        <div className="flex items-center gap-2">
+                                            <Mail className="h-3 w-3 opacity-50" />
+                                            {tag.vehicle.owner.email}
+                                        </div>
                                     </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-6 py-4">
                                         <TagStatusBadge status={tag.status} />
                                     </td>
-                                    <td className="px-4 py-3 text-sm">
-                                        <span className="flex items-center gap-1">
-                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                    <td className="px-6 py-4 text-sm text-center">
+                                        <span className="inline-flex items-center gap-1 text-slate-300 bg-white/5 px-2 py-1 rounded-md">
+                                            <Eye className="h-3 w-3 opacity-50" />
                                             {tag._count.interactions}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-6 py-4">
                                         {tag.interactions[0] ? (
                                             <div className="text-xs">
-                                                <span className="text-muted-foreground">
+                                                <span className="text-slate-300 font-medium">
                                                     {new Date(tag.interactions[0].timestamp).toLocaleDateString()}
                                                 </span>
-                                                <span className="block text-muted-foreground/70">
+                                                <span className="block text-slate-500 text-[10px] uppercase tracking-tighter mt-0.5">
                                                     {tag.interactions[0].actionType.replace("_", " ")}
                                                 </span>
                                             </div>
                                         ) : (
-                                            <span className="text-xs text-muted-foreground">Never</span>
+                                            <span className="text-xs text-slate-600 italic">No logs</span>
                                         )}
                                     </td>
-                                    <td className="px-4 py-3 text-xs text-muted-foreground">
-                                        {new Date(tag.createdAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-6 py-4">
                                         <div className="flex items-center justify-end gap-1">
                                             <Link href={`/t/${tag.shortCode}`} target="_blank">
-                                                <Button variant="ghost" size="sm">
+                                                <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5">
                                                     <ExternalLink className="h-4 w-4" />
                                                 </Button>
                                             </Link>
@@ -177,13 +148,13 @@ export default async function AdminTagsPage() {
                     </table>
 
                     {tags.length === 0 && (
-                        <div className="p-8 text-center bg-card">
-                            <QrCode className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <p className="text-muted-foreground">No tags generated yet</p>
+                        <div className="p-16 text-center">
+                            <QrCode className="h-16 w-16 text-slate-700 mx-auto mb-4 opacity-20" />
+                            <p className="text-slate-500 font-medium">No tracking tags initialized</p>
                         </div>
                     )}
                 </div>
-            </main>
+            </div>
         </div>
     );
 }

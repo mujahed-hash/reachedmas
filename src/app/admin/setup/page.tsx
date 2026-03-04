@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, CheckCircle, AlertCircle } from "lucide-react";
+import { Shield, CheckCircle, AlertCircle, Lock } from "lucide-react";
 import { promoteToAdmin } from "@/app/actions/admin";
 import { useRouter } from "next/navigation";
 
@@ -21,61 +21,63 @@ export default function SetupAdminPage() {
 
         if (res.success) {
             setTimeout(() => {
-                router.push("/admin");
+                router.push("/"); // Back to admin overview
             }, 1500);
         }
     }
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
-            <Card className="w-full max-w-md border-border bg-card">
-                <CardHeader className="text-center">
-                    <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center">
-                        <Shield className="h-8 w-8 text-red-500" />
+        <div className="flex items-center justify-center py-12">
+            <Card className="w-full max-w-md border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="text-center px-8 pt-8">
+                    <div className="mx-auto mb-6 w-20 h-20 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                        <Lock className="h-10 w-10 text-indigo-400" />
                     </div>
-                    <CardTitle className="text-2xl">Admin Setup</CardTitle>
-                    <CardDescription>
-                        Enter your email to become the first admin
+                    <CardTitle className="text-2xl font-bold text-white">Security Escalation</CardTitle>
+                    <CardDescription className="text-slate-400 mt-2">
+                        Promote an account to Administrator status.
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-8 pb-8">
                     {result?.success ? (
-                        <div className="text-center py-4">
-                            <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                            <p className="text-lg font-medium text-foreground">
-                                Admin access granted!
-                            </p>
-                            <p className="text-sm text-muted-foreground mt-2">
-                                Redirecting to admin panel...
-                            </p>
+                        <div className="text-center py-6 space-y-4">
+                            <CheckCircle className="h-16 w-16 text-emerald-400 mx-auto" />
+                            <div className="space-y-1">
+                                <p className="text-xl font-bold text-white">Access Granted</p>
+                                <p className="text-sm text-slate-500">
+                                    Command Center privileges enabled.
+                                </p>
+                            </div>
                         </div>
                     ) : (
-                        <form action={handleSetupAdmin} className="space-y-4">
+                        <form action={handleSetupAdmin} className="space-y-6">
                             {result?.error && (
-                                <div className="p-3 rounded-lg bg-red-500/10 text-red-500 text-sm flex items-center gap-2">
-                                    <AlertCircle className="h-4 w-4" />
+                                <div className="p-4 rounded-xl bg-red-400/10 border border-red-400/20 text-red-400 text-sm flex items-center gap-3">
+                                    <AlertCircle className="h-5 w-5 shrink-0" />
                                     {result.error}
                                 </div>
                             )}
-                            <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                                    Your Email Address
+                            <div className="space-y-1.5">
+                                <label htmlFor="email" className="text-xs font-semibold text-slate-500 uppercase tracking-widest px-1">
+                                    Target Email Address
                                 </label>
                                 <input
                                     id="email"
                                     name="email"
                                     type="email"
                                     required
-                                    placeholder="you@example.com"
-                                    className="w-full px-3 py-2 rounded-lg border border-border bg-muted/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    placeholder="admin@reachmasked.com"
+                                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
                                 />
                             </div>
-                            <Button type="submit" className="w-full" disabled={loading}>
-                                {loading ? "Setting up..." : "Make Me Admin"}
+                            <Button type="submit" className="w-full py-6 text-lg font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 transition-all" disabled={loading}>
+                                {loading ? "Authorizing..." : "Escalate to Admin"}
                             </Button>
-                            <p className="text-xs text-muted-foreground text-center">
-                                This only works if no admins exist yet, or if you&apos;re already an admin.
-                            </p>
+                            <div className="p-4 bg-white/[0.02] border border-white/5 rounded-lg">
+                                <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+                                    Note: This operation is restricted to accounts already possessing partial admin logic or if the system has zero active administrators.
+                                </p>
+                            </div>
                         </form>
                     )}
                 </CardContent>

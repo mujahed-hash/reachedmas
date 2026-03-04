@@ -55,215 +55,102 @@ async function getAdminStats() {
 }
 
 export default async function AdminDashboard() {
-    const session = await auth();
-
-    if (!session?.user?.id) {
-        redirect("/login");
-    }
-
-    // Check if user is admin (for now, check role)
-    const user = await prisma.user.findUnique({
-        where: { id: session.user.id },
-    });
-
-    if (user?.role !== "ADMIN") {
-        redirect("/dashboard");
-    }
-
     const stats = await getAdminStats();
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
-            {/* Header */}
-            <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-xl">
-                <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                    <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-                        <Shield className="h-6 w-6 text-red-500" />
-                        <span className="text-lg font-bold tracking-tight text-foreground">
-                            ReachMasked Admin
-                        </span>
-                    </Link>
-                    <nav className="flex items-center gap-2">
-                        <Link href="https://reachmasked.com/dashboard">
-                            <Button variant="outline" size="sm">
-                                User Dashboard
-                            </Button>
-                        </Link>
-                    </nav>
-                </div>
-            </header>
+        <div className="space-y-8">
+            <h1 className="text-3xl font-bold text-white">Command Center Overview</h1>
 
-            {/* Main Content */}
-            <main className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <StatCard icon={<Users className="h-5 w-5 text-blue-400" />} value={stats.userCount} label="Total Users" />
+                <StatCard icon={<Car className="h-5 w-5 text-emerald-400" />} value={stats.vehicleCount} label="Vehicles" />
+                <StatCard icon={<QrCode className="h-5 w-5 text-indigo-400" />} value={stats.tagCount} label="Active Tags" />
+                <StatCard icon={<BarChart3 className="h-5 w-5 text-amber-400" />} value={stats.interactionCount} label="Total Scans" />
+                <StatCard icon={<MessageCircle className="h-5 w-5 text-rose-400" />} value={stats.notificationCount} label="Notifications" />
+            </div>
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                    <Card className="border-border bg-card">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-blue-500/10">
-                                    <Users className="h-5 w-5 text-blue-500" />
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-foreground">{stats.userCount}</p>
-                                    <p className="text-xs text-muted-foreground">Total Users</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+            {/* Quick Links */}
+            <div className="grid md:grid-cols-3 gap-6">
+                <AdminLink href="/users" icon={<Users className="h-5 w-5 text-blue-400" />} title="Manage Users" description="View, search, and manage all registered users" />
+                <AdminLink href="/tags" icon={<QrCode className="h-5 w-5 text-indigo-400" />} title="Manage Tags" description="View all tags, disable suspicious activity" />
+                <AdminLink href="/analytics" icon={<BarChart3 className="h-5 w-5 text-amber-400" />} title="Analytics" description="View usage statistics and trends" />
+            </div>
 
-                    <Card className="border-border bg-card">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-green-500/10">
-                                    <Car className="h-5 w-5 text-green-500" />
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-foreground">{stats.vehicleCount}</p>
-                                    <p className="text-xs text-muted-foreground">Vehicles</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-border bg-card">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-purple-500/10">
-                                    <QrCode className="h-5 w-5 text-purple-500" />
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-foreground">{stats.tagCount}</p>
-                                    <p className="text-xs text-muted-foreground">Active Tags</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-border bg-card">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-orange-500/10">
-                                    <BarChart3 className="h-5 w-5 text-orange-500" />
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-foreground">{stats.interactionCount}</p>
-                                    <p className="text-xs text-muted-foreground">Total Scans</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-border bg-card">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-pink-500/10">
-                                    <MessageCircle className="h-5 w-5 text-pink-500" />
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-foreground">{stats.notificationCount}</p>
-                                    <p className="text-xs text-muted-foreground">Notifications</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Quick Links */}
-                <div className="grid md:grid-cols-3 gap-6 mb-8">
-                    <Link href="/users">
-                        <Card className="border-border bg-card hover:bg-accent/50 transition cursor-pointer">
-                            <CardHeader>
-                                <CardTitle className="flex items-center justify-between">
-                                    <span className="flex items-center gap-2">
-                                        <Users className="h-5 w-5" />
-                                        Manage Users
-                                    </span>
-                                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground text-sm">
-                                    View, search, and manage all registered users
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </Link>
-
-                    <Link href="/tags">
-                        <Card className="border-border bg-card hover:bg-accent/50 transition cursor-pointer">
-                            <CardHeader>
-                                <CardTitle className="flex items-center justify-between">
-                                    <span className="flex items-center gap-2">
-                                        <QrCode className="h-5 w-5" />
-                                        Manage Tags
-                                    </span>
-                                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground text-sm">
-                                    View all tags, disable suspicious activity
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </Link>
-
-                    <Link href="/analytics">
-                        <Card className="border-border bg-card hover:bg-accent/50 transition cursor-pointer">
-                            <CardHeader>
-                                <CardTitle className="flex items-center justify-between">
-                                    <span className="flex items-center gap-2">
-                                        <BarChart3 className="h-5 w-5" />
-                                        Analytics
-                                    </span>
-                                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground text-sm">
-                                    View usage statistics and trends
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </Link>
-                </div>
-
-                {/* Recent Activity */}
-                <Card className="border-border bg-card">
-                    <CardHeader>
-                        <CardTitle>Recent Activity</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {stats.recentInteractions.length === 0 ? (
-                                <p className="text-muted-foreground text-center py-4">No activity yet</p>
-                            ) : (
-                                stats.recentInteractions.map((interaction) => (
-                                    <div
-                                        key={interaction.id}
-                                        className="flex items-center justify-between border-b border-border pb-3 last:border-0"
-                                    >
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium">
-                                                {interaction.actionType.replace("_", " ")}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {interaction.tag.vehicle.color} {interaction.tag.vehicle.model} •{" "}
-                                                {interaction.tag.vehicle.owner.email}
-                                            </p>
-                                        </div>
-                                        <div className="text-xs text-muted-foreground">
-                                            {new Date(interaction.timestamp).toLocaleString()}
-                                        </div>
+            {/* Recent Activity */}
+            <Card className="border-white/10 bg-white/5 backdrop-blur-sm">
+                <CardHeader>
+                    <CardTitle className="text-white">Recent Security Activity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {stats.recentInteractions.length === 0 ? (
+                            <p className="text-slate-500 text-center py-4">No activity yet</p>
+                        ) : (
+                            stats.recentInteractions.map((interaction) => (
+                                <div
+                                    key={interaction.id}
+                                    className="flex items-center justify-between border-b border-white/5 pb-3 last:border-0"
+                                >
+                                    <div className="flex-1">
+                                        <p className="text-sm font-medium text-slate-200">
+                                            {interaction.actionType.replace("_", " ")}
+                                        </p>
+                                        <p className="text-xs text-slate-500">
+                                            {interaction.tag.vehicle.color} {interaction.tag.vehicle.model} •{" "}
+                                            {interaction.tag.vehicle.owner.email}
+                                        </p>
                                     </div>
-                                ))
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-            </main>
+                                    <div className="text-xs text-slate-500">
+                                        {new Date(interaction.timestamp).toLocaleString()}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
         </div>
+    );
+}
+
+function StatCard({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
+    return (
+        <Card className="border-white/10 bg-white/5">
+            <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-white/5">
+                        {icon}
+                    </div>
+                    <div>
+                        <p className="text-2xl font-bold text-white">{value}</p>
+                        <p className="text-xs text-slate-500">{label}</p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+function AdminLink({ href, icon, title, description }: { href: string; icon: React.ReactNode; title: string; description: string }) {
+    return (
+        <Link href={href}>
+            <Card className="border-white/10 bg-white/5 hover:bg-white/10 transition cursor-pointer group">
+                <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-white">
+                        <span className="flex items-center gap-2">
+                            {icon}
+                            {title}
+                        </span>
+                        <ChevronRight className="h-5 w-5 text-slate-500 group-hover:text-white transition-colors" />
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-slate-400 text-sm">
+                        {description}
+                    </p>
+                </CardContent>
+            </Card>
+        </Link>
     );
 }

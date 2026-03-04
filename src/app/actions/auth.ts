@@ -88,6 +88,22 @@ export async function register(formData: FormData) {
     }
 }
 
+export async function adminLogin(formData: FormData) {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    try {
+        await signIn("credentials", {
+            email,
+            password,
+            redirectTo: "/",  // On admin subdomain, "/" rewrites to /admin
+        });
+    } catch (error) {
+        if (isRedirectError(error)) throw error;
+        return { error: "Invalid email or password" };
+    }
+}
+
 export async function logout() {
     await signOut({ redirectTo: "/" });
 }
