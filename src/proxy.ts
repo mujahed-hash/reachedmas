@@ -7,6 +7,10 @@ export default auth(async (req) => {
     const host = req.headers.get("host") || "";
     const pathname = url.pathname;
 
+    // Create a new headers object to pass data to RSC
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-path", pathname);
+
     // 1. Redirect reachmasked.com/admin to admin.reachmasked.com
     if (host === "reachmasked.com" && pathname.startsWith("/admin")) {
         return NextResponse.redirect(new URL(`https://admin.reachmasked.com${pathname.replace("/admin", "")}`, req.url));
@@ -22,7 +26,6 @@ export default auth(async (req) => {
         const isAllowed = allowedAdminPaths.some(p => cleanPath === p);
 
         // BLOCK: Any path not in the whitelist → redirect to admin root
-        // This prevents /dashboard, /pricing, /settings, etc. from ever loading
         if (!isAllowed) {
             return NextResponse.redirect(new URL("/", req.url));
         }
@@ -38,22 +41,20 @@ export default auth(async (req) => {
 
         // Rewrite to internal /admin/* file structure
         const internalPath = cleanPath === "/" ? "/admin" : `/admin${cleanPath}`;
-        return NextResponse.rewrite(new URL(internalPath, req.url));
+        return NextResponse.rewrite(new URL(internalPath, req.url), {
+            request: {
+                headers: requestHeaders,
+            }
+        });
     }
 
-    // Create response and set path header
-    const response = NextResponse.next();
-
-    // Set custom header for path detection in layouts
-    response.headers.set("x-path", pathname);
-
-    // Default Authentication Guard (for main domain)
+    // 4. Default Authentication Guard (for main domain)
     const session = req.auth;
     const isProtected = [
         "/dashboard",
         "/settings",
         "/notifications",
-        "/admin", // This handles reachmasked.com/admin if not redirected
+        "/admin",
     ].some(path => pathname.startsWith(path));
 
     if (isProtected && !session) {
@@ -62,22 +63,15 @@ export default auth(async (req) => {
         return NextResponse.redirect(loginUrl);
     }
 
-    // Ensure the response from rewrites or redirects also gets the path header if needed
-    // However, for rewriting, we usually return a new NextResponse.rewrite.
-    // Let's ensure headers are passed where possible.
-
-    return response;
+    return NextResponse.next({
+        request: {
+            headers: requestHeaders,
+        }
+    });
 });
 
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
         "/((?!api|_next/static|_next/image|favicon.ico).*)",
     ],
 };
