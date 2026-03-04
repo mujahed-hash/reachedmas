@@ -14,22 +14,23 @@ export default async function AdminLayout({
     // Detect if we're on a public admin page (login/setup)
     const headersList = await headers();
     const path = headersList.get("x-path") || "";
-    const url = headersList.get("x-url") || headersList.get("referer") || "";
+    const referer = headersList.get("referer") || "";
 
-    // Check both x-path (reliable) and url (fallback)
+    // Check both x-path (reliable from middleware) and referer (fallback)
     const isPublicPage =
-        path.endsWith("/login") ||
-        path.endsWith("/setup") ||
-        url.includes("/login") ||
-        url.includes("/setup");
+        path.includes("/login") ||
+        path.includes("/setup") ||
+        referer.includes("/login") ||
+        referer.includes("/setup");
 
     const session = await auth();
 
     // SECURITY: Enforce auth for non-public admin pages
     if (!session?.user?.id && !isPublicPage) {
-        // If we're on an admin page, redirect to the admin login
-        // If we're on a subdomain, "/login" usually maps to the admin login
-        redirect("/admin/login");
+        // SAFETY: Only redirect if NOT already on a login-adjacent path to prevent loops
+        if (!path.includes("login") && !path.includes("setup")) {
+            redirect("/admin/login");
+        }
     }
 
     // SECURITY: Enforce ADMIN role
@@ -41,9 +42,12 @@ export default async function AdminLayout({
         });
         isAdmin = user?.role === "ADMIN";
 
-        // Logged in but NOT admin → block (redirect to login, NOT /dashboard)
+        // Logged in but NOT admin → block
         if (!isAdmin && !isPublicPage) {
-            redirect("/login");
+            // SAFETY: Prevent loop
+            if (!path.includes("login") && !path.includes("setup")) {
+                redirect("/admin/login");
+            }
         }
     }
 
