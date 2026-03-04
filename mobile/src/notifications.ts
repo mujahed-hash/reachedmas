@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Platform } from "react-native";
+import { Platform, Alert } from "react-native";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
@@ -10,6 +10,8 @@ Notifications.setNotificationHandler({
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
     }),
 });
 
@@ -42,7 +44,7 @@ export function usePushNotifications() {
 
 async function registerForPushNotifications() {
     if (!Device.isDevice) {
-        console.log("Push notifications require a physical device");
+        console.log("[PUSH] Push notifications require a physical device");
         return;
     }
 
@@ -56,18 +58,27 @@ async function registerForPushNotifications() {
         }
 
         if (finalStatus !== "granted") {
-            console.log("Permission not granted for push notifications");
+            console.log("[PUSH] Permission not granted for push notifications");
             return;
         }
 
+        // Get project ID from app config
         const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+        if (!projectId) {
+            console.warn("[PUSH] No projectId configured in app.json. Run `eas project:init` to set one.");
+            return;
+        }
+
         const tokenData = await Notifications.getExpoPushTokenAsync({
             projectId,
         });
 
         const token = tokenData.data;
+        console.log("[PUSH] Token obtained:", token);
+
         const platform = Platform.OS as "ios" | "android";
         await registerPushToken(token, platform);
+        console.log("[PUSH] Token registered with server");
 
         if (Platform.OS === "android") {
             await Notifications.setNotificationChannelAsync("default", {
@@ -78,7 +89,12 @@ async function registerForPushNotifications() {
                 sound: "default",
             });
         }
-    } catch (error) {
-        console.error("Error registering for push notifications:", error);
+    } catch (error: any) {
+        // Gracefully handle Expo Go limitation (SDK 53+)
+        if (error?.message?.includes("projectId") || error?.message?.includes("not supported")) {
+            console.warn("[PUSH] Push notifications are not supported in Expo Go. Use a development build for full functionality.");
+        } else {
+            console.error("[PUSH] Error registering for push notifications:", error);
+        }
     }
 }

@@ -1,12 +1,12 @@
-import { auth } from "@/lib/auth";
+import { getSessionFromRequest } from "@/lib/mobile-auth";
 import { prisma } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
-        const session = await auth();
+        const session = await getSessionFromRequest(req);
         if (!session?.user?.id) {
             return NextResponse.json({ unreadCount: 0, notifications: [] });
         }

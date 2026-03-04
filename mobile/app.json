@@ -40,7 +40,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": ""
+        "projectId": "reachmasked-app"
       }
     }
   }

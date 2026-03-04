@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getSessionFromRequest } from "@/lib/mobile-auth";
 import { prisma } from "@/lib/db";
 
 // GET /api/mobile/dashboard — Mobile-optimized dashboard data
 export async function GET(req: NextRequest) {
     try {
-        const session = await auth();
+        const session = await getSessionFromRequest(req);
         if (!session?.user?.id) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }

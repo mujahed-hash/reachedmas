@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getSessionFromRequest } from "@/lib/mobile-auth";
 import { prisma } from "@/lib/db";
 
 // POST /api/push/register — Save device push token
 export async function POST(req: NextRequest) {
     try {
-        const session = await auth();
+        const session = await getSessionFromRequest(req);
         if (!session?.user?.id) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }

@@ -7,9 +7,9 @@ import {
     RefreshControl,
     TouchableOpacity,
     Platform,
-    SafeAreaView,
     StatusBar,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchDashboard } from "../api";
 
 interface Vehicle {

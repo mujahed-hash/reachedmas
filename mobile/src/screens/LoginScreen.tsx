@@ -12,7 +12,6 @@ import {
     Alert,
 } from "react-native";
 import { useAuth } from "../auth";
-import { setFallbackMode, getFallbackMode } from "../api";
 
 const { width } = Dimensions.get("window");
 
@@ -22,7 +21,6 @@ export default function LoginScreen() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [fallbackActive, setFallbackActive] = useState(getFallbackMode());
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -43,18 +41,7 @@ export default function LoginScreen() {
         }
     };
 
-    const toggleFallback = () => {
-        const newVal = !fallbackActive;
-        setFallbackMode(newVal);
-        setFallbackActive(newVal);
-        setError("");
-        Alert.alert(
-            "Connection Mode Changed",
-            newVal
-                ? "Now using IP-based (HTTP) connection for troubleshooting. This bypasses SSL/DNS."
-                : "Now using Domain-based (HTTPS) connection. Optimized for production security."
-        );
-    };
+
 
     return (
         <KeyboardAvoidingView
@@ -130,12 +117,6 @@ export default function LoginScreen() {
                 </View>
             </View>
 
-            {/* Troubleshooting Mode Link */}
-            <TouchableOpacity style={styles.troubleshoot} onPress={toggleFallback}>
-                <Text style={styles.troubleshootText}>
-                    {fallbackActive ? "🔒 Restore Secure Mode" : "🔧 Connection Issues?"}
-                </Text>
-            </TouchableOpacity>
         </KeyboardAvoidingView>
     );
 }

@@ -6,8 +6,8 @@ import {
     FlatList,
     RefreshControl,
     TouchableOpacity,
-    SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchNotifications } from "../api";
 
 interface Notification {
