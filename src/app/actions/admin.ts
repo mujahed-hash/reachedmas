@@ -90,7 +90,7 @@ export async function deleteUser(userId: string): Promise<{ success: boolean; er
     }
 
     try {
-        // Delete user (cascades to vehicles, tags, notifications)
+        // Delete user (cascades to assets, tags, notifications)
         await prisma.user.delete({
             where: { id: userId },
         });
@@ -152,17 +152,17 @@ export async function deleteTag(tagId: string): Promise<{ success: boolean; erro
     }
 }
 
-// ========== VEHICLE ACTIONS ==========
+// ========== ASSET ACTIONS ==========
 
 export async function deleteVehicleAdmin(vehicleId: string): Promise<{ success: boolean; error?: string }> {
     const { isAdmin } = await verifyAdmin();
 
     if (!isAdmin) {
-        return { success: false, error: "Only admins can delete vehicles" };
+        return { success: false, error: "Only admins can delete assets" };
     }
 
     try {
-        await prisma.vehicle.delete({
+        await prisma.asset.delete({
             where: { id: vehicleId },
         });
 
@@ -170,8 +170,8 @@ export async function deleteVehicleAdmin(vehicleId: string): Promise<{ success: 
         revalidatePath("/admin/tags");
         return { success: true };
     } catch (error) {
-        console.error("Error deleting vehicle:", error);
-        return { success: false, error: "Failed to delete vehicle" };
+        console.error("Error deleting asset:", error);
+        return { success: false, error: "Failed to delete asset" };
     }
 }
 
@@ -179,28 +179,28 @@ export async function toggleVehicleActive(vehicleId: string): Promise<{ success:
     const { isAdmin } = await verifyAdmin();
 
     if (!isAdmin) {
-        return { success: false, error: "Only admins can toggle vehicle status" };
+        return { success: false, error: "Only admins can toggle asset status" };
     }
 
     try {
-        const vehicle = await prisma.vehicle.findUnique({
+        const asset = await prisma.asset.findUnique({
             where: { id: vehicleId },
         });
 
-        if (!vehicle) {
-            return { success: false, error: "Vehicle not found" };
+        if (!asset) {
+            return { success: false, error: "Asset not found" };
         }
 
-        await prisma.vehicle.update({
+        await prisma.asset.update({
             where: { id: vehicleId },
-            data: { isActive: !vehicle.isActive },
+            data: { isActive: !asset.isActive },
         });
 
         revalidatePath("/admin");
         return { success: true };
     } catch (error) {
-        console.error("Error toggling vehicle:", error);
-        return { success: false, error: "Failed to update vehicle" };
+        console.error("Error toggling asset:", error);
+        return { success: false, error: "Failed to update asset" };
     }
 }
 

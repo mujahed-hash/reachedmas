@@ -1,23 +1,8 @@
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 
-// Use the production domain as default
 const API_BASE = "https://reachmasked.com";
-// Fallback for debugging when SSL/DNS isn't fully ready
-const FALLBACK_IP = "http://3.148.188.194";
-
 let authToken: string | null = null;
-let useIPFallback = false;
-
-export function setFallbackMode(enabled: boolean) {
-    useIPFallback = enabled;
-}
-
-export function getFallbackMode() {
-    return useIPFallback;
-}
-
-const getBaseUrl = () => useIPFallback ? FALLBACK_IP : API_BASE;
 
 export async function loadToken() {
     authToken = await SecureStore.getItemAsync("auth_token");
@@ -38,7 +23,6 @@ export function getToken() {
 }
 
 async function apiFetch(path: string, options: RequestInit = {}) {
-    const baseUrl = getBaseUrl();
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
         ...(options.headers as Record<string, string> || {}),
@@ -46,10 +30,9 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 
     if (authToken) {
         headers["Authorization"] = `Bearer ${authToken}`;
-        headers["Cookie"] = `${getSessionCookieName()}=${authToken}`;
     }
 
-    const fullUrl = `${baseUrl}${path}`;
+    const fullUrl = `${API_BASE}${path}`;
     console.log(`[API] Fetching: ${fullUrl}`);
 
     try {
@@ -71,19 +54,11 @@ async function apiFetch(path: string, options: RequestInit = {}) {
     }
 }
 
-// Cookie name for session token (HTTPS uses __Secure- prefix)
-const getSessionCookieName = () =>
-    getBaseUrl().startsWith("https") ? "__Secure-authjs.session-token" : "authjs.session-token";
-
 // ── Auth ──
-// Uses dedicated mobile-login API (returns token in JSON) - no cookie/CSRF flow needed
 export async function login(email: string, password: string) {
-    const baseUrl = getBaseUrl();
-
     try {
-        console.log(`[AUTH] Starting login at ${baseUrl}...`);
-
-        const res = await fetch(`${baseUrl}/api/auth/mobile-login`, {
+        console.log(`[AUTH] Starting login at ${API_BASE}...`);
+        const res = await fetch(`${API_BASE}/api/auth/mobile-login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -100,37 +75,133 @@ export async function login(email: string, password: string) {
         }
 
         const token = data.token;
-        if (!token) {
-            throw new Error("Login failed: No token in response");
-        }
+        if (!token) throw new Error("Login failed: No token in response");
 
         await saveToken(token);
         console.log("[AUTH] Login Successful, token saved.");
         return token;
     } catch (err: any) {
         console.error(`[AUTH] Detailed Error:`, err);
-
-        if (err.message.includes("Network request failed")) {
-            const msg = `Network failure at ${baseUrl}.\n\n` +
-                `Possible causes:\n` +
-                `1. SSL Certificate not trusted by device.\n` +
-                `2. DNS is still propagating.\n` +
-                `3. Server is blocked by firewall/network.\n\n` +
-                `Check Expo logs for more details.`;
-            throw new Error(msg);
-        }
         throw err;
     }
 }
 
+export async function registerAccount(data: any) {
+    return apiFetch("/api/auth/mobile-register", {
+        method: "POST",
+        body: JSON.stringify(data),
+    });
+}
+
+// ── Vehicles & Tags ──
 export async function fetchDashboard() {
     return apiFetch("/api/mobile/dashboard");
 }
 
-export async function fetchNotifications() {
-    return apiFetch("/api/notifications/poll");
+export async function fetchVehicleDetail(vehicleId: string) {
+    return apiFetch(`/api/mobile/vehicles/${vehicleId}`);
 }
 
+export async function addVehicle(data: any) {
+    return apiFetch("/api/mobile/vehicles", {
+        method: "POST",
+        body: JSON.stringify(data),
+    });
+}
+
+export async function deleteVehicle(vehicleId: string) {
+    return apiFetch(`/api/mobile/vehicles/${vehicleId}`, { method: "DELETE" });
+}
+
+export async function updateTagStatus(tagId: string, status: "ACTIVE" | "DISABLED", label?: string) {
+    return apiFetch("/api/mobile/tags", {
+        method: "POST",
+        body: JSON.stringify({ tagId, status, label }),
+    });
+}
+
+export async function toggleTowPrevention(vehicleId: string, enabled: boolean) {
+    return apiFetch("/api/mobile/vehicles/tow-prevention", {
+        method: "POST",
+        body: JSON.stringify({ vehicleId, enabled }),
+    });
+}
+
+// ── Notifications ──
+export async function fetchNotifications() {
+    return apiFetch("/api/mobile/notifications");
+}
+
+export async function markNotificationRead(notificationId: string) {
+    return apiFetch("/api/mobile/notifications", {
+        method: "POST",
+        body: JSON.stringify({ notificationId }),
+    });
+}
+
+export async function markAllNotificationsRead() {
+    return apiFetch("/api/mobile/notifications", {
+        method: "POST",
+        body: JSON.stringify({ markAll: true }),
+    });
+}
+
+// ── Settings & Profile ──
+export async function fetchSettings() {
+    return apiFetch("/api/mobile/settings");
+}
+
+export async function updateProfile(data: any) {
+    return apiFetch("/api/mobile/settings", {
+        method: "PUT",
+        body: JSON.stringify({ action: "updateProfile", ...data }),
+    });
+}
+
+export async function updatePhone(data: any) {
+    return apiFetch("/api/mobile/settings", {
+        method: "PUT",
+        body: JSON.stringify({ action: "updatePhone", ...data }),
+    });
+}
+
+export async function updateNotificationPrefs(data: any) {
+    return apiFetch("/api/mobile/settings", {
+        method: "PUT",
+        body: JSON.stringify({ action: "updateNotificationPrefs", ...data }),
+    });
+}
+
+export async function changePassword(data: any) {
+    return apiFetch("/api/mobile/settings", {
+        method: "PUT",
+        body: JSON.stringify({ action: "changePassword", ...data }),
+    });
+}
+
+// ── Auto-Replies ──
+export async function addAutoReply(vehicleId: string, label: string, message: string) {
+    return apiFetch("/api/mobile/auto-replies", {
+        method: "POST",
+        body: JSON.stringify({ vehicleId, label, message }),
+    });
+}
+
+export async function toggleAutoReply(replyId: string, isActive: boolean) {
+    return apiFetch("/api/mobile/auto-replies", {
+        method: "PUT",
+        body: JSON.stringify({ replyId, isActive }),
+    });
+}
+
+export async function deleteAutoReply(replyId: string) {
+    return apiFetch("/api/mobile/auto-replies", {
+        method: "DELETE",
+        body: JSON.stringify({ replyId }),
+    });
+}
+
+// ── Push Notifications ──
 export async function registerPushToken(token: string, platform: string) {
     return apiFetch("/api/push/register", {
         method: "POST",
@@ -145,6 +216,8 @@ export async function unregisterPushToken(token: string) {
     });
 }
 
+// ── Chat (Legacy Mobile feature?) ──
+// Keeping these just in case they are used somewhere deeper
 export async function sendChatMessage(threadId: string, sender: string, text: string) {
     return apiFetch("/api/chat/send", {
         method: "POST",
@@ -155,11 +228,4 @@ export async function sendChatMessage(threadId: string, sender: string, text: st
 export async function pollChat(threadId: string, after?: string) {
     const params = after ? `?after=${encodeURIComponent(after)}` : "";
     return apiFetch(`/api/chat/${threadId}/poll${params}`);
-}
-
-export async function updateTagStatus(tagId: string, status: "ACTIVE" | "DISABLED") {
-    return apiFetch("/api/mobile/dashboard", {
-        method: "POST",
-        body: JSON.stringify({ action: "updateTagStatus", tagId, status }),
-    });
 }

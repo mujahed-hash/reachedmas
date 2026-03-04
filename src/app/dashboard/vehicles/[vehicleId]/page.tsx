@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { Car, MessageSquare, Phone, Truck, AlertTriangle, Eye } from "lucide-react";
+import { Car, Dog, Home, User, Package, MessageSquare, Phone, Truck, AlertTriangle, Eye, PackageCheck } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,12 +9,18 @@ import { ScanHeatmap } from "@/components/scan-heatmap";
 import { Header } from "@/components/header";
 import { type AutoReply } from "@prisma/client";
 
+const typeIcons: Record<string, any> = {
+    CAR: Car, PET: Dog, HOME: Home, PERSON: User, ASSET: Package,
+};
+
 const actionIcon: Record<string, React.ReactNode> = {
     SCAN_VIEW: <Eye className="h-4 w-4" />,
     CONTACT_SMS: <MessageSquare className="h-4 w-4" />,
     CONTACT_CALL: <Phone className="h-4 w-4" />,
     TOW_ALERT: <Truck className="h-4 w-4" />,
     EMERGENCY: <AlertTriangle className="h-4 w-4" />,
+    DELIVERY_KNOCK: <PackageCheck className="h-4 w-4" />,
+    FOUND_REPORT: <Dog className="h-4 w-4" />,
 };
 
 const actionLabel: Record<string, string> = {
@@ -23,6 +29,8 @@ const actionLabel: Record<string, string> = {
     CONTACT_CALL: "Call Initiated",
     TOW_ALERT: "Tow Alert",
     EMERGENCY: "Emergency",
+    DELIVERY_KNOCK: "Delivery Notification",
+    FOUND_REPORT: "Found Report",
 };
 
 const actionColor: Record<string, string> = {
@@ -43,24 +51,25 @@ export default async function VehicleHistoryPage({
 
     const { vehicleId } = await params;
 
-    const vehicle = await prisma.vehicle.findFirst({
+    const asset = await prisma.asset.findFirst({
         where: { id: vehicleId, ownerId: session.user.id }
     });
 
-    if (!vehicle) redirect("/dashboard");
+    if (!asset) redirect("/dashboard");
+
+    const Icon = typeIcons[asset.type] || Package;
 
     const tags = await prisma.tag.findMany({
-        where: { vehicleId: vehicle.id }
+        where: { assetId: asset.id }
     });
 
     const autoReplies = await prisma.autoReply.findMany({
-        where: { vehicleId: vehicle.id },
+        where: { assetId: asset.id },
         orderBy: { createdAt: "desc" }
     });
 
     const tagIds = tags.map((t) => t.id);
 
-    // Get all interactions for this vehicle's tags
     const interactions = await prisma.interaction.findMany({
         where: { tagId: { in: tagIds } },
         orderBy: { timestamp: "desc" },
@@ -70,20 +79,20 @@ export default async function VehicleHistoryPage({
         },
     });
 
-    const vehicleName = `${vehicle.color} ${vehicle.model}`;
+    const assetName = asset.name;
 
     return (
         <div className="min-h-screen bg-background text-foreground">
             <Header variant="dashboard" session={session} />
 
             <main className="container mx-auto px-4 py-8 max-w-2xl">
-                {/* Vehicle Header */}
+                {/* Asset Header */}
                 <div className="flex items-center gap-4 mb-8">
                     <div className="p-3 rounded-xl bg-primary/10">
-                        <Car className="h-6 w-6 text-primary" />
+                        <Icon className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-foreground">{vehicleName}</h1>
+                        <h1 className="text-2xl font-bold text-foreground">{assetName}</h1>
                         <p className="text-muted-foreground text-sm">
                             {tags.length} tag{tags.length !== 1 ? "s" : ""} ·{" "}
                             {interactions.length} interaction{interactions.length !== 1 ? "s" : ""}

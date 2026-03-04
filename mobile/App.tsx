@@ -5,35 +5,40 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AuthProvider, useAuth } from "./src/auth";
 import { usePushNotifications } from "./src/notifications";
+import { ThemeProvider, useAppTheme } from "./src/ThemeProvider";
 
 import LoginScreen from "./src/screens/LoginScreen";
+import RegisterScreen from "./src/screens/RegisterScreen";
 import DashboardScreen from "./src/screens/DashboardScreen";
 import NotificationsScreen from "./src/screens/NotificationsScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
-import TagDetailScreen from "./src/screens/TagDetailScreen";
+import VehicleDetailScreen from "./src/screens/VehicleDetailScreen";
+import TagSetupScreen from "./src/screens/TagSetupScreen";
+import AddVehicleModal from "./src/screens/AddVehicleModal";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function MainTabs() {
   usePushNotifications();
+  const { theme, isDark } = useAppTheme();
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarStyle: {
-          backgroundColor: "#0B1120",
-          borderTopColor: "rgba(255,255,255,0.1)",
+          backgroundColor: theme.background,
+          borderTopColor: theme.border,
           borderTopWidth: 1,
           height: 85,
           paddingBottom: 25,
           paddingTop: 10,
         },
-        tabBarActiveTintColor: "#6366F1",
-        tabBarInactiveTintColor: "#64748B",
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.textMuted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
-        headerStyle: { backgroundColor: "#0B1120" },
-        headerTintColor: "#F8FAFC",
+        headerStyle: { backgroundColor: theme.background },
+        headerTintColor: theme.text,
         headerTitleStyle: { fontWeight: "700" },
         headerShadowVisible: false,
         tabBarIcon: ({ focused }) => {
@@ -57,48 +62,66 @@ function MainTabs() {
   );
 }
 
+function MainStack() {
+  const { theme } = useAppTheme();
+
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.background },
+        headerTintColor: theme.text,
+        headerShadowVisible: false,
+      }}
+    >
+      <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} options={{ title: "Vehicle Timeline" }} />
+      <Stack.Screen name="TagSetup" component={TagSetupScreen} options={{ title: "Tag Setup" }} />
+      <Stack.Screen
+        name="AddVehicleModal"
+        component={AddVehicleModal}
+        options={{ presentation: 'modal', title: "Add Vehicle" }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function AuthStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+    </Stack.Navigator>
+  );
+}
+
 function AppNavigator() {
   const { isAuthenticated, isLoading } = useAuth();
+  const { theme, isDark } = useAppTheme();
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#0B1120" }}>
-        <ActivityIndicator size="large" color="#6366F1" />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.background }}>
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!isAuthenticated ? (
-        <Stack.Screen name="Login" component={LoginScreen} />
-      ) : (
-        <>
-          <Stack.Screen name="Main" component={MainTabs} />
-          <Stack.Screen
-            name="TagDetail"
-            component={TagDetailScreen}
-            options={{
-              headerShown: true,
-              title: "Tag Details",
-              headerStyle: { backgroundColor: "#0B1120" },
-              headerTintColor: "#F8FAFC",
-              headerShadowVisible: false,
-            }}
-          />
-        </>
-      )}
-    </Stack.Navigator>
+    <>
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor={theme.background} />
+      <NavigationContainer>
+        {!isAuthenticated ? <AuthStack /> : <MainStack />}
+      </NavigationContainer>
+    </>
   );
 }
 
 export default function App() {
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <StatusBar barStyle="light-content" backgroundColor="#0B1120" />
+    <ThemeProvider>
+      <AuthProvider>
         <AppNavigator />
-      </NavigationContainer>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

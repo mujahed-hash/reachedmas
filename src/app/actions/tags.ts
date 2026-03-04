@@ -15,11 +15,11 @@ export async function updateTagStatus(
     if (!session?.user?.id) return { success: false, message: "Not authenticated" };
 
     try {
-        // Verify the tag belongs to this owner via vehicle
+        // Verify the tag belongs to this owner via asset
         const tag = await prisma.tag.findFirst({
             where: {
                 id: tagId,
-                vehicle: { ownerId: session.user.id },
+                asset: { ownerId: session.user.id },
             },
         });
 
@@ -54,7 +54,7 @@ export async function updateTagLabel(
         const tag = await prisma.tag.findFirst({
             where: {
                 id: tagId,
-                vehicle: { ownerId: session.user.id },
+                asset: { ownerId: session.user.id },
             },
         });
 
@@ -73,24 +73,24 @@ export async function updateTagLabel(
 }
 
 // ──────────────────────────────────────
-// Toggle vehicle tow-prevention mode
+// Toggle asset tow-prevention mode (CAR type)
 // ──────────────────────────────────────
 export async function toggleTowPrevention(
-    vehicleId: string,
+    assetId: string,
     enabled: boolean
 ): Promise<{ success: boolean; message: string }> {
     const session = await auth();
     if (!session?.user?.id) return { success: false, message: "Not authenticated" };
 
     try {
-        const vehicle = await prisma.vehicle.findFirst({
-            where: { id: vehicleId, ownerId: session.user.id },
+        const asset = await prisma.asset.findFirst({
+            where: { id: assetId, ownerId: session.user.id },
         });
 
-        if (!vehicle) return { success: false, message: "Vehicle not found" };
+        if (!asset) return { success: false, message: "Asset not found" };
 
-        await prisma.vehicle.update({
-            where: { id: vehicleId },
+        await prisma.asset.update({
+            where: { id: assetId },
             data: { towPreventionMode: enabled },
         });
 

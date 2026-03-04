@@ -9,30 +9,54 @@ import {
     Platform,
     ActivityIndicator,
     ScrollView,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../auth";
 import { useAppTheme } from "../ThemeProvider";
+import { registerAccount, login as apiLogin, saveToken } from "../api";
 
-export default function LoginScreen({ navigation }: any) {
+export default function RegisterScreen({ navigation }: any) {
     const { login } = useAuth();
     const { theme, isDark } = useAppTheme();
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const handleLogin = async () => {
-        if (!email || !password) {
-            setError("Please enter email and password");
+    const handleRegister = async () => {
+        if (!email || !password || !confirmPassword || !phone) {
+            setError("All required fields must be filled");
             return;
         }
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters");
+            return;
+        }
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+        if (phone.length < 10) {
+            setError("Please enter a valid phone number");
+            return;
+        }
+
         setError("");
         setLoading(true);
         try {
-            await login(email.trim(), password);
+            const result = await registerAccount({ name, email, password, confirmPassword, phone });
+            if (result.success) {
+                // Auto-login after registration
+                await login(email.trim(), password);
+            } else {
+                setError(result.message || "Registration failed");
+            }
         } catch (err: any) {
-            setError(err.message || "Login failed");
+            setError(err.message || "Registration failed");
         } finally {
             setLoading(false);
         }
@@ -55,14 +79,26 @@ export default function LoginScreen({ navigation }: any) {
 
                     {/* Card */}
                     <View style={s.card}>
-                        <Text style={s.title}>Welcome back</Text>
-                        <Text style={s.subtitle}>Enter your credentials to access your dashboard</Text>
+                        <Text style={s.title}>Create an account</Text>
+                        <Text style={s.subtitle}>Get your vehicle tags and start protecting your privacy</Text>
 
                         {error ? (
                             <View style={s.errorBox}>
                                 <Text style={s.errorText}>{error}</Text>
                             </View>
                         ) : null}
+
+                        <View style={s.field}>
+                            <Text style={s.label}>Full Name <Text style={s.optional}>(optional)</Text></Text>
+                            <TextInput
+                                style={s.input}
+                                value={name}
+                                onChangeText={setName}
+                                placeholder="John Smith"
+                                placeholderTextColor={theme.textMuted}
+                                autoCapitalize="words"
+                            />
+                        </View>
 
                         <View style={s.field}>
                             <Text style={s.label}>Email</Text>
@@ -90,23 +126,50 @@ export default function LoginScreen({ navigation }: any) {
                             />
                         </View>
 
+                        <View style={s.field}>
+                            <Text style={s.label}>Confirm Password</Text>
+                            <TextInput
+                                style={s.input}
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
+                                placeholder="••••••••"
+                                placeholderTextColor={theme.textMuted}
+                                secureTextEntry
+                            />
+                        </View>
+
+                        <View style={s.field}>
+                            <Text style={s.label}>Phone Number</Text>
+                            <TextInput
+                                style={s.input}
+                                value={phone}
+                                onChangeText={setPhone}
+                                placeholder="+1 (555) 123-4567"
+                                placeholderTextColor={theme.textMuted}
+                                keyboardType="phone-pad"
+                            />
+                            <Text style={s.helpText}>
+                                We'll alert you when someone contacts you about your vehicle. Your number is fully encrypted.
+                            </Text>
+                        </View>
+
                         <TouchableOpacity
                             style={[s.button, loading && s.buttonDisabled]}
-                            onPress={handleLogin}
+                            onPress={handleRegister}
                             disabled={loading}
                             activeOpacity={0.8}
                         >
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={s.buttonText}>Sign In</Text>
+                                <Text style={s.buttonText}>Create Account</Text>
                             )}
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => navigation.navigate("Register")} style={s.linkRow}>
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={s.linkRow}>
                             <Text style={s.linkText}>
-                                Don't have an account?{" "}
-                                <Text style={s.linkHighlight}>Sign up</Text>
+                                Already have an account?{" "}
+                                <Text style={s.linkHighlight}>Sign in</Text>
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -177,6 +240,10 @@ const createStyles = (theme: any, isDark: boolean) =>
             color: theme.text,
             marginBottom: 6,
         },
+        optional: {
+            fontWeight: "400",
+            color: theme.textMuted,
+        },
         input: {
             backgroundColor: isDark ? "rgba(15,23,42,0.5)" : "#F1F5F9",
             borderRadius: 10,
@@ -185,6 +252,11 @@ const createStyles = (theme: any, isDark: boolean) =>
             padding: 14,
             fontSize: 15,
             color: theme.text,
+        },
+        helpText: {
+            fontSize: 12,
+            color: theme.textMuted,
+            marginTop: 6,
         },
         button: {
             backgroundColor: theme.primary,

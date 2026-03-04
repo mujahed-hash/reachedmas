@@ -6,103 +6,137 @@ import {
     FlatList,
     RefreshControl,
     TouchableOpacity,
+    ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { fetchNotifications } from "../api";
+import { fetchNotifications, markNotificationRead, markAllNotificationsRead } from "../api";
+import { useAppTheme } from "../ThemeProvider";
 
-interface Notification {
-    id: string;
-    type: string;
-    title: string;
-    body: string;
-    isRead: boolean;
-    createdAt: string;
-}
+const typeIcons: Record<string, string> = {
+    SCAN: "👁️",
+    MESSAGE: "💬",
+    CALL: "📞",
+    TOW_ALERT: "🚛",
+    EMERGENCY: "⚠️",
+};
+
+const typeColors: Record<string, { bg: string; text: string }> = {
+    SCAN: { bg: "rgba(148,163,184,0.1)", text: "#94A3B8" },
+    MESSAGE: { bg: "rgba(99,102,241,0.1)", text: "#6366F1" },
+    CALL: { bg: "rgba(129,140,248,0.1)", text: "#818CF8" },
+    TOW_ALERT: { bg: "rgba(245,158,11,0.1)", text: "#F59E0B" },
+    EMERGENCY: { bg: "rgba(239,68,68,0.1)", text: "#EF4444" },
+};
 
 export default function NotificationsScreen() {
-    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const { theme, isDark } = useAppTheme();
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
     const load = useCallback(async () => {
         try {
-            const data = await fetchNotifications();
-            setNotifications(data.notifications || []);
+            const res = await fetchNotifications();
+            setNotifications(res.notifications || []);
         } catch (err) {
-            console.error("Failed to fetch notifications:", err);
+            console.error("Notifications load error:", err);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
         }
     }, []);
 
-    useEffect(() => {
-        load();
-        const interval = setInterval(load, 5000);
-        return () => clearInterval(interval);
-    }, [load]);
+    useEffect(() => { load(); }, [load]);
 
-    const onRefresh = async () => {
-        setRefreshing(true);
-        await load();
-        setRefreshing(false);
-    };
-
-    const getTypeIcon = (type: string) => {
-        switch (type) {
-            case "EMERGENCY": return "🚨";
-            case "TOW_ALERT": return "⚠️";
-            default: return "✉️";
+    const handleMarkRead = async (id: string) => {
+        try {
+            await markNotificationRead(id);
+            setNotifications((prev) =>
+                prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+            );
+        } catch (err) {
+            console.error("Mark read error:", err);
         }
     };
 
-    const timeAgo = (dateStr: string) => {
-        const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-        if (seconds < 60) return "just now";
-        if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-        if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-        return `${Math.floor(seconds / 86400)}d ago`;
+    const handleMarkAllRead = async () => {
+        try {
+            await markAllNotificationsRead();
+            setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+        } catch (err) {
+            console.error("Mark all read error:", err);
+        }
     };
 
-    const renderItem = ({ item }: { item: Notification }) => (
-        <TouchableOpacity
-            activeOpacity={0.7}
-            style={[styles.card, !item.isRead && styles.unreadCard]}
-        >
-            <View style={styles.cardHeader}>
-                <Text style={styles.iconText}>{getTypeIcon(item.type)}</Text>
-                <View style={styles.cardContent}>
-                    <View style={styles.titleRow}>
-                        <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-                        {!item.isRead && (
-                            <View style={styles.unreadDot} />
-                        )}
-                    </View>
-                    <Text style={styles.cardTime}>{timeAgo(item.createdAt)}</Text>
-                </View>
+    const s = createStyles(theme, isDark);
+    const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+    if (loading) {
+        return (
+            <View style={[s.container, { justifyContent: "center", alignItems: "center" }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
             </View>
-            <Text style={styles.cardBody} numberOfLines={2}>
-                {item.body}
-            </Text>
-        </TouchableOpacity>
-    );
+        );
+    }
+
+    const renderItem = ({ item }: { item: any }) => {
+        const type = item.type || "SCAN";
+        const colors = typeColors[type] || typeColors.SCAN;
+        const icon = typeIcons[type] || "🔔";
+        const vehicleName = item.vehicle
+            ? `${item.vehicle.color} ${item.vehicle.model}`
+            : "";
+
+        return (
+            <TouchableOpacity
+                style={[s.notifCard, !item.isRead && s.notifUnread]}
+                onPress={() => !item.isRead && handleMarkRead(item.id)}
+                activeOpacity={0.7}
+            >
+                <View style={[s.notifIcon, { backgroundColor: colors.bg }]}>
+                    <Text style={{ fontSize: 18 }}>{icon}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                        <Text style={s.notifTitle}>{item.title}</Text>
+                        <View style={[s.typeBadge, { backgroundColor: colors.bg }]}>
+                            <Text style={[s.typeBadgeText, { color: colors.text }]}>{type}</Text>
+                        </View>
+                    </View>
+                    <Text style={s.notifBody} numberOfLines={2}>{item.body}</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 }}>
+                        {vehicleName ? <Text style={s.notifMeta}>🚗 {vehicleName}</Text> : null}
+                        <Text style={s.notifMeta}>{new Date(item.createdAt).toLocaleString()}</Text>
+                    </View>
+                </View>
+                {!item.isRead && <View style={s.unreadDot} />}
+            </TouchableOpacity>
+        );
+    };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={s.container} edges={["left", "right"]}>
+            {unreadCount > 0 && (
+                <TouchableOpacity style={s.markAllBtn} onPress={handleMarkAllRead}>
+                    <Text style={s.markAllText}>Mark all read ({unreadCount})</Text>
+                </TouchableOpacity>
+            )}
             <FlatList
                 data={notifications}
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
-                contentContainerStyle={styles.list}
+                contentContainerStyle={s.listContent}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366F1" />
-                }
-                ListHeaderComponent={
-                    <View style={styles.header}>
-                        <Text style={styles.headerTitle}>Alerts</Text>
-                        <Text style={styles.headerSubtitle}>Real-time protection updates</Text>
-                    </View>
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={() => { setRefreshing(true); load(); }}
+                        tintColor={theme.primary}
+                    />
                 }
                 ListEmptyComponent={
-                    <View style={styles.empty}>
-                        <Text style={styles.emptyEmoji}>🔔</Text>
-                        <Text style={styles.emptyText}>No notifications yet</Text>
+                    <View style={s.emptyContainer}>
+                        <Text style={{ fontSize: 36, marginBottom: 12 }}>🔔</Text>
+                        <Text style={s.emptyText}>No notifications yet</Text>
                     </View>
                 }
             />
@@ -110,93 +144,70 @@ export default function NotificationsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#0B1120"
-    },
-    header: {
-        marginBottom: 24,
-        marginTop: 8,
-    },
-    headerTitle: {
-        fontSize: 30,
-        fontWeight: "700",
-        color: "#F8FAFC",
-        letterSpacing: -0.5,
-    },
-    headerSubtitle: {
-        fontSize: 16,
-        color: "#94A3B8",
-        marginTop: 4,
-    },
-    list: {
-        padding: 16,
-        paddingBottom: 40
-    },
-    card: {
-        backgroundColor: "rgba(255, 255, 255, 0.05)",
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.1)",
-    },
-    unreadCard: {
-        borderColor: "rgba(99, 102, 241, 0.3)",
-        backgroundColor: "rgba(99, 102, 241, 0.05)",
-    },
-    cardHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 8,
-    },
-    iconText: {
-        fontSize: 20,
-        marginRight: 12,
-    },
-    cardContent: {
-        flex: 1
-    },
-    titleRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-    cardTitle: {
-        color: "#F8FAFC",
-        fontSize: 16,
-        fontWeight: "600",
-        flex: 1,
-    },
-    unreadDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: "#6366F1",
-    },
-    cardTime: {
-        color: "#64748B",
-        fontSize: 12,
-        marginTop: 2,
-    },
-    cardBody: {
-        color: "#94A3B8",
-        fontSize: 14,
-        lineHeight: 20,
-    },
-    empty: {
-        alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: 60,
-    },
-    emptyEmoji: {
-        fontSize: 48,
-        marginBottom: 16,
-    },
-    emptyText: {
-        color: "#F8FAFC",
-        fontSize: 18,
-        fontWeight: "600"
-    }
-});
+const createStyles = (theme: any, isDark: boolean) =>
+    StyleSheet.create({
+        container: { flex: 1, backgroundColor: theme.background },
+        listContent: { padding: 16, paddingBottom: 40 },
+
+        markAllBtn: {
+            alignSelf: "flex-end",
+            marginRight: 16,
+            marginTop: 8,
+            backgroundColor: theme.primary,
+            borderRadius: 8,
+            paddingHorizontal: 14,
+            paddingVertical: 8,
+        },
+        markAllText: { color: "#fff", fontSize: 13, fontWeight: "600" },
+
+        notifCard: {
+            flexDirection: "row",
+            alignItems: "flex-start",
+            gap: 12,
+            backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#FFFFFF",
+            borderRadius: 14,
+            borderWidth: 1,
+            borderColor: theme.border,
+            padding: 14,
+            marginBottom: 8,
+        },
+        notifUnread: {
+            borderLeftWidth: 3,
+            borderLeftColor: theme.primary,
+        },
+        notifIcon: {
+            width: 40,
+            height: 40,
+            borderRadius: 10,
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        notifTitle: { fontSize: 14, fontWeight: "600", color: theme.text },
+        notifBody: { fontSize: 13, color: theme.textMuted },
+        notifMeta: { fontSize: 11, color: theme.textMuted },
+
+        typeBadge: {
+            borderRadius: 6,
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+        },
+        typeBadgeText: { fontSize: 10, fontWeight: "700" },
+
+        unreadDot: {
+            width: 8,
+            height: 8,
+            borderRadius: 4,
+            backgroundColor: theme.primary,
+            position: "absolute",
+            top: 8,
+            right: 8,
+        },
+
+        emptyContainer: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingTop: 80,
+        },
+        emptyText: { fontSize: 15, color: theme.textMuted },
+    });

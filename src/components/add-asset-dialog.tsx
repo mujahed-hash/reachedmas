@@ -1,0 +1,258 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Plus, Loader2, CheckCircle, Car, Dog, Home, User, Package } from "lucide-react";
+import { addAsset } from "@/app/actions/asset";
+
+type AssetType = "CAR" | "PET" | "HOME" | "PERSON" | "ASSET";
+
+const assetTypes: { type: AssetType; icon: any; label: string; desc: string }[] = [
+    { type: "CAR", icon: Car, label: "Vehicle", desc: "Car, truck, motorcycle" },
+    { type: "PET", icon: Dog, label: "Pet", desc: "Dog, cat, any pet" },
+    { type: "HOME", icon: Home, label: "Home", desc: "Apartment, house, office" },
+    { type: "PERSON", icon: User, label: "Person", desc: "Kid, elderly, family" },
+    { type: "ASSET", icon: Package, label: "Asset", desc: "Bike, luggage, device" },
+];
+
+export function AddAssetDialog() {
+    const [open, setOpen] = useState(false);
+    const [step, setStep] = useState<1 | 2>(1); // 1=choose type, 2=fill form
+    const [selectedType, setSelectedType] = useState<AssetType>("CAR");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+
+    const reset = () => {
+        setStep(1);
+        setSelectedType("CAR");
+        setError(null);
+        setSuccess(null);
+    };
+
+    async function handleSubmit(formData: FormData) {
+        formData.set("type", selectedType);
+        setLoading(true);
+        setError(null);
+
+        const result = await addAsset(formData);
+        setLoading(false);
+
+        if (result.success) {
+            setSuccess(result.message);
+            setTimeout(() => {
+                setOpen(false);
+                reset();
+            }, 2000);
+        } else {
+            setError(result.message);
+        }
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset(); }}>
+            <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Asset
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg border-border bg-card">
+                <DialogHeader>
+                    <DialogTitle className="text-foreground">
+                        {step === 1 ? "Choose Asset Type" : `Add ${selectedType === "CAR" ? "Vehicle" : selectedType.charAt(0) + selectedType.slice(1).toLowerCase()}`}
+                    </DialogTitle>
+                    <DialogDescription className="text-muted-foreground">
+                        {step === 1 ? "What would you like to protect?" : "Fill in the details to generate a tag."}
+                    </DialogDescription>
+                </DialogHeader>
+
+                {success ? (
+                    <div className="py-8 text-center space-y-4">
+                        <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto" />
+                        <p className="text-foreground font-medium">{success}</p>
+                    </div>
+                ) : step === 1 ? (
+                    <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-3">
+                        {assetTypes.map(({ type, icon: Icon, label, desc }) => (
+                            <button
+                                key={type}
+                                className={`flex flex-col items-center gap-2 rounded-xl border p-4 transition-all ${selectedType === type
+                                    ? "border-primary bg-primary/10 text-primary"
+                                    : "border-border bg-card text-muted-foreground hover:border-primary/30"
+                                    }`}
+                                onClick={() => { setSelectedType(type); setStep(2); }}
+                            >
+                                <Icon className="h-6 w-6" />
+                                <span className="text-sm font-semibold">{label}</span>
+                                <span className="text-[10px] text-muted-foreground">{desc}</span>
+                            </button>
+                        ))}
+                    </div>
+                ) : (
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.currentTarget);
+                        handleSubmit(formData);
+                    }}>
+                        <div className="space-y-4 py-4">
+                            {error && (
+                                <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+                                    {error}
+                                </div>
+                            )}
+
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Name *</Label>
+                                <Input
+                                    id="name"
+                                    name="name"
+                                    placeholder={
+                                        selectedType === "CAR" ? "e.g. Silver Camry" :
+                                            selectedType === "PET" ? "e.g. Max" :
+                                                selectedType === "HOME" ? "e.g. 123 Main St" :
+                                                    selectedType === "PERSON" ? "e.g. Mom" :
+                                                        "e.g. My Bike"
+                                    }
+                                    required
+                                    className="bg-muted/50 border-border"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="subtitle">
+                                    {selectedType === "CAR" ? "Color" :
+                                        selectedType === "PET" ? "Breed" :
+                                            selectedType === "HOME" ? "Unit/Apt" :
+                                                selectedType === "PERSON" ? "Relationship" :
+                                                    "Category"}
+                                </Label>
+                                <Input
+                                    id="subtitle"
+                                    name="subtitle"
+                                    placeholder={
+                                        selectedType === "CAR" ? "e.g. Silver, Black" :
+                                            selectedType === "PET" ? "e.g. Golden Retriever" :
+                                                selectedType === "HOME" ? "e.g. Apt 4B" :
+                                                    selectedType === "PERSON" ? "e.g. Daughter" :
+                                                        "e.g. Bicycle"
+                                    }
+                                    className="bg-muted/50 border-border"
+                                />
+                            </div>
+
+                            {/* Type-specific extra fields */}
+                            {selectedType === "CAR" && (
+                                <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="model">Model</Label>
+                                        <Input id="model" name="model" placeholder="e.g. Camry, Civic" className="bg-muted/50 border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="color">Color</Label>
+                                        <Input id="color" name="color" placeholder="e.g. Silver" className="bg-muted/50 border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="licensePlate">License Plate (Optional)</Label>
+                                        <Input id="licensePlate" name="licensePlate" placeholder="ABC 1234" className="bg-muted/50 border-border" />
+                                        <p className="text-xs text-muted-foreground">Stored encrypted. Only visible to you.</p>
+                                    </div>
+                                </>
+                            )}
+
+                            {selectedType === "PET" && (
+                                <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="species">Species</Label>
+                                        <Input id="species" name="species" placeholder="e.g. Dog, Cat" className="bg-muted/50 border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="breed">Breed</Label>
+                                        <Input id="breed" name="breed" placeholder="e.g. Labrador" className="bg-muted/50 border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="microchipId">Microchip ID (Optional)</Label>
+                                        <Input id="microchipId" name="microchipId" placeholder="Chip number" className="bg-muted/50 border-border" />
+                                    </div>
+                                </>
+                            )}
+
+                            {selectedType === "HOME" && (
+                                <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="address">Street Address</Label>
+                                        <Input id="address" name="address" placeholder="123 Main St" className="bg-muted/50 border-border" />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="city">City</Label>
+                                            <Input id="city" name="city" placeholder="City" className="bg-muted/50 border-border" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="state">State</Label>
+                                            <Input id="state" name="state" placeholder="State" className="bg-muted/50 border-border" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="zip">ZIP Code</Label>
+                                        <Input id="zip" name="zip" placeholder="12345" className="bg-muted/50 border-border" />
+                                    </div>
+                                </>
+                            )}
+
+                            {selectedType === "PERSON" && (
+                                <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="relationship">Relationship</Label>
+                                        <Input id="relationship" name="relationship" placeholder="e.g. Son, Mother" className="bg-muted/50 border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="age">Age (Optional)</Label>
+                                        <Input id="age" name="age" placeholder="e.g. 12" type="number" className="bg-muted/50 border-border" />
+                                    </div>
+                                </>
+                            )}
+
+                            {selectedType === "ASSET" && (
+                                <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="category">Category</Label>
+                                        <Input id="category" name="category" placeholder="e.g. Bicycle, Laptop" className="bg-muted/50 border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="serialNumber">Serial Number (Optional)</Label>
+                                        <Input id="serialNumber" name="serialNumber" placeholder="S/N" className="bg-muted/50 border-border" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="description">Description</Label>
+                                        <Input id="description" name="description" placeholder="Brief description" className="bg-muted/50 border-border" />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setStep(1)} className="border-border">
+                                Back
+                            </Button>
+                            <Button type="submit" disabled={loading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add Asset"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                )}
+            </DialogContent>
+        </Dialog>
+    );
+}

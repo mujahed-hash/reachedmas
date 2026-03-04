@@ -4,21 +4,25 @@ import { prisma } from "@/lib/db";
 import { Header } from "@/components/header";
 import { generateQRDataURL, getTagURL, getNFCPayload } from "@/lib/qr";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Smartphone, QrCode, Car } from "lucide-react";
+import { Car, Dog, Home, User, Package, Smartphone, QrCode } from "lucide-react";
 import Image from "next/image";
 import { CopyButton } from "@/components/copy-button";
 import { DownloadQRButton } from "@/components/download-qr-button";
+
+const typeIcons: Record<string, any> = {
+    CAR: Car, PET: Dog, HOME: Home, PERSON: User, ASSET: Package,
+};
 
 async function getTagDetails(tagId: string, userId: string) {
     const tag = await prisma.tag.findFirst({
         where: {
             id: tagId,
-            vehicle: {
+            asset: {
                 ownerId: userId,
             },
         },
         include: {
-            vehicle: true,
+            asset: true,
             _count: {
                 select: { interactions: true },
             },
@@ -55,15 +59,15 @@ export default async function TagDetailsPage({
             <Header variant="dashboard" session={session} />
 
             <main className="container mx-auto px-4 py-8 max-w-4xl">
-                {/* Vehicle Info */}
+                {/* Asset Info */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 rounded-lg bg-primary/10">
-                            <Car className="h-6 w-6 text-primary" />
+                            {(() => { const I = typeIcons[tag.asset.type] || Package; return <I className="h-6 w-6 text-primary" />; })()}
                         </div>
                         <div>
                             <h1 className="text-2xl font-bold text-foreground">
-                                {tag.vehicle.color} {tag.vehicle.model}
+                                {tag.asset.name}{tag.asset.subtitle ? ` · ${tag.asset.subtitle}` : ""}
                             </h1>
                             <p className="text-muted-foreground">Tag Code: {tag.shortCode}</p>
                         </div>
@@ -90,7 +94,7 @@ export default async function TagDetailsPage({
                                 />
                             </div>
                             <p className="text-sm text-muted-foreground text-center">
-                                Print this QR code and place it on your vehicle
+                                Print this QR code and attach it to your asset
                             </p>
                             <DownloadQRButton shortCode={tag.shortCode} qrDataURL={qrDataURL} />
                         </CardContent>
@@ -158,7 +162,7 @@ export default async function TagDetailsPage({
                                 <ul className="list-disc list-inside space-y-1">
                                     <li>Use any NFC writer app (NFC Tools, etc.)</li>
                                     <li>Write the URL above as an NDEF record</li>
-                                    <li>Place tag on vehicle dashboard/window</li>
+                                    <li>Place tag on your asset (dashboard, collar, door, etc.)</li>
                                 </ul>
                             </div>
                         </div>

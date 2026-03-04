@@ -5,16 +5,16 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 // ──────────────────────────────────────
-// Get auto-replies for a vehicle
+// Get auto-replies for an asset
 // ──────────────────────────────────────
-export async function getAutoReplies(vehicleId: string) {
+export async function getAutoReplies(assetId: string) {
     const session = await auth();
     if (!session?.user?.id) return [];
 
     const replies = await prisma.autoReply.findMany({
         where: {
-            vehicleId,
-            vehicle: { ownerId: session.user.id },
+            assetId,
+            asset: { ownerId: session.user.id },
         },
         orderBy: { createdAt: "desc" },
     });
@@ -31,7 +31,7 @@ export async function addAutoReply(
     const session = await auth();
     if (!session?.user?.id) return { success: false, message: "Not authenticated" };
 
-    const vehicleId = formData.get("vehicleId") as string;
+    const assetId = formData.get("assetId") as string;
     const label = (formData.get("label") as string)?.trim();
     const message = (formData.get("message") as string)?.trim();
 
@@ -44,20 +44,18 @@ export async function addAutoReply(
     }
 
     try {
-        // Verify ownership
-        const vehicle = await prisma.vehicle.findFirst({
-            where: { id: vehicleId, ownerId: session.user.id },
+        const asset = await prisma.asset.findFirst({
+            where: { id: assetId, ownerId: session.user.id },
         });
-        if (!vehicle) return { success: false, message: "Vehicle not found" };
+        if (!asset) return { success: false, message: "Asset not found" };
 
-        // Max 5 auto-replies per vehicle
-        const count = await prisma.autoReply.count({ where: { vehicleId } });
+        const count = await prisma.autoReply.count({ where: { assetId } });
         if (count >= 5) {
-            return { success: false, message: "Maximum 5 auto-replies per vehicle" };
+            return { success: false, message: "Maximum 5 auto-replies per asset" };
         }
 
         await prisma.autoReply.create({
-            data: { vehicleId, label, message },
+            data: { assetId, label, message },
         });
 
         revalidatePath(`/dashboard`);
@@ -79,7 +77,7 @@ export async function toggleAutoReply(
 
     try {
         const reply = await prisma.autoReply.findFirst({
-            where: { id: replyId, vehicle: { ownerId: session.user.id } },
+            where: { id: replyId, asset: { ownerId: session.user.id } },
         });
         if (!reply) return { success: false, message: "Reply not found" };
 
@@ -106,7 +104,7 @@ export async function deleteAutoReply(
 
     try {
         const reply = await prisma.autoReply.findFirst({
-            where: { id: replyId, vehicle: { ownerId: session.user.id } },
+            where: { id: replyId, asset: { ownerId: session.user.id } },
         });
         if (!reply) return { success: false, message: "Reply not found" };
 
@@ -120,11 +118,11 @@ export async function deleteAutoReply(
 }
 
 // ──────────────────────────────────────
-// Get the active auto-reply for a vehicle (used by scan page)
+// Get the active auto-reply for an asset (used by scan page)
 // ──────────────────────────────────────
-export async function getActiveAutoReplyForVehicle(vehicleId: string) {
+export async function getActiveAutoReplyForAsset(assetId: string) {
     const reply = await prisma.autoReply.findFirst({
-        where: { vehicleId, isActive: true },
+        where: { assetId, isActive: true },
         select: { message: true },
     });
     return reply?.message ?? null;

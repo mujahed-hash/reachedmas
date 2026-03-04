@@ -36,7 +36,8 @@
           "color": "#6366F1"
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      "expo-web-browser"
     ],
     "extra": {
       "eas": {

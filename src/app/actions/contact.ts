@@ -13,7 +13,9 @@ export type ContactAction =
     | "parking_meter"
     | "lights_on"
     | "tow_alert"
-    | "emergency";
+    | "emergency"
+    | "delivery_knock"
+    | "found_report";
 
 interface ContactResult {
     success: boolean;
@@ -29,6 +31,8 @@ const actionTitles: Record<ContactAction, string> = {
     lights_on: "Lights Left On",
     tow_alert: "⚠️ Tow Alert",
     emergency: "🚨 Emergency Alert",
+    delivery_knock: "📦 Delivery at Door",
+    found_report: "🐾 Pet Found Report",
 };
 
 const notifyType: Record<ContactAction, string> = {
@@ -37,6 +41,8 @@ const notifyType: Record<ContactAction, string> = {
     lights_on: "SMS_RECEIVED",
     tow_alert: "TOW_ALERT",
     emergency: "EMERGENCY",
+    delivery_knock: "DELIVERY_KNOCK",
+    found_report: "FOUND_REPORT",
 };
 
 const actionTypeMap: Record<ContactAction, string> = {
@@ -45,6 +51,8 @@ const actionTypeMap: Record<ContactAction, string> = {
     lights_on: "CONTACT_SMS",
     tow_alert: "TOW_ALERT",
     emergency: "CONTACT_CALL",
+    delivery_knock: "DELIVERY_KNOCK",
+    found_report: "FOUND_REPORT",
 };
 
 export async function initiateContact(
@@ -97,11 +105,11 @@ export async function initiateContact(
             }
         }
 
-        // Find the tag by public ID with owner + vehicle info
+        // Find the tag by public ID with owner + asset info
         const tag = await prisma.tag.findFirst({
             where: { publicId: tagPublicId },
             include: {
-                vehicle: {
+                asset: {
                     include: {
                         owner: {
                             select: {
@@ -109,6 +117,15 @@ export async function initiateContact(
                                 email: true,
                                 phoneEncrypted: true,
                                 smsNotif: true,
+                                familyOwned: {
+                                    include: {
+                                        member: {
+                                            select: {
+                                                id: true,
+                                            }
+                                        }
+                                    }
+                                },
                             },
                         },
                         autoReplies: {
@@ -124,19 +141,18 @@ export async function initiateContact(
             return { success: false, message: "Tag not found or inactive" };
         }
 
-        const vehicle = tag.vehicle;
-        const vehicleDescription = `${vehicle.color} ${vehicle.model}`;
-        const owner = vehicle.owner;
+        const asset = tag.asset;
+        const assetDescription = asset.name + (asset.subtitle ? ` (${asset.subtitle})` : "");
+        const owner = asset.owner;
 
-        // Check tow-prevention mode
+        // Check special modes
         const isTowAlert = action === "tow_alert";
-        if (isTowAlert && vehicle.towPreventionMode) {
-            // Tow-prevention is ON — send highest priority dual-channel alert
-            // (handled the same way, but we note it in the notification)
+        if (isTowAlert && asset.towPreventionMode) {
+            // Tow-prevention is ON
         }
 
         // Build the alert message
-        const smsBody = getAlertMessage(action, vehicleDescription);
+        const smsBody = getAlertMessage(action as any, assetDescription);
         const fullMessage = scannerMessage
             ? `${smsBody}\n\nMessage from person nearby: "${scannerMessage.slice(0, 200)}"`
             : smsBody;
@@ -154,27 +170,34 @@ export async function initiateContact(
 
         // ── Create notification ──
         const towExtra =
-            isTowAlert && vehicle.towPreventionMode
+            isTowAlert && asset.towPreventionMode
                 ? " [TOW PREVENTION MODE ACTIVE]"
                 : "";
 
-        await prisma.notification.create({
-            data: {
-                userId: owner.id,
-                interactionId: interaction.id,
-                type: notifyType[action],
-                title: actionTitles[action] + towExtra,
-                body: fullMessage,
-            },
-        });
+        // ── Send push notifications & create DB notifications for all recipients ──
+        const familyMemberIds = owner.familyOwned.map(fo => fo.member.id);
+        const allRecipients = [owner.id, ...familyMemberIds];
 
-        // ── Send push notification to mobile app (FREE via Expo Push) ──
-        await sendPushToUser(
-            owner.id,
-            actionTitles[action] + towExtra,
-            fullMessage,
-            { interactionId: interaction.id, type: notifyType[action] }
-        );
+        for (const recipientId of allRecipients) {
+            // Create notification in DB
+            await prisma.notification.create({
+                data: {
+                    userId: recipientId,
+                    interactionId: interaction.id,
+                    type: notifyType[action],
+                    title: actionTitles[action] + towExtra,
+                    body: fullMessage,
+                },
+            });
+
+            // Send push to mobile
+            await sendPushToUser(
+                recipientId,
+                actionTitles[action] + towExtra,
+                fullMessage,
+                { interactionId: interaction.id, type: notifyType[action] }
+            );
+        }
 
         // ── Create chat thread for scanner ↔ owner messaging ──
         await prisma.chatThread.create({
@@ -183,8 +206,8 @@ export async function initiateContact(
 
         // ── Send email ──
         const emailContent = getAlertEmailHTML(
-            action,
-            vehicleDescription,
+            action as any,
+            assetDescription,
             tag.shortCode
         );
         const emailResult = await sendEmail({
@@ -210,16 +233,16 @@ export async function initiateContact(
 
             // Admin-enabled: for emergencies/tow, also initiate voice call
             if (
-                action === "emergency" || (isTowAlert && vehicle.towPreventionMode)
+                action === "emergency" || (isTowAlert && asset.towPreventionMode)
             ) {
                 await initiateCall(ownerPhone);
             }
         }
 
         // ── Build success response ──
-        const autoReply = vehicle.autoReplies[0]?.message ?? null;
+        const autoReply = asset.autoReplies[0]?.message ?? null;
 
-        const actionMessages: Record<ContactAction, string> = {
+        const actionMessages: Record<string, string> = {
             blocking_driveway:
                 "The owner has been notified about the blocked driveway.",
             parking_meter: "The owner has been alerted about the parking meter.",
@@ -228,6 +251,8 @@ export async function initiateContact(
                 "The vehicle owner has been urgently notified about the tow risk.",
             emergency:
                 "Emergency alert sent. The owner is being contacted urgently.",
+            delivery_knock: "Resident has been notified of your delivery.",
+            found_report: "The owner has been notified that you found their pet.",
         };
 
         return {

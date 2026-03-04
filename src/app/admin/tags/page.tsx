@@ -9,7 +9,7 @@ import { TagActions, TagStatusBadge } from "@/components/admin/tag-actions";
 async function getTags() {
     return prisma.tag.findMany({
         include: {
-            vehicle: {
+            asset: {
                 include: {
                     owner: {
                         select: { email: true, id: true },
@@ -60,7 +60,7 @@ export default async function AdminTagsPage() {
                                     Digital ID
                                 </th>
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                                    Linked Vehicle
+                                    Linked Asset
                                 </th>
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                                     Owner Ident
@@ -90,19 +90,17 @@ export default async function AdminTagsPage() {
                                     <td className="px-6 py-4">
                                         <div>
                                             <span className="text-sm font-medium text-white">
-                                                {tag.vehicle.color} {tag.vehicle.model}
+                                                {(tag as any).asset.name}
                                             </span>
-                                            {tag.vehicle.licensePlateHash && (
-                                                <span className="text-xs text-slate-500 block font-mono uppercase">
-                                                    #{tag.vehicle.licensePlateHash}
-                                                </span>
-                                            )}
+                                            <span className="text-xs text-slate-500 block">
+                                                {(tag as any).asset.type}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-slate-400">
                                         <div className="flex items-center gap-2">
                                             <Mail className="h-3 w-3 opacity-50" />
-                                            {tag.vehicle.owner.email}
+                                            {(tag as any).asset.owner.email}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">

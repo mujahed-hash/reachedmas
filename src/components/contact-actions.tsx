@@ -14,6 +14,9 @@ import {
     Loader2,
     MessageCircle,
     Reply,
+    PackageCheck,
+    Dog,
+    Home,
 } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { initiateContact, type ContactAction } from "@/app/actions/contact";
@@ -21,9 +24,10 @@ import { initiateContact, type ContactAction } from "@/app/actions/contact";
 interface ContactActionsProps {
     tagPublicId: string;
     towPreventionMode?: boolean;
+    assetType?: string;
 }
 
-export function ContactActions({ tagPublicId, towPreventionMode }: ContactActionsProps) {
+export function ContactActions({ tagPublicId, towPreventionMode, assetType = "CAR" }: ContactActionsProps) {
     const [loading, setLoading] = useState<ContactAction | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [autoReply, setAutoReply] = useState<string | null>(null);
@@ -134,51 +138,130 @@ export function ContactActions({ tagPublicId, towPreventionMode }: ContactAction
                 </div>
             )}
 
-            <div className="grid grid-cols-2 gap-3">
-                <ActionButton
-                    icon={<MessageSquare className="h-5 w-5" />}
-                    label="Blocking Driveway"
-                    loading={loading === "blocking_driveway"}
-                    disabled={loading !== null}
-                    onClick={() => handleAction("blocking_driveway")}
-                    colorClass="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20"
-                />
-                <ActionButton
-                    icon={<Clock className="h-5 w-5" />}
-                    label="Parking Meter"
-                    loading={loading === "parking_meter"}
-                    disabled={loading !== null}
-                    onClick={() => handleAction("parking_meter")}
-                    colorClass="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 hover:bg-orange-500/20"
-                />
-                <ActionButton
-                    icon={<AlertTriangle className="h-5 w-5" />}
-                    label="Lights On"
-                    loading={loading === "lights_on"}
-                    disabled={loading !== null}
-                    onClick={() => handleAction("lights_on")}
-                    colorClass="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20"
-                />
-                <ActionButton
-                    icon={<Phone className="h-5 w-5" />}
-                    label="Emergency"
-                    loading={loading === "emergency"}
-                    disabled={loading !== null}
-                    onClick={() => handleAction("emergency")}
-                    colorClass="bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20"
-                />
-            </div>
+            {/* Type-specific action buttons */}
+            {assetType === "HOME" ? (
+                <>
+                    <div className="grid grid-cols-2 gap-3">
+                        <ActionButton
+                            icon={<PackageCheck className="h-5 w-5" />}
+                            label="Notify Resident"
+                            loading={loading === "blocking_driveway"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("blocking_driveway")}
+                            colorClass="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20"
+                        />
+                        <ActionButton
+                            icon={<MessageSquare className="h-5 w-5" />}
+                            label="Leave a Note"
+                            loading={loading === "parking_meter"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("parking_meter")}
+                            colorClass="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 hover:bg-orange-500/20"
+                        />
+                        <ActionButton
+                            icon={<Phone className="h-5 w-5" />}
+                            label="Emergency"
+                            loading={loading === "emergency"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("emergency")}
+                            colorClass="bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20"
+                        />
+                        <ActionButton
+                            icon={<Home className="h-5 w-5" />}
+                            label="Delivery Drop-off"
+                            loading={loading === "delivery_knock"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("delivery_knock")}
+                            colorClass="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                        />
+                    </div>
+                </>
+            ) : assetType === "PET" ? (
+                <>
+                    <div className="grid grid-cols-2 gap-3">
+                        <ActionButton
+                            icon={<Dog className="h-5 w-5" />}
+                            label="Found This Pet"
+                            loading={loading === "found_report"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("found_report")}
+                            colorClass="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                        />
+                        <ActionButton
+                            icon={<MessageSquare className="h-5 w-5" />}
+                            label="Contact Owner"
+                            loading={loading === "parking_meter"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("parking_meter")}
+                            colorClass="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20"
+                        />
+                        <ActionButton
+                            icon={<Phone className="h-5 w-5" />}
+                            label="Emergency"
+                            loading={loading === "emergency"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("emergency")}
+                            colorClass="bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20"
+                        />
+                        <ActionButton
+                            icon={<AlertTriangle className="h-5 w-5" />}
+                            label="Pet in Danger"
+                            loading={loading === "tow_alert"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("tow_alert")}
+                            colorClass="bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20"
+                        />
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div className="grid grid-cols-2 gap-3">
+                        <ActionButton
+                            icon={<MessageSquare className="h-5 w-5" />}
+                            label="Blocking Driveway"
+                            loading={loading === "blocking_driveway"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("blocking_driveway")}
+                            colorClass="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20"
+                        />
+                        <ActionButton
+                            icon={<Clock className="h-5 w-5" />}
+                            label="Parking Meter"
+                            loading={loading === "parking_meter"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("parking_meter")}
+                            colorClass="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 hover:bg-orange-500/20"
+                        />
+                        <ActionButton
+                            icon={<AlertTriangle className="h-5 w-5" />}
+                            label="Lights On"
+                            loading={loading === "lights_on"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("lights_on")}
+                            colorClass="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20"
+                        />
+                        <ActionButton
+                            icon={<Phone className="h-5 w-5" />}
+                            label="Emergency"
+                            loading={loading === "emergency"}
+                            disabled={loading !== null}
+                            onClick={() => handleAction("emergency")}
+                            colorClass="bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20"
+                        />
+                    </div>
 
-            {/* Tow Alert — full width, prominent CTA */}
-            <ActionButton
-                icon={<Truck className="h-5 w-5" />}
-                label={towPreventionMode ? "⚡ Tow Alert (Owner Opted In)" : "Tow Alert"}
-                loading={loading === "tow_alert"}
-                disabled={loading !== null}
-                onClick={() => handleAction("tow_alert")}
-                colorClass="bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20"
-                fullWidth
-            />
+                    {/* Tow Alert — full width, prominent CTA */}
+                    <ActionButton
+                        icon={<Truck className="h-5 w-5" />}
+                        label={towPreventionMode ? "⚡ Tow Alert (Owner Opted In)" : "Tow Alert"}
+                        loading={loading === "tow_alert"}
+                        disabled={loading !== null}
+                        onClick={() => handleAction("tow_alert")}
+                        colorClass="bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20"
+                        fullWidth
+                    />
+                </>
+            )}
 
             {/* Optional message toggle */}
             <div className="pt-1">

@@ -12,8 +12,8 @@ export async function GET(req: NextRequest) {
 
         const userId = session.user.id;
 
-        // Fetch vehicle with tags and recent interactions
-        const vehicles = await prisma.vehicle.findMany({
+        // Fetch assets with tags
+        const assets = await prisma.asset.findMany({
             where: { ownerId: userId },
             include: {
                 tags: {
@@ -25,10 +25,11 @@ export async function GET(req: NextRequest) {
                     },
                 },
             },
+            orderBy: { createdAt: "desc" },
         });
 
         // Recent notifications (unread first)
-        const notifications = await prisma.notification.findMany({
+        const recentNotifications = await prisma.notification.findMany({
             where: { userId },
             orderBy: { createdAt: "desc" },
             take: 20,
@@ -39,30 +40,33 @@ export async function GET(req: NextRequest) {
                 body: true,
                 isRead: true,
                 createdAt: true,
-                interactionId: true,
             },
-        });
-
-        const unreadCount = await prisma.notification.count({
-            where: { userId, isRead: false },
         });
 
         // Stats
         const totalScans = await prisma.interaction.count({
             where: {
                 tag: {
-                    vehicle: { ownerId: userId },
+                    asset: { ownerId: userId },
                 },
             },
         });
 
+        const activeTags = assets.reduce(
+            (sum, a) => sum + a.tags.filter((t) => t.status === "ACTIVE").length,
+            0
+        );
+
         return NextResponse.json({
-            vehicles,
-            notifications,
-            unreadCount,
+            // Keep backward compat: send both `vehicles` and `assets`
+            vehicles: assets,
+            assets,
+            recentNotifications,
             stats: {
                 totalScans,
-                totalVehicles: vehicles.length,
+                activeTags,
+                vehicleCount: assets.length,
+                assetCount: assets.length,
             },
         });
     } catch (error) {

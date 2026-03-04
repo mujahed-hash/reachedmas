@@ -14,7 +14,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2, Loader2 } from "lucide-react";
-import { deleteVehicle } from "@/app/actions/vehicle";
+import { deleteAsset } from "@/app/actions/asset";
 
 interface DeleteVehicleButtonProps {
     vehicleId: string;
@@ -27,7 +27,7 @@ export function DeleteVehicleButton({ vehicleId, vehicleName }: DeleteVehicleBut
 
     async function handleDelete() {
         setLoading(true);
-        const result = await deleteVehicle(vehicleId);
+        const result = await deleteAsset(vehicleId);
         setLoading(false);
 
         if (result.success) {
@@ -46,7 +46,7 @@ export function DeleteVehicleButton({ vehicleId, vehicleName }: DeleteVehicleBut
             </AlertDialogTrigger>
             <AlertDialogContent className="border-border bg-card">
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="text-foreground">Delete Vehicle</AlertDialogTitle>
+                    <AlertDialogTitle className="text-foreground">Delete Asset</AlertDialogTitle>
                     <AlertDialogDescription className="text-muted-foreground">
                         Are you sure you want to delete <strong>{vehicleName}</strong>? This will also delete all associated tags and scan history. This action cannot be undone.
                     </AlertDialogDescription>

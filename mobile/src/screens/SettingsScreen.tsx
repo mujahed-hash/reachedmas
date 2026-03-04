@@ -1,146 +1,327 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import {
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    ScrollView,
+    TouchableOpacity,
+    Switch,
+    Alert,
+    ActivityIndicator,
+    Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../auth";
+import { useAppTheme } from "../ThemeProvider";
+import {
+    fetchSettings,
+    updateProfile,
+    updatePhone,
+    updateNotificationPrefs,
+    changePassword,
+} from "../api";
+
+type Section = "profile" | "phone" | "notifs" | "password" | null;
 
 export default function SettingsScreen() {
     const { logout } = useAuth();
+    const { theme, isDark, mode, setMode } = useAppTheme();
+    const [settings, setSettings] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState<Section>(null);
+    const [feedback, setFeedback] = useState<{ section: Section; msg: string; ok: boolean } | null>(null);
+
+    // Form state
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [emailNotif, setEmailNotif] = useState(true);
+    const [smsNotif, setSmsNotif] = useState(true);
+    const [currentPw, setCurrentPw] = useState("");
+    const [newPw, setNewPw] = useState("");
+    const [confirmPw, setConfirmPw] = useState("");
+
+    const load = useCallback(async () => {
+        try {
+            const res = await fetchSettings();
+            if (res?.settings) {
+                setSettings(res.settings);
+                setName(res.settings.name || "");
+                setEmail(res.settings.email || "");
+                setEmailNotif(res.settings.emailNotif ?? true);
+                setSmsNotif(res.settings.smsNotif ?? true);
+            }
+        } catch (err) {
+            console.error("Settings load error:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => { load(); }, [load]);
+
+    const showFeedback = (section: Section, msg: string, ok: boolean) => {
+        setFeedback({ section, msg, ok });
+        setTimeout(() => setFeedback(null), 3000);
+    };
+
+    const handleUpdateProfile = async () => {
+        setSaving("profile");
+        try {
+            const res = await updateProfile({ name, email });
+            showFeedback("profile", res.message, res.success);
+        } catch (err) {
+            showFeedback("profile", "Failed to update", false);
+        } finally {
+            setSaving(null);
+        }
+    };
+
+    const handleUpdatePhone = async () => {
+        if (!phone || phone.length < 10) {
+            showFeedback("phone", "Valid phone required", false);
+            return;
+        }
+        setSaving("phone");
+        try {
+            const res = await updatePhone({ phone });
+            showFeedback("phone", res.message, res.success);
+            if (res.success) { setPhone(""); load(); }
+        } catch (err) {
+            showFeedback("phone", "Failed to update", false);
+        } finally {
+            setSaving(null);
+        }
+    };
+
+    const handleUpdateNotifs = async () => {
+        setSaving("notifs");
+        try {
+            const res = await updateNotificationPrefs({ emailNotif, smsNotif });
+            showFeedback("notifs", res.message, res.success);
+        } catch (err) {
+            showFeedback("notifs", "Failed to update", false);
+        } finally {
+            setSaving(null);
+        }
+    };
+
+    const handleChangePassword = async () => {
+        if (!currentPw || !newPw || !confirmPw) {
+            showFeedback("password", "All fields required", false);
+            return;
+        }
+        setSaving("password");
+        try {
+            const res = await changePassword({ currentPassword: currentPw, newPassword: newPw, confirmPassword: confirmPw });
+            showFeedback("password", res.message, res.success);
+            if (res.success) { setCurrentPw(""); setNewPw(""); setConfirmPw(""); }
+        } catch (err) {
+            showFeedback("password", "Failed to change", false);
+        } finally {
+            setSaving(null);
+        }
+    };
 
     const handleLogout = () => {
-        Alert.alert(
-            "Sign Out",
-            "Are you sure you want to sign out?",
-            [
-                { text: "Cancel", style: "cancel" },
-                { text: "Sign Out", onPress: logout, style: "destructive" }
-            ]
+        Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Sign Out", style: "destructive", onPress: logout },
+        ]);
+    };
+
+    const s = createStyles(theme, isDark);
+
+    if (loading) {
+        return (
+            <View style={[s.container, { justifyContent: "center", alignItems: "center" }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
+            </View>
+        );
+    }
+
+    const FeedbackBadge = ({ section }: { section: Section }) => {
+        if (!feedback || feedback.section !== section) return null;
+        return (
+            <View style={[s.feedbackBox, { backgroundColor: feedback.ok ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)" }]}>
+                <Text style={{ color: feedback.ok ? theme.success : theme.error, fontSize: 13 }}>{feedback.msg}</Text>
+            </View>
         );
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content}>
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Settings</Text>
-                    <Text style={styles.headerSubtitle}>Manage your account and preferences</Text>
+        <SafeAreaView style={s.container} edges={["left", "right"]}>
+            <ScrollView contentContainerStyle={s.scrollContent}>
+                {/* Profile */}
+                <View style={s.card}>
+                    <Text style={s.cardTitle}>Profile</Text>
+                    <FeedbackBadge section="profile" />
+                    <View style={s.field}>
+                        <Text style={s.label}>Full Name</Text>
+                        <TextInput style={s.input} value={name} onChangeText={setName} placeholderTextColor={theme.textMuted} placeholder="Your name" />
+                    </View>
+                    <View style={s.field}>
+                        <Text style={s.label}>Email</Text>
+                        <TextInput style={s.input} value={email} onChangeText={setEmail} placeholderTextColor={theme.textMuted} placeholder="Email" keyboardType="email-address" autoCapitalize="none" />
+                    </View>
+                    <TouchableOpacity style={[s.saveBtn, saving === "profile" && { opacity: 0.6 }]} onPress={handleUpdateProfile} disabled={saving === "profile"}>
+                        {saving === "profile" ? <ActivityIndicator color="#fff" size="small" /> : <Text style={s.saveBtnText}>Save Profile</Text>}
+                    </TouchableOpacity>
                 </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Account</Text>
-                    <View style={styles.card}>
-                        <TouchableOpacity style={styles.row}>
-                            <Text style={styles.rowLabel}>Notification Preferences</Text>
-                            <Text style={styles.rowChevron}>›</Text>
-                        </TouchableOpacity>
-                        <View style={styles.separator} />
-                        <TouchableOpacity style={styles.row}>
-                            <Text style={styles.rowLabel}>Privacy & Security</Text>
-                            <Text style={styles.rowChevron}>›</Text>
-                        </TouchableOpacity>
+                {/* Phone */}
+                <View style={s.card}>
+                    <Text style={s.cardTitle}>Phone Number</Text>
+                    <FeedbackBadge section="phone" />
+                    {settings?.phoneMasked && (
+                        <Text style={s.maskedPhone}>Current: {settings.phoneMasked}</Text>
+                    )}
+                    <View style={s.field}>
+                        <Text style={s.label}>New Phone Number</Text>
+                        <TextInput style={s.input} value={phone} onChangeText={setPhone} placeholderTextColor={theme.textMuted} placeholder="+1 (555) 123-4567" keyboardType="phone-pad" />
+                    </View>
+                    <TouchableOpacity style={[s.saveBtn, saving === "phone" && { opacity: 0.6 }]} onPress={handleUpdatePhone} disabled={saving === "phone"}>
+                        {saving === "phone" ? <ActivityIndicator color="#fff" size="small" /> : <Text style={s.saveBtnText}>Update Phone</Text>}
+                    </TouchableOpacity>
+                </View>
+
+                {/* Notification Prefs */}
+                <View style={s.card}>
+                    <Text style={s.cardTitle}>Notification Preferences</Text>
+                    <FeedbackBadge section="notifs" />
+                    <View style={s.switchRow}>
+                        <Text style={s.switchLabel}>Email Notifications</Text>
+                        <Switch
+                            value={emailNotif}
+                            onValueChange={(v) => setEmailNotif(v)}
+                            trackColor={{ false: theme.border, true: theme.success }}
+                            thumbColor="#fff"
+                        />
+                    </View>
+                    <View style={s.switchRow}>
+                        <Text style={s.switchLabel}>SMS Notifications</Text>
+                        <Switch
+                            value={smsNotif}
+                            onValueChange={(v) => setSmsNotif(v)}
+                            trackColor={{ false: theme.border, true: theme.success }}
+                            thumbColor="#fff"
+                        />
+                    </View>
+                    <TouchableOpacity style={[s.saveBtn, saving === "notifs" && { opacity: 0.6 }]} onPress={handleUpdateNotifs} disabled={saving === "notifs"}>
+                        {saving === "notifs" ? <ActivityIndicator color="#fff" size="small" /> : <Text style={s.saveBtnText}>Save Preferences</Text>}
+                    </TouchableOpacity>
+                </View>
+
+                {/* Theme */}
+                <View style={s.card}>
+                    <Text style={s.cardTitle}>Appearance</Text>
+                    <View style={s.themeRow}>
+                        {(["system", "light", "dark"] as const).map((m) => (
+                            <TouchableOpacity
+                                key={m}
+                                style={[s.themeOption, mode === m && s.themeOptionActive]}
+                                onPress={() => setMode(m)}
+                            >
+                                <Text style={[s.themeOptionText, mode === m && s.themeOptionTextActive]}>
+                                    {m === "system" ? "☀️🌙 System" : m === "light" ? "☀️ Light" : "🌙 Dark"}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 </View>
 
-                <TouchableOpacity
-                    activeOpacity={0.8}
-                    style={styles.logoutButton}
-                    onPress={handleLogout}
-                >
-                    <Text style={styles.logoutText}>Sign Out</Text>
+                {/* Password */}
+                <View style={s.card}>
+                    <Text style={s.cardTitle}>Change Password</Text>
+                    <FeedbackBadge section="password" />
+                    <View style={s.field}>
+                        <Text style={s.label}>Current Password</Text>
+                        <TextInput style={s.input} value={currentPw} onChangeText={setCurrentPw} secureTextEntry placeholderTextColor={theme.textMuted} placeholder="Current password" />
+                    </View>
+                    <View style={s.field}>
+                        <Text style={s.label}>New Password</Text>
+                        <TextInput style={s.input} value={newPw} onChangeText={setNewPw} secureTextEntry placeholderTextColor={theme.textMuted} placeholder="New password" />
+                    </View>
+                    <View style={s.field}>
+                        <Text style={s.label}>Confirm New Password</Text>
+                        <TextInput style={s.input} value={confirmPw} onChangeText={setConfirmPw} secureTextEntry placeholderTextColor={theme.textMuted} placeholder="Confirm" />
+                    </View>
+                    <TouchableOpacity style={[s.saveBtn, saving === "password" && { opacity: 0.6 }]} onPress={handleChangePassword} disabled={saving === "password"}>
+                        {saving === "password" ? <ActivityIndicator color="#fff" size="small" /> : <Text style={s.saveBtnText}>Change Password</Text>}
+                    </TouchableOpacity>
+                </View>
+
+                {/* Sign Out */}
+                <TouchableOpacity style={s.logoutBtn} onPress={handleLogout}>
+                    <Text style={s.logoutText}>Sign Out</Text>
                 </TouchableOpacity>
 
-                <View style={styles.footer}>
-                    <Text style={styles.versionText}>ReachMasked v1.0.0</Text>
-                </View>
+                <Text style={s.versionText}>ReachMasked v1.0.0</Text>
             </ScrollView>
         </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#0B1120" // Web Deep Navy
-    },
-    content: {
-        padding: 16,
-        paddingBottom: 40,
-    },
-    header: {
-        marginBottom: 32,
-        marginTop: 8,
-    },
-    headerTitle: {
-        fontSize: 30,
-        fontWeight: "700",
-        color: "#F8FAFC",
-        letterSpacing: -0.5,
-    },
-    headerSubtitle: {
-        fontSize: 16,
-        color: "#94A3B8",
-        marginTop: 4,
-    },
-    section: {
-        marginBottom: 32
-    },
-    sectionTitle: {
-        color: "#94A3B8",
-        fontSize: 12,
-        fontWeight: "600",
-        marginBottom: 8,
-        textTransform: "uppercase",
-        letterSpacing: 1,
-        marginLeft: 4,
-    },
-    card: {
-        backgroundColor: "rgba(255, 255, 255, 0.05)",
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.1)",
-        overflow: "hidden",
-    },
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: 16,
-    },
-    rowLabel: {
-        color: "#F8FAFC",
-        fontSize: 16,
-        fontWeight: "500",
-    },
-    rowChevron: {
-        color: "#475569",
-        fontSize: 22,
-        fontWeight: "300",
-    },
-    separator: {
-        height: 1,
-        backgroundColor: "rgba(255, 255, 255, 0.05)",
-        marginHorizontal: 16,
-    },
-    logoutButton: {
-        backgroundColor: "rgba(239, 68, 68, 0.1)",
-        borderRadius: 12,
-        padding: 16,
-        alignItems: "center",
-        marginTop: 8,
-        borderWidth: 1,
-        borderColor: "rgba(239, 68, 68, 0.2)",
-    },
-    logoutText: {
-        color: "#F87171",
-        fontSize: 16,
-        fontWeight: "600"
-    },
-    footer: {
-        marginTop: 40,
-        alignItems: "center",
-    },
-    versionText: {
-        color: "#475569",
-        fontSize: 12,
-        fontWeight: "500",
-    },
-});
+const createStyles = (theme: any, isDark: boolean) =>
+    StyleSheet.create({
+        container: { flex: 1, backgroundColor: theme.background },
+        scrollContent: { padding: 16, paddingBottom: 60 },
+
+        card: {
+            backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#FFFFFF",
+            borderRadius: 14, borderWidth: 1, borderColor: theme.border,
+            padding: 20, marginBottom: 16,
+        },
+        cardTitle: { fontSize: 17, fontWeight: "700", color: theme.text, marginBottom: 14 },
+
+        feedbackBox: { borderRadius: 10, padding: 10, marginBottom: 12 },
+
+        field: { marginBottom: 14 },
+        label: { fontSize: 13, fontWeight: "600", color: theme.text, marginBottom: 6 },
+        input: {
+            backgroundColor: isDark ? "rgba(15,23,42,0.5)" : "#F1F5F9",
+            borderRadius: 10, borderWidth: 1, borderColor: theme.border,
+            padding: 12, fontSize: 15, color: theme.text,
+        },
+
+        maskedPhone: {
+            fontSize: 14, color: theme.textMuted, marginBottom: 12,
+            fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
+        },
+
+        switchRow: {
+            flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+            paddingVertical: 10,
+        },
+        switchLabel: { fontSize: 14, color: theme.text },
+
+        themeRow: { flexDirection: "row", gap: 8, marginTop: 4 },
+        themeOption: {
+            flex: 1, borderRadius: 10, borderWidth: 1, borderColor: theme.border,
+            paddingVertical: 12, alignItems: "center",
+        },
+        themeOptionActive: {
+            borderColor: theme.primary,
+            backgroundColor: "rgba(99,102,241,0.1)",
+        },
+        themeOptionText: { fontSize: 13, color: theme.textMuted, fontWeight: "600" },
+        themeOptionTextActive: { color: theme.primary },
+
+        saveBtn: {
+            backgroundColor: theme.primary, borderRadius: 10, paddingVertical: 12,
+            alignItems: "center", marginTop: 4,
+        },
+        saveBtnText: { color: "#fff", fontWeight: "700", fontSize: 14 },
+
+        logoutBtn: {
+            backgroundColor: "rgba(239,68,68,0.1)",
+            borderRadius: 12, borderWidth: 1, borderColor: "rgba(239,68,68,0.2)",
+            paddingVertical: 14, alignItems: "center", marginTop: 8,
+        },
+        logoutText: { color: theme.error, fontWeight: "700", fontSize: 15 },
+
+        versionText: {
+            textAlign: "center", fontSize: 12, color: theme.textMuted, marginTop: 20,
+        },
+    });

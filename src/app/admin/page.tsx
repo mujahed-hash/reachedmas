@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
     Shield,
     Users,
-    Car,
+    Package,
     QrCode,
     MessageCircle,
     BarChart3,
@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 
 async function getAdminStats() {
-    const [userCount, vehicleCount, tagCount, interactionCount, notificationCount] =
+    const [userCount, assetCount, tagCount, interactionCount, notificationCount] =
         await Promise.all([
             prisma.user.count(),
-            prisma.vehicle.count(),
+            prisma.asset.count(),
             prisma.tag.count(),
             prisma.interaction.count(),
             prisma.notification.count(),
@@ -32,7 +32,7 @@ async function getAdminStats() {
         include: {
             tag: {
                 include: {
-                    vehicle: {
+                    asset: {
                         include: {
                             owner: {
                                 select: { email: true },
@@ -46,7 +46,7 @@ async function getAdminStats() {
 
     return {
         userCount,
-        vehicleCount,
+        assetCount,
         tagCount,
         interactionCount,
         notificationCount,
@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <StatCard icon={<Users className="h-5 w-5 text-blue-400" />} value={stats.userCount} label="Total Users" />
-                <StatCard icon={<Car className="h-5 w-5 text-emerald-400" />} value={stats.vehicleCount} label="Vehicles" />
+                <StatCard icon={<Package className="h-5 w-5 text-emerald-400" />} value={stats.assetCount} label="Assets" />
                 <StatCard icon={<QrCode className="h-5 w-5 text-indigo-400" />} value={stats.tagCount} label="Active Tags" />
                 <StatCard icon={<BarChart3 className="h-5 w-5 text-amber-400" />} value={stats.interactionCount} label="Total Scans" />
                 <StatCard icon={<MessageCircle className="h-5 w-5 text-rose-400" />} value={stats.notificationCount} label="Notifications" />
@@ -97,8 +97,8 @@ export default async function AdminDashboard() {
                                             {interaction.actionType.replace("_", " ")}
                                         </p>
                                         <p className="text-xs text-slate-500">
-                                            {interaction.tag.vehicle.color} {interaction.tag.vehicle.model} •{" "}
-                                            {interaction.tag.vehicle.owner.email}
+                                            {interaction.tag.asset.name} •{" "}
+                                            {interaction.tag.asset.owner.email}
                                         </p>
                                     </div>
                                     <div className="text-xs text-slate-500">

@@ -7,122 +7,129 @@ datasource db {
 }
 
 model User {
-  id              String    @id @default(uuid())
-  publicId        String    @unique @default(cuid())
-  name            String?
-  email           String    @unique
-  passwordHash    String
-  phoneEncrypted  String?   // AES-256-GCM encrypted phone number
-  emailNotif      Boolean   @default(true)
-  smsNotif        Boolean   @default(false) // Only enabled if phone + Twilio configured
-  role                 String    @default("OWNER") // OWNER | ADMIN
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
-  plan                 String    @default("FREE")  // FREE | PREMIUM
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-
-  vehicles        Vehicle[]
-  notifications   Notification[]
-  pushTokens      PushToken[]
+  id                   String         @id @default(uuid())
+  publicId             String         @unique @default(cuid())
+  name                 String?
+  email                String         @unique
+  passwordHash         String
+  phoneEncrypted       String?
+  emailNotif           Boolean        @default(true)
+  smsNotif             Boolean        @default(false)
+  role                 String         @default("OWNER")
+  stripeCustomerId     String?        @unique
+  stripeSubscriptionId String?        @unique
+  plan                 String         @default("FREE")
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  assets               Asset[]
+  familyMemberships    FamilyMember[] @relation("FamilyMember")
+  familyOwned          FamilyMember[] @relation("FamilyOwner")
+  notifications        Notification[]
+  pushTokens           PushToken[]
 
   @@map("users")
 }
 
-model Vehicle {
-  id               String    @id @default(uuid())
-  publicId         String    @unique @default(cuid())
-  ownerId          String
-  licensePlate     String?   // Plain text (optional, owner's choice)
-  licensePlateHash String?   // SHA-256 hash for search/indexing
-  model            String
-  color            String
-  year             String?
-  notes            String?   // Private notes for owner
-  isActive         Boolean   @default(true)
-  towPreventionMode Boolean  @default(false)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+model Asset {
+  id                String      @id @default(uuid())
+  publicId          String      @unique @default(cuid())
+  ownerId           String
+  type              String
+  name              String
+  subtitle          String?
+  imageUrl          String?
+  notes             String?
+  isActive          Boolean     @default(true)
+  towPreventionMode Boolean     @default(false)
+  metadata          String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  owner             User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  autoReplies       AutoReply[]
+  tags              Tag[]
 
-  owner            User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  tags             Tag[]
-  autoReplies      AutoReply[]
-
-  @@map("vehicles")
+  @@map("assets")
 }
 
 model Tag {
-  id          String    @id @default(uuid())
-  publicId    String    @unique @default(cuid())
-  vehicleId   String
-  shortCode   String    @unique
-  nfcPayload  String?   // Full URL written to NFC chip
-  label       String?   // Owner-facing label, e.g. "Windshield tag"
-  status      String    @default("ACTIVE") // ACTIVE | DISABLED | FLAGGED
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  vehicle      Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  id           String        @id @default(uuid())
+  publicId     String        @unique @default(cuid())
+  assetId      String
+  shortCode    String        @unique
+  nfcPayload   String?
+  label        String?
+  status       String        @default("ACTIVE")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   interactions Interaction[]
+  asset        Asset         @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
   @@map("tags")
 }
 
 model Interaction {
-  id          String     @id @default(uuid())
-  tagId       String
-  // SCAN_VIEW | CONTACT_SMS | CONTACT_CALL | TOW_ALERT | EMERGENCY
-  actionType  String
-  ipHash      String?
-  userAgent   String?
-  message     String?    // Optional message from scanner
-  cityGuess   String?    // Approximate city from IP geo (privacy-safe)
-  timestamp   DateTime   @default(now())
-
+  id           String        @id @default(uuid())
+  tagId        String
+  actionType   String
+  ipHash       String?
+  userAgent    String?
+  message      String?
+  cityGuess    String?
+  photoUrl     String?
+  timestamp    DateTime      @default(now())
+  chatThread   ChatThread?
   tag          Tag           @relation(fields: [tagId], references: [id], onDelete: Cascade)
   notification Notification?
-  chatThread   ChatThread?
 
   @@map("interactions")
 }
 
 model Notification {
-  id            String     @id @default(uuid())
+  id            String      @id @default(uuid())
   userId        String
-  interactionId String     @unique
-  // SMS_RECEIVED | CALL_RECEIVED | EMERGENCY | TOW_ALERT
+  interactionId String      @unique
   type          String
   title         String
   body          String
-  isRead        Boolean    @default(false)
-  createdAt     DateTime   @default(now())
-
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isRead        Boolean     @default(false)
+  createdAt     DateTime    @default(now())
   interaction   Interaction @relation(fields: [interactionId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
 
 model AutoReply {
-  id          String    @id @default(uuid())
-  vehicleId   String
-  label       String    // e.g. "I'll move in 5 minutes"
-  message     String
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-
-  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  assetId   String
+  label     String
+  message   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
   @@map("auto_replies")
+}
+
+model FamilyMember {
+  id        String   @id @default(uuid())
+  ownerId   String
+  memberId  String
+  role      String   @default("MEMBER")
+  createdAt DateTime @default(now())
+  member    User     @relation("FamilyMember", fields: [memberId], references: [id], onDelete: Cascade)
+  owner     User     @relation("FamilyOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, memberId])
+  @@map("family_members")
 }
 
 model PushToken {
   id        String   @id @default(uuid())
   userId    String
-  token     String   @unique   // Expo push token
-  platform  String              // "ios" | "android"
+  token     String   @unique
+  platform  String
   createdAt DateTime @default(now())
-
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("push_tokens")
@@ -132,22 +139,19 @@ model ChatThread {
   id            String        @id @default(uuid())
   interactionId String        @unique
   createdAt     DateTime      @default(now())
-
-  interaction   Interaction   @relation(fields: [interactionId], references: [id], onDelete: Cascade)
   messages      ChatMessage[]
+  interaction   Interaction   @relation(fields: [interactionId], references: [id], onDelete: Cascade)
 
   @@map("chat_threads")
 }
 
 model ChatMessage {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   threadId  String
-  sender    String              // "SCANNER" | "OWNER"
+  sender    String
   text      String
-  createdAt DateTime @default(now())
-
+  createdAt DateTime   @default(now())
   thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
 
   @@map("chat_messages")
 }
-

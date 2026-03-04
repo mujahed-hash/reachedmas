@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, ArrowLeft, Users, Car, Mail, Phone, Calendar, Bell } from "lucide-react";
+import { Shield, ArrowLeft, Users, Package, Mail, Phone, Calendar, Bell } from "lucide-react";
 import { UserActions } from "@/components/admin/user-actions";
 
 async function getUsers() {
@@ -13,11 +13,11 @@ async function getUsers() {
         include: {
             _count: {
                 select: {
-                    vehicles: true,
+                    assets: true,
                     notifications: true,
                 },
             },
-            vehicles: {
+            assets: {
                 include: {
                     tags: {
                         select: {
@@ -58,8 +58,8 @@ export default async function AdminUsersPage() {
             {/* Users List */}
             <div className="grid gap-4">
                 {users.map((user) => {
-                    const totalScans = user.vehicles.reduce(
-                        (sum, v) => sum + v.tags.reduce((ts, t) => ts + t._count.interactions, 0),
+                    const totalScans = user.assets.reduce(
+                        (sum: number, a: any) => sum + a.tags.reduce((ts: number, t: any) => ts + t._count.interactions, 0),
                         0
                     );
 
@@ -87,8 +87,8 @@ export default async function AdminUsersPage() {
                                             </div>
                                             <div className="flex items-center gap-4 mt-2 text-sm text-slate-400 flex-wrap">
                                                 <span className="flex items-center gap-1">
-                                                    <Car className="h-4 w-4" />
-                                                    {user._count.vehicles} vehicles
+                                                    <Package className="h-4 w-4" />
+                                                    {user._count.assets} assets
                                                 </span>
                                                 <span className="flex items-center gap-1">
                                                     <Bell className="h-4 w-4" />
@@ -109,19 +109,19 @@ export default async function AdminUsersPage() {
                                                 Joined {new Date(user.createdAt).toLocaleDateString()}
                                             </div>
 
-                                            {/* Vehicles */}
-                                            {user.vehicles.length > 0 && (
+                                            {/* Assets */}
+                                            {user.assets.length > 0 && (
                                                 <div className="mt-3 flex flex-wrap gap-2">
-                                                    {user.vehicles.map((v) => (
+                                                    {user.assets.map((a: any) => (
                                                         <div
-                                                            key={v.id}
+                                                            key={a.id}
                                                             className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded text-slate-400"
                                                         >
                                                             <span className="font-medium text-slate-300">
-                                                                {v.color} {v.model}
+                                                                {a.name}
                                                             </span>
                                                             <span className="ml-1 opacity-50">
-                                                                • {v.tags.length} active tags
+                                                                • {a.type} • {a.tags.length} tags
                                                             </span>
                                                         </div>
                                                     ))}

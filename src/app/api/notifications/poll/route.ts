@@ -23,8 +23,8 @@ export async function GET(req: NextRequest) {
                     include: {
                         tag: {
                             include: {
-                                vehicle: {
-                                    select: { model: true, color: true },
+                                asset: {
+                                    select: { name: true, subtitle: true },
                                 },
                             },
                         },
@@ -41,9 +41,10 @@ export async function GET(req: NextRequest) {
                 title: n.title,
                 body: n.body,
                 createdAt: n.createdAt,
-                vehicle: n.interaction?.tag?.vehicle
-                    ? `${n.interaction.tag.vehicle.color} ${n.interaction.tag.vehicle.model}`
-                    : "Unknown vehicle",
+                asset: n.interaction?.tag?.asset
+                    ? `${n.interaction.tag.asset.name} ${n.interaction.tag.asset.subtitle || ""}`.trim()
+                    : "Unknown asset",
+                tagCode: n.interaction?.tag?.shortCode || "N/A",
             })),
         });
     } catch (error) {

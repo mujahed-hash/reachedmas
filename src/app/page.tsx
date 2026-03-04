@@ -11,6 +11,11 @@ import {
   Eye,
   Zap,
   Check,
+  Dog,
+  Home as HomeIcon,
+  User,
+  Package,
+  PackageCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { Header } from "@/components/header";
@@ -39,15 +44,16 @@ export default async function Home() {
               </div>
 
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-foreground">
-                Contact without <br />
+                Protect What Matters.
+                <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400">
-                  Compromise.
+                  Privately.
                 </span>
               </h1>
 
               <p className="mx-auto max-w-2xl text-lg text-muted-foreground leading-relaxed">
-                The privacy-first vehicle tag. Notify owners about parking issues,
-                lights left on, or emergencies{" "}
+                Smart NFC/QR tags for your car, pet, home, kids, and valuables.
+                Get notified instantly when someone scans —{" "}
                 <span className="text-foreground font-semibold">
                   without ever sharing your phone number.
                 </span>
@@ -83,7 +89,7 @@ export default async function Home() {
             <FeatureCard
               icon={<QrCode className="h-8 w-8 text-emerald-500 dark:text-emerald-400" />}
               title="Instant Scan"
-              description="No app required. Anyone can scan your vehicle's tag to notify you instantly."
+              description="No app required. Anyone can scan your tag — car, pet collar, front door — and notify you instantly."
             />
             <FeatureCard
               icon={<Lock className="h-8 w-8 text-primary" />}
@@ -95,6 +101,23 @@ export default async function Home() {
               title="Tow Prevention"
               description="Enable tow-prevention mode and get an urgent call + SMS before your car gets towed."
             />
+          </div>
+
+          {/* Asset type showcase */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-12">
+            {[
+              { icon: <Truck className="h-6 w-6" />, label: "Vehicles", desc: "Parking, tow alerts" },
+              { icon: <Dog className="h-6 w-6" />, label: "Pets", desc: "Lost pet recovery" },
+              { icon: <HomeIcon className="h-6 w-6" />, label: "Homes", desc: "Delivery notifications" },
+              { icon: <User className="h-6 w-6" />, label: "People", desc: "Kids & elderly safety" },
+              { icon: <Package className="h-6 w-6" />, label: "Assets", desc: "Bikes, luggage, devices" },
+            ].map((item) => (
+              <div key={item.label} className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-card/50 hover:border-primary/30 transition-colors">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">{item.icon}</div>
+                <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                <span className="text-xs text-muted-foreground text-center">{item.desc}</span>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -115,7 +138,7 @@ export default async function Home() {
                 number="1"
                 icon={<QrCode className="h-6 w-6" />}
                 title="Place Your Tag"
-                description="Stick the NFC/QR tag on your windshield or dashboard. Register it in 30 seconds."
+                description="Stick the NFC/QR tag on your car, pet collar, front door, or valuables. Register in 30 seconds."
               />
               <StepCard
                 number="2"
@@ -159,13 +182,16 @@ export default async function Home() {
                     <p className="text-sm text-muted-foreground mt-3 font-medium">Then $4.99/mo starting the second year.</p>
                   </div>
                   <ul className="mt-8 space-y-4">
-                    <PricingItem>1 Vehicle Tag</PricingItem>
+                    <PricingItem>Up to 5 Asset Tags (any type)</PricingItem>
                     <PricingItem>Real-time In-App Alerts & Alarms</PricingItem>
                     <PricingItem>Browser Push Notifications</PricingItem>
                     <PricingItem>Email Notifications</PricingItem>
                     <PricingItem>Tag Ownership Control (Disable/Lock)</PricingItem>
                     <PricingItem>Scan History & Analytics</PricingItem>
-                    <PricingItem>Tow Prevention Alerts</PricingItem>
+                    <PricingItem>Tow Prevention Alerts (Vehicles)</PricingItem>
+                    <PricingItem>Pet Found Reports</PricingItem>
+                    <PricingItem>Delivery Notifications (Homes)</PricingItem>
+                    <PricingItem>Family Dashboard</PricingItem>
                   </ul>
                   <Link href="/register" className="mt-8 block">
                     <Button className="w-full h-12 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all">
@@ -194,8 +220,16 @@ export default async function Home() {
                 a="Absolutely. Your phone number is encrypted with AES-256-GCM and stored securely. When someone contacts you, we relay the message through our servers. Neither party ever sees the other's real number."
               />
               <FaqItem
+                q="What types of assets can I tag?"
+                a="Anything! Cars, pets, homes, kids, elderly family members, bikes, luggage, laptops — any asset you want to protect. Each type gets specialized actions: tow prevention for cars, found reports for pets, delivery notifications for homes."
+              />
+              <FaqItem
                 q="What is tow-prevention mode?"
-                a="When enabled, any tow operator who scans your tag triggers an urgent dual-channel alert — you get both an SMS and an automated phone call within seconds."
+                a="When enabled on a vehicle tag, any tow operator who scans triggers an urgent dual-channel alert — you get both an SMS and an automated phone call within seconds."
+              />
+              <FaqItem
+                q="How do delivery notifications work?"
+                a="Place a tag on your front door. When a delivery driver scans it, you get an instant push notification saying a package has been dropped off — no doorbell camera needed."
               />
               <FaqItem
                 q="Can I disable my tag temporarily?"
@@ -203,7 +237,7 @@ export default async function Home() {
               />
               <FaqItem
                 q="What does the standard plan include?"
-                a="Everything you need: unlimited tags, SMS and email alerts, real-time dashboard notifications, masked contact relay, and tow-prevention mode."
+                a="Up to 5 asset tags of any type, SMS and email alerts, real-time dashboard notifications, masked contact relay, tow-prevention mode, pet found reports, delivery notifications, family dashboard, and scan analytics."
               />
             </div>
           </div>
