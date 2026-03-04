@@ -19,9 +19,9 @@ export default auth(async (req) => {
             return NextResponse.redirect(new URL(pathname.replace("/admin", "") || "/", req.url));
         }
 
-        // Allow login page to be shared but skip the /admin rewrite for it
+        // Allow login page to be shared but rewrite to admin-specific version
         if (pathname === "/login") {
-            return NextResponse.next();
+            return NextResponse.rewrite(new URL("/admin/login", req.url));
         }
 
         // Internal rewrite to /admin
