@@ -41,7 +41,13 @@ export default auth(async (req) => {
         return NextResponse.rewrite(new URL(internalPath, req.url));
     }
 
-    // 4. Default Authentication Guard (for main domain)
+    // Create response and set path header
+    const response = NextResponse.next();
+
+    // Set custom header for path detection in layouts
+    response.headers.set("x-path", pathname);
+
+    // Default Authentication Guard (for main domain)
     const session = req.auth;
     const isProtected = [
         "/dashboard",
@@ -56,7 +62,11 @@ export default auth(async (req) => {
         return NextResponse.redirect(loginUrl);
     }
 
-    return NextResponse.next();
+    // Ensure the response from rewrites or redirects also gets the path header if needed
+    // However, for rewriting, we usually return a new NextResponse.rewrite.
+    // Let's ensure headers are passed where possible.
+
+    return response;
 });
 
 export const config = {
