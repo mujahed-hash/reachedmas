@@ -193,7 +193,9 @@ export default function DashboardScreen({ navigation }: any) {
                                                         navigation.navigate("TagSetup", {
                                                             tagId: firstTag.id,
                                                             shortCode: firstTag.shortCode,
+                                                            assetId: a.id,
                                                             assetName,
+                                                            assetType: a.type
                                                         })
                                                     }
                                                 >

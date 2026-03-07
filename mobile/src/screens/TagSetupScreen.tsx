@@ -12,15 +12,15 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import QRCode from "react-native-qrcode-svg";
 import * as Clipboard from "expo-clipboard";
-import { updateTagStatus, toggleTowPrevention, fetchVehicleDetail } from "../api";
+import { updateTagStatus, toggleTowPrevention, fetchAssetDetail } from "../api";
 import { useAppTheme } from "../ThemeProvider";
 
 export default function TagSetupScreen({ route, navigation }: any) {
-    const { tagId, shortCode, vehicleName } = route.params;
+    const { tagId, shortCode, assetName, assetType } = route.params;
     const { theme, isDark } = useAppTheme();
     const [tagStatus, setTagStatus] = useState<"ACTIVE" | "DISABLED">("ACTIVE");
     const [towMode, setTowMode] = useState(false);
-    const [vehicleId, setVehicleId] = useState<string | null>(null);
+    const [assetId, setAssetId] = useState<string | null>(null);
     const [totalScans, setTotalScans] = useState(0);
     const [loading, setLoading] = useState(true);
     const [copied, setCopied] = useState(false);
@@ -29,16 +29,16 @@ export default function TagSetupScreen({ route, navigation }: any) {
     const nfcPayload = tagURL;
 
     useEffect(() => {
-        // Load vehicle detail to get tag status and tow mode
+        // Load asset detail to get tag status and tow mode
         (async () => {
             try {
-                // We need to find the vehicleId from the tag
+                // We need to find the assetId from the tag
                 // The dashboard data should have this, but we can search
-                const res = await fetchVehicleDetail(route.params.vehicleId || "");
-                if (res?.vehicle) {
-                    setVehicleId(res.vehicle.id);
-                    setTowMode(res.vehicle.towPreventionMode || false);
-                    const tag = res.vehicle.tags?.find((t: any) => t.id === tagId);
+                const res = await fetchAssetDetail(route.params.assetId || "");
+                if (res?.asset) {
+                    setAssetId(res.asset.id);
+                    setTowMode(res.asset.towPreventionMode || false);
+                    const tag = res.asset.tags?.find((t: any) => t.id === tagId);
                     if (tag) setTagStatus(tag.status);
                     setTotalScans(res.interactions?.length || 0);
                 }
@@ -67,10 +67,10 @@ export default function TagSetupScreen({ route, navigation }: any) {
     };
 
     const handleToggleTow = async () => {
-        if (!vehicleId) return;
+        if (!assetId) return;
         const newVal = !towMode;
         try {
-            await toggleTowPrevention(vehicleId, newVal);
+            await toggleTowPrevention(assetId, newVal);
             setTowMode(newVal);
         } catch (err) {
             Alert.alert("Error", "Failed to update tow prevention");
@@ -87,17 +87,27 @@ export default function TagSetupScreen({ route, navigation }: any) {
         );
     }
 
+    const getTypeIcon = (type: string) => {
+        switch (type) {
+            case "CAR": return "🚗";
+            case "PET": return "🐶";
+            case "HOME": return "🏠";
+            case "PERSON": return "🎒";
+            default: return "📦";
+        }
+    };
+
     return (
         <SafeAreaView style={s.container} edges={["left", "right", "bottom"]}>
             <ScrollView contentContainerStyle={s.scrollContent}>
-                {/* Vehicle Info */}
-                <View style={s.vehicleHeader}>
-                    <View style={s.vehicleIconBox}>
-                        <Text style={{ fontSize: 24 }}>🚗</Text>
+                {/* Asset Info */}
+                <View style={s.assetHeader}>
+                    <View style={s.assetIconBox}>
+                        <Text style={{ fontSize: 24 }}>{getTypeIcon(assetType)}</Text>
                     </View>
                     <View>
-                        <Text style={s.vehicleName}>{vehicleName || "Vehicle"}</Text>
-                        <Text style={s.vehicleMeta}>Tag Code: {shortCode}</Text>
+                        <Text style={s.assetName}>{assetName || "Asset"}</Text>
+                        <Text style={s.assetMeta}>Tag Code: {shortCode}</Text>
                     </View>
                 </View>
 
@@ -115,7 +125,7 @@ export default function TagSetupScreen({ route, navigation }: any) {
                             color="black"
                         />
                     </View>
-                    <Text style={s.qrHint}>Print this QR code and place it on your vehicle</Text>
+                    <Text style={s.qrHint}>Print this QR code and place it on your asset</Text>
                 </View>
 
                 {/* URL & NFC Card */}
@@ -194,7 +204,7 @@ export default function TagSetupScreen({ route, navigation }: any) {
                             <Text style={s.instructionHeading}>How to Program</Text>
                             <Text style={s.instructionText}>• Use any NFC writer app</Text>
                             <Text style={s.instructionText}>• Write the URL as NDEF record</Text>
-                            <Text style={s.instructionText}>• Place on vehicle windshield</Text>
+                            <Text style={s.instructionText}>• Place securely on your asset</Text>
                         </View>
                     </View>
                     <View style={s.privacyBanner}>
@@ -214,14 +224,14 @@ const createStyles = (theme: any, isDark: boolean) =>
         container: { flex: 1, backgroundColor: theme.background },
         scrollContent: { padding: 16, paddingBottom: 40 },
 
-        vehicleHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 20 },
-        vehicleIconBox: {
+        assetHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 20 },
+        assetIconBox: {
             width: 48, height: 48, borderRadius: 12,
             backgroundColor: "rgba(99,102,241,0.1)",
             justifyContent: "center", alignItems: "center",
         },
-        vehicleName: { fontSize: 20, fontWeight: "700", color: theme.text },
-        vehicleMeta: { fontSize: 13, color: theme.textMuted, marginTop: 2 },
+        assetName: { fontSize: 20, fontWeight: "700", color: theme.text },
+        assetMeta: { fontSize: 13, color: theme.textMuted, marginTop: 2 },
 
         card: {
             backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#FFFFFF",
