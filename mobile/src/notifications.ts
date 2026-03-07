@@ -10,6 +10,7 @@ Notifications.setNotificationHandler({
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
+        // Modern properties for SDK 52+
         shouldShowBanner: true,
         shouldShowList: true,
     }),
