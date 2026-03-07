@@ -110,8 +110,8 @@ export function useNotificationRealtime(onNewNotification?: (n: any) => void) {
             }
         });
 
-        es.addEventListener("error", (event) => {
-            console.warn("[REALTIME] Connection error:", event.message);
+        es.addEventListener("error", (event: any) => {
+            console.warn("[REALTIME] Connection error:", event?.message || "Unknown SSE error");
             es.close();
             // Reconnect logic is handled by react-native-sse automatically or via retry interval
         });

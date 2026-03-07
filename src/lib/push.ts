@@ -43,14 +43,18 @@ export async function sendPushToUser(
         const fcmTokens: string[] = [];
 
         for (const { token } of tokens) {
+            const isUrgent = ["EMERGENCY", "TOW_ALERT", "CALL"].includes((data?.type as string) || "");
+            const soundFile = isUrgent ? "alert-urgent.wav" : "alert-soft.wav";
+
             if (Expo.isExpoPushToken(token)) {
                 expoMessages.push({
                     to: token,
-                    sound: "default" as const,
+                    sound: "default", // Expo handles this, but custom requires mapping in app.json if non-default
                     title,
                     body,
                     data: data || {},
-                    priority: "high" as const,
+                    priority: "high",
+                    badge: 1,
                 });
             } else {
                 // Assume anything else is a native FCM token
