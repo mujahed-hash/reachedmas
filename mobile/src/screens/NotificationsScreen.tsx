@@ -18,6 +18,8 @@ const typeIcons: Record<string, string> = {
     CALL: "📞",
     TOW_ALERT: "🚛",
     EMERGENCY: "⚠️",
+    DELIVERY_KNOCK: "📦",
+    FOUND_REPORT: "🎒",
 };
 
 const typeColors: Record<string, { bg: string; text: string }> = {
@@ -26,6 +28,18 @@ const typeColors: Record<string, { bg: string; text: string }> = {
     CALL: { bg: "rgba(129,140,248,0.1)", text: "#818CF8" },
     TOW_ALERT: { bg: "rgba(245,158,11,0.1)", text: "#F59E0B" },
     EMERGENCY: { bg: "rgba(239,68,68,0.1)", text: "#EF4444" },
+    DELIVERY_KNOCK: { bg: "rgba(99,102,241,0.1)", text: "#6366F1" },
+    FOUND_REPORT: { bg: "rgba(16,185,129,0.1)", text: "#10B981" },
+};
+
+const getAssetIcon = (type: string) => {
+    switch (type) {
+        case "CAR": return "🚗";
+        case "PET": return "🐶";
+        case "HOME": return "🏠";
+        case "PERSON": return "🎒";
+        default: return "📦";
+    }
 };
 
 export default function NotificationsScreen() {
@@ -83,9 +97,10 @@ export default function NotificationsScreen() {
         const type = item.type || "SCAN";
         const colors = typeColors[type] || typeColors.SCAN;
         const icon = typeIcons[type] || "🔔";
-        const vehicleName = item.vehicle
-            ? `${item.vehicle.color} ${item.vehicle.model}`
-            : "";
+
+        // Use generic asset name and type-aware icon
+        const assetName = item.asset?.name;
+        const assetIcon = getAssetIcon(item.asset?.type);
 
         return (
             <TouchableOpacity
@@ -100,12 +115,12 @@ export default function NotificationsScreen() {
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2 }}>
                         <Text style={s.notifTitle}>{item.title}</Text>
                         <View style={[s.typeBadge, { backgroundColor: colors.bg }]}>
-                            <Text style={[s.typeBadgeText, { color: colors.text }]}>{type}</Text>
+                            <Text style={[s.typeBadgeText, { color: colors.text }]}>{type.replace('_', ' ')}</Text>
                         </View>
                     </View>
                     <Text style={s.notifBody} numberOfLines={2}>{item.body}</Text>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 }}>
-                        {vehicleName ? <Text style={s.notifMeta}>🚗 {vehicleName}</Text> : null}
+                        {assetName ? <Text style={s.notifMeta}>{assetIcon} {assetName}</Text> : null}
                         <Text style={s.notifMeta}>{new Date(item.createdAt).toLocaleString()}</Text>
                     </View>
                 </View>

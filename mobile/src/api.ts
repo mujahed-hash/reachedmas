@@ -93,24 +93,24 @@ export async function registerAccount(data: any) {
     });
 }
 
-// ── Vehicles & Tags ──
+// ── Assets & Tags ──
 export async function fetchDashboard() {
     return apiFetch("/api/mobile/dashboard");
 }
 
-export async function fetchVehicleDetail(vehicleId: string) {
-    return apiFetch(`/api/mobile/vehicles/${vehicleId}`);
+export async function fetchAssetDetail(assetId: string) {
+    return apiFetch(`/api/mobile/vehicles/${assetId}`);
 }
 
-export async function addVehicle(data: any) {
+export async function addAsset(data: { name: string; type: string; subtitle?: string; metadata?: any }) {
     return apiFetch("/api/mobile/vehicles", {
         method: "POST",
         body: JSON.stringify(data),
     });
 }
 
-export async function deleteVehicle(vehicleId: string) {
-    return apiFetch(`/api/mobile/vehicles/${vehicleId}`, { method: "DELETE" });
+export async function deleteAsset(assetId: string) {
+    return apiFetch(`/api/mobile/vehicles/${assetId}`, { method: "DELETE" });
 }
 
 export async function updateTagStatus(tagId: string, status: "ACTIVE" | "DISABLED", label?: string) {
@@ -120,10 +120,10 @@ export async function updateTagStatus(tagId: string, status: "ACTIVE" | "DISABLE
     });
 }
 
-export async function toggleTowPrevention(vehicleId: string, enabled: boolean) {
+export async function toggleTowPrevention(assetId: string, enabled: boolean) {
     return apiFetch("/api/mobile/vehicles/tow-prevention", {
         method: "POST",
-        body: JSON.stringify({ vehicleId, enabled }),
+        body: JSON.stringify({ vehicleId: assetId, enabled }),
     });
 }
 
@@ -180,10 +180,10 @@ export async function changePassword(data: any) {
 }
 
 // ── Auto-Replies ──
-export async function addAutoReply(vehicleId: string, label: string, message: string) {
+export async function addAutoReply(assetId: string, label: string, message: string) {
     return apiFetch("/api/mobile/auto-replies", {
         method: "POST",
-        body: JSON.stringify({ vehicleId, label, message }),
+        body: JSON.stringify({ assetId, label, message }),
     });
 }
 

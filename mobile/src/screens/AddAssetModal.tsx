@@ -11,35 +11,43 @@ import {
     Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { addVehicle } from "../api";
+import { addAsset } from "../api";
 import { useAppTheme } from "../ThemeProvider";
 
-export default function AddVehicleModal({ navigation }: any) {
+const ASSET_TYPES = [
+    { id: "CAR", label: "Vehicle", icon: "🚗" },
+    { id: "PET", label: "Pet", icon: "🐶" },
+    { id: "HOME", label: "Home", icon: "🏠" },
+    { id: "PERSON", label: "Person", icon: "🎒" },
+    { id: "ASSET", label: "Other Asset", icon: "📦" },
+];
+
+export default function AddAssetModal({ navigation }: any) {
     const { theme, isDark } = useAppTheme();
-    const [model, setModel] = useState("");
-    const [color, setColor] = useState("");
-    const [licensePlate, setLicensePlate] = useState("");
+    const [name, setName] = useState("");
+    const [type, setType] = useState("CAR");
+    const [subtitle, setSubtitle] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
     const handleSubmit = async () => {
-        if (!model || !color) {
-            setError("Model and color are required");
+        if (!name) {
+            setError("Name is required");
             return;
         }
         setError("");
         setLoading(true);
         try {
-            const result = await addVehicle({ model, color, licensePlate });
+            const result = await addAsset({ name, type, subtitle });
             if (result.success) {
-                setSuccess(result.message || "Vehicle added!");
+                setSuccess(result.message || "Asset added!");
                 setTimeout(() => navigation.goBack(), 1500);
             } else {
-                setError(result.message || "Failed to add vehicle");
+                setError(result.message || "Failed to add asset");
             }
         } catch (err: any) {
-            setError(err.message || "Failed to add vehicle");
+            setError(err.message || "Failed to add asset");
         } finally {
             setLoading(false);
         }
@@ -62,10 +70,10 @@ export default function AddVehicleModal({ navigation }: any) {
                     ) : (
                         <>
                             <View style={s.headerRow}>
-                                <Text style={{ fontSize: 22 }}>🚗</Text>
+                                <Text style={{ fontSize: 22 }}>🛡️</Text>
                                 <View style={{ marginLeft: 10 }}>
-                                    <Text style={s.title}>Add New Vehicle</Text>
-                                    <Text style={s.subtitle}>Add a vehicle to generate a ReachMasked tag code.</Text>
+                                    <Text style={s.title}>Add New Asset</Text>
+                                    <Text style={s.subtitle}>Protect what matters. Select a type and give it a name.</Text>
                                 </View>
                             </View>
 
@@ -75,39 +83,45 @@ export default function AddVehicleModal({ navigation }: any) {
                                 </View>
                             ) : null}
 
+                            <Text style={s.label}>Asset Type</Text>
+                            <View style={s.typeGrid}>
+                                {ASSET_TYPES.map((t) => (
+                                    <TouchableOpacity
+                                        key={t.id}
+                                        style={[
+                                            s.typeCard,
+                                            type === t.id && s.typeCardActive
+                                        ]}
+                                        onPress={() => setType(t.id)}
+                                    >
+                                        <Text style={{ fontSize: 20 }}>{t.icon}</Text>
+                                        <Text style={[s.typeCardText, type === t.id && s.typeCardTextActive]}>
+                                            {t.label}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+
                             <View style={s.field}>
-                                <Text style={s.label}>Vehicle Model *</Text>
+                                <Text style={s.label}>Name *</Text>
                                 <TextInput
                                     style={s.input}
-                                    value={model}
-                                    onChangeText={setModel}
-                                    placeholder="e.g. Toyota Camry, Honda Civic"
+                                    value={name}
+                                    onChangeText={setName}
+                                    placeholder={type === "CAR" ? "e.g. My Toyota Camry" : "e.g. Buddy, Front Door, My Laptop"}
                                     placeholderTextColor={theme.textMuted}
                                 />
                             </View>
 
                             <View style={s.field}>
-                                <Text style={s.label}>Color *</Text>
+                                <Text style={s.label}>Subtitle / Description (Optional)</Text>
                                 <TextInput
                                     style={s.input}
-                                    value={color}
-                                    onChangeText={setColor}
-                                    placeholder="e.g. Silver, Black, White"
+                                    value={subtitle}
+                                    onChangeText={setSubtitle}
+                                    placeholder="e.g. Silver sedan, Golden Retriever, Blue backpack"
                                     placeholderTextColor={theme.textMuted}
                                 />
-                            </View>
-
-                            <View style={s.field}>
-                                <Text style={s.label}>License Plate (Optional)</Text>
-                                <TextInput
-                                    style={s.input}
-                                    value={licensePlate}
-                                    onChangeText={setLicensePlate}
-                                    placeholder="ABC 1234"
-                                    placeholderTextColor={theme.textMuted}
-                                    autoCapitalize="characters"
-                                />
-                                <Text style={s.helpText}>Stored encrypted. Only visible to you.</Text>
                             </View>
 
                             <View style={s.buttonRow}>
@@ -122,7 +136,7 @@ export default function AddVehicleModal({ navigation }: any) {
                                     {loading ? (
                                         <ActivityIndicator color="#fff" size="small" />
                                     ) : (
-                                        <Text style={s.submitText}>Add Vehicle</Text>
+                                        <Text style={s.submitText}>Add Asset</Text>
                                     )}
                                 </TouchableOpacity>
                             </View>
@@ -148,8 +162,26 @@ const createStyles = (theme: any, isDark: boolean) =>
             marginBottom: 16,
         },
         errorText: { color: theme.error, fontSize: 13 },
+        label: { fontSize: 13, fontWeight: "600", color: theme.text, marginBottom: 8 },
+
+        typeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 24 },
+        typeCard: {
+            width: "31%",
+            backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#F1F5F9",
+            borderRadius: 12,
+            paddingVertical: 12,
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: "transparent",
+        },
+        typeCardActive: {
+            borderColor: theme.primary,
+            backgroundColor: isDark ? "rgba(99,102,241,0.1)" : "rgba(99,102,241,0.05)",
+        },
+        typeCardText: { fontSize: 11, color: theme.textMuted, marginTop: 4, fontWeight: "500" },
+        typeCardTextActive: { color: theme.primary, fontWeight: "700" },
+
         field: { marginBottom: 16 },
-        label: { fontSize: 13, fontWeight: "600", color: theme.text, marginBottom: 6 },
         input: {
             backgroundColor: isDark ? "rgba(15,23,42,0.5)" : "#F1F5F9",
             borderRadius: 10,
@@ -159,7 +191,6 @@ const createStyles = (theme: any, isDark: boolean) =>
             fontSize: 15,
             color: theme.text,
         },
-        helpText: { fontSize: 12, color: theme.textMuted, marginTop: 6 },
         buttonRow: { flexDirection: "row", gap: 12, marginTop: 8 },
         cancelBtn: {
             flex: 1,

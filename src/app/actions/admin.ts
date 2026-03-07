@@ -154,7 +154,7 @@ export async function deleteTag(tagId: string): Promise<{ success: boolean; erro
 
 // ========== ASSET ACTIONS ==========
 
-export async function deleteVehicleAdmin(vehicleId: string): Promise<{ success: boolean; error?: string }> {
+export async function deleteAssetAdmin(assetId: string): Promise<{ success: boolean; error?: string }> {
     const { isAdmin } = await verifyAdmin();
 
     if (!isAdmin) {
@@ -163,7 +163,7 @@ export async function deleteVehicleAdmin(vehicleId: string): Promise<{ success: 
 
     try {
         await prisma.asset.delete({
-            where: { id: vehicleId },
+            where: { id: assetId },
         });
 
         revalidatePath("/admin");

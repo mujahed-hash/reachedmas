@@ -11,22 +11,33 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
-import { fetchDashboard, deleteVehicle as apiDeleteVehicle } from "../api";
+import { fetchDashboard, deleteAsset as apiDeleteAsset } from "../api";
 import { useAppTheme } from "../ThemeProvider";
 
-interface Vehicle {
+interface Asset {
     id: string;
-    model: string;
-    color: string;
+    name: string;
+    type: string;
+    subtitle?: string;
     towPreventionMode?: boolean;
     tags: { id: string; shortCode: string; status: string }[];
 }
 
 interface DashboardData {
-    vehicles: Vehicle[];
-    stats: { totalScans: number; activeTags: number; vehicleCount: number };
+    assets: Asset[];
+    stats: { totalScans: number; activeTags: number; assetCount: number };
     recentNotifications: any[];
 }
+
+const getTypeIcon = (type: string) => {
+    switch (type) {
+        case "CAR": return "🚗";
+        case "PET": return "🐶";
+        case "HOME": return "🏠";
+        case "PERSON": return "🎒";
+        default: return "📦";
+    }
+};
 
 export default function DashboardScreen({ navigation }: any) {
     const { theme, isDark } = useAppTheme();
@@ -38,23 +49,18 @@ export default function DashboardScreen({ navigation }: any) {
         try {
             const res = await fetchDashboard();
             setData(res);
-        } catch (err) {
-            console.error("Dashboard load error:", err);
+        } catch (err: any) {
+            console.error("Dashboard load error:", err.message);
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
     }, []);
 
-    useEffect(() => {
-        load();
-    }, [load]);
+    useEffect(() => { load(); }, [load]);
 
     useEffect(() => {
-        const unsubscribe = navigation.addListener("focus", () => {
-            load();
-        });
-        return unsubscribe;
+        return navigation.addListener("focus", load);
     }, [navigation, load]);
 
     const onRefresh = () => {
@@ -62,10 +68,10 @@ export default function DashboardScreen({ navigation }: any) {
         load();
     };
 
-    const handleDeleteVehicle = (vehicleId: string, vehicleName: string) => {
+    const handleDeleteAsset = (assetId: string, assetName: string) => {
         Alert.alert(
-            "Delete Vehicle",
-            `Are you sure you want to delete "${vehicleName}"? This will also delete all associated tags and history.`,
+            "Delete Asset",
+            `Are you sure you want to delete "${assetName}"? This will also delete all associated tags and history.`,
             [
                 { text: "Cancel", style: "cancel" },
                 {
@@ -73,10 +79,10 @@ export default function DashboardScreen({ navigation }: any) {
                     style: "destructive",
                     onPress: async () => {
                         try {
-                            await apiDeleteVehicle(vehicleId);
+                            await apiDeleteAsset(assetId);
                             load();
                         } catch (err) {
-                            Alert.alert("Error", "Failed to delete vehicle");
+                            Alert.alert("Error", "Failed to delete asset");
                         }
                     },
                 },
@@ -98,8 +104,8 @@ export default function DashboardScreen({ navigation }: any) {
         );
     }
 
-    const stats = data?.stats || { totalScans: 0, activeTags: 0, vehicleCount: 0 };
-    const vehicles = data?.vehicles || [];
+    const stats = data?.stats || { totalScans: 0, activeTags: 0, assetCount: 0 };
+    const assets = data?.assets || [];
     const notifications = data?.recentNotifications || [];
     const unreadCount = notifications.filter((n: any) => !n.isRead).length;
 
@@ -112,9 +118,9 @@ export default function DashboardScreen({ navigation }: any) {
                 {/* Stats Grid */}
                 <View style={s.statsRow}>
                     <View style={s.statCard}>
-                        <Text style={s.statIcon}>🚗</Text>
-                        <Text style={s.statValue}>{stats.vehicleCount}</Text>
-                        <Text style={s.statLabel}>Vehicles</Text>
+                        <Text style={s.statIcon}>🛡️</Text>
+                        <Text style={s.statValue}>{stats.assetCount}</Text>
+                        <Text style={s.statLabel}>Assets</Text>
                     </View>
                     <View style={s.statCard}>
                         <Text style={s.statIcon}>👁️</Text>
@@ -128,41 +134,41 @@ export default function DashboardScreen({ navigation }: any) {
                     </View>
                 </View>
 
-                {/* Vehicles Section */}
+                {/* Assets Section */}
                 <View style={s.section}>
                     <View style={s.sectionHeader}>
-                        <Text style={s.sectionTitle}>Your Vehicles</Text>
+                        <Text style={s.sectionTitle}>Your Assets</Text>
                         <TouchableOpacity
                             style={s.addButton}
-                            onPress={() => navigation.navigate("AddVehicleModal")}
+                            onPress={() => navigation.navigate("AddAssetModal")}
                         >
-                            <Text style={s.addButtonText}>+ Add Vehicle</Text>
+                            <Text style={s.addButtonText}>+ Add Asset</Text>
                         </TouchableOpacity>
                     </View>
 
-                    {vehicles.length === 0 ? (
+                    {assets.length === 0 ? (
                         <View style={s.emptyCard}>
-                            <Text style={s.emptyIcon}>🚗</Text>
-                            <Text style={s.emptyText}>No vehicles yet. Add your first vehicle to get started.</Text>
+                            <Text style={s.emptyIcon}>🛡️</Text>
+                            <Text style={s.emptyText}>No assets yet. Add your first asset to get started.</Text>
                         </View>
                     ) : (
-                        vehicles.map((v) => {
-                            const vehicleName = `${v.color} ${v.model}`;
-                            const firstTag = v.tags[0];
+                        assets.map((a) => {
+                            const assetName = a.name;
+                            const firstTag = a.tags[0];
                             return (
-                                <View key={v.id} style={s.vehicleCard}>
-                                    <View style={s.vehicleRow}>
-                                        <View style={s.vehicleIconBox}>
-                                            <Text style={{ fontSize: 22 }}>🚗</Text>
+                                <View key={a.id} style={s.assetCard}>
+                                    <View style={s.assetRow}>
+                                        <View style={s.assetIconBox}>
+                                            <Text style={{ fontSize: 22 }}>{getTypeIcon(a.type)}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
-                                            <Text style={s.vehicleName}>{vehicleName}</Text>
-                                            <Text style={s.vehicleMeta}>
-                                                {v.tags.length} tag{v.tags.length !== 1 ? "s" : ""}
+                                            <Text style={s.assetName}>{assetName}</Text>
+                                            <Text style={s.assetMeta}>
+                                                {a.subtitle || `${a.tags.length} tag${a.tags.length !== 1 ? "s" : ""}`}
                                             </Text>
                                         </View>
                                         <TouchableOpacity
-                                            onPress={() => handleDeleteVehicle(v.id, vehicleName)}
+                                            onPress={() => handleDeleteAsset(a.id, assetName)}
                                             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                                         >
                                             <Text style={{ fontSize: 18, color: theme.error }}>🗑️</Text>
@@ -176,7 +182,7 @@ export default function DashboardScreen({ navigation }: any) {
                                                 <TouchableOpacity
                                                     style={s.tagActionBtn}
                                                     onPress={() =>
-                                                        navigation.navigate("VehicleDetail", { vehicleId: v.id })
+                                                        navigation.navigate("AssetDetail", { assetId: a.id })
                                                     }
                                                 >
                                                     <Text style={s.tagActionText}>History</Text>
@@ -187,7 +193,7 @@ export default function DashboardScreen({ navigation }: any) {
                                                         navigation.navigate("TagSetup", {
                                                             tagId: firstTag.id,
                                                             shortCode: firstTag.shortCode,
-                                                            vehicleName,
+                                                            assetName,
                                                         })
                                                     }
                                                 >
@@ -285,8 +291,8 @@ const createStyles = (theme: any, isDark: boolean) =>
         emptyIcon: { fontSize: 36, marginBottom: 12 },
         emptyText: { color: theme.textMuted, fontSize: 14, textAlign: "center" },
 
-        // Vehicle Card
-        vehicleCard: {
+        // Asset Card
+        assetCard: {
             backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#FFFFFF",
             borderRadius: 14,
             borderWidth: 1,
@@ -294,8 +300,8 @@ const createStyles = (theme: any, isDark: boolean) =>
             padding: 16,
             marginBottom: 10,
         },
-        vehicleRow: { flexDirection: "row", alignItems: "center" },
-        vehicleIconBox: {
+        assetRow: { flexDirection: "row", alignItems: "center" },
+        assetIconBox: {
             width: 44,
             height: 44,
             borderRadius: 12,
@@ -304,8 +310,8 @@ const createStyles = (theme: any, isDark: boolean) =>
             alignItems: "center",
             marginRight: 12,
         },
-        vehicleName: { fontSize: 16, fontWeight: "600", color: theme.text },
-        vehicleMeta: { fontSize: 13, color: theme.textMuted, marginTop: 2 },
+        assetName: { fontSize: 16, fontWeight: "600", color: theme.text },
+        assetMeta: { fontSize: 13, color: theme.textMuted, marginTop: 2 },
 
         // Tag Section
         tagSection: {

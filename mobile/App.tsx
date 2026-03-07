@@ -12,9 +12,10 @@ import RegisterScreen from "./src/screens/RegisterScreen";
 import DashboardScreen from "./src/screens/DashboardScreen";
 import NotificationsScreen from "./src/screens/NotificationsScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
-import VehicleDetailScreen from "./src/screens/VehicleDetailScreen";
+import FamilyScreen from "./src/screens/FamilyScreen";
+import AssetDetailScreen from "./src/screens/AssetDetailScreen";
 import TagSetupScreen from "./src/screens/TagSetupScreen";
-import AddVehicleModal from "./src/screens/AddVehicleModal";
+import AddAssetModal from "./src/screens/AddAssetModal";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,6 +45,7 @@ function MainTabs() {
         tabBarIcon: ({ focused }) => {
           const icons: Record<string, string> = {
             Dashboard: "🏠",
+            Family: "👨‍👩‍👧",
             Notifications: "🔔",
             Settings: "⚙️",
           };
@@ -55,7 +57,8 @@ function MainTabs() {
         },
       })}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: "Dashboard", tabBarLabel: "Home" }} />
+      <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: "ReachMasked", tabBarLabel: "Home" }} />
+      <Tab.Screen name="Family" component={FamilyScreen} options={{ title: "Family Hub", tabBarLabel: "Family" }} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ title: "Alerts", tabBarLabel: "Alerts" }} />
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: "Settings", tabBarLabel: "Settings" }} />
     </Tab.Navigator>
@@ -74,12 +77,12 @@ function MainStack() {
       }}
     >
       <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
-      <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} options={{ title: "Vehicle Timeline" }} />
+      <Stack.Screen name="AssetDetail" component={AssetDetailScreen} options={{ title: "Interaction History" }} />
       <Stack.Screen name="TagSetup" component={TagSetupScreen} options={{ title: "Tag Setup" }} />
       <Stack.Screen
-        name="AddVehicleModal"
-        component={AddVehicleModal}
-        options={{ presentation: 'modal', title: "Add Vehicle" }}
+        name="AddAssetModal"
+        component={AddAssetModal}
+        options={{ presentation: 'modal', title: "Add New Asset" }}
       />
     </Stack.Navigator>
   );

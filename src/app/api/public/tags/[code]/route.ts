@@ -11,11 +11,11 @@ export async function GET(
         const tag = await prisma.tag.findUnique({
             where: { shortCode: code },
             include: {
-                vehicle: {
+                asset: {
                     select: {
                         publicId: true,
-                        model: true,
-                        color: true,
+                        type: true,
+                        name: true,
                         isActive: true,
                     },
                 },
@@ -29,9 +29,9 @@ export async function GET(
             );
         }
 
-        if (!tag.vehicle.isActive) {
+        if (!tag.asset.isActive) {
             return NextResponse.json(
-                { error: "Vehicle is currently not accepting messages" },
+                { error: "Asset is currently not accepting messages" },
                 { status: 403 }
             );
         }
@@ -46,15 +46,16 @@ export async function GET(
             },
         });
 
-        // Return public vehicle info (NEVER expose internal IDs)
+        // Return public asset info (NEVER expose internal IDs)
         return NextResponse.json({
             tag: {
                 publicId: tag.publicId,
                 shortCode: tag.shortCode,
             },
-            vehicle: {
-                publicId: tag.vehicle.publicId,
-                alias: `${tag.vehicle.color} ${tag.vehicle.model}`,
+            asset: {
+                publicId: tag.asset.publicId,
+                type: tag.asset.type,
+                name: tag.asset.name,
             },
         });
     } catch (error) {

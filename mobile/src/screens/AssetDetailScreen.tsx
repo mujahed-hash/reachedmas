@@ -8,12 +8,11 @@ import {
     TouchableOpacity,
     Alert,
     ActivityIndicator,
-    Switch,
     TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-    fetchVehicleDetail,
+    fetchAssetDetail,
     addAutoReply,
     toggleAutoReply as apiToggleAutoReply,
     deleteAutoReply as apiDeleteAutoReply,
@@ -26,22 +25,37 @@ const actionIcons: Record<string, string> = {
     CONTACT_CALL: "📞",
     TOW_ALERT: "🚛",
     EMERGENCY: "⚠️",
+    DELIVERY_KNOCK: "📦",
+    FOUND_REPORT: "🎒",
 };
+
 const actionLabels: Record<string, string> = {
     SCAN_VIEW: "Tag Scanned",
     CONTACT_SMS: "Message Sent",
     CONTACT_CALL: "Call Initiated",
     TOW_ALERT: "Tow Alert",
     EMERGENCY: "Emergency",
+    DELIVERY_KNOCK: "Delivery / Knock",
+    FOUND_REPORT: "Found Report",
 };
 
-export default function VehicleDetailScreen({ route, navigation }: any) {
-    const { vehicleId } = route.params;
+const getTypeIcon = (type: string) => {
+    switch (type) {
+        case "CAR": return "🚗";
+        case "PET": return "🐶";
+        case "HOME": return "🏠";
+        case "PERSON": return "🎒";
+        default: return "📦";
+    }
+};
+
+export default function AssetDetailScreen({ route, navigation }: any) {
+    const { assetId } = route.params;
     const { theme, isDark } = useAppTheme();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    // Add auto-reply form
+
     const [showAddReply, setShowAddReply] = useState(false);
     const [replyLabel, setReplyLabel] = useState("");
     const [replyMessage, setReplyMessage] = useState("");
@@ -49,20 +63,20 @@ export default function VehicleDetailScreen({ route, navigation }: any) {
 
     const load = useCallback(async () => {
         try {
-            const res = await fetchVehicleDetail(vehicleId);
+            const res = await fetchAssetDetail(assetId);
             setData(res);
-            if (res.vehicle) {
+            if (res.asset) {
                 navigation.setOptions({
-                    title: `${res.vehicle.color} ${res.vehicle.model}`,
+                    title: res.asset.name,
                 });
             }
         } catch (err) {
-            console.error("Vehicle detail load error:", err);
+            console.error("Asset detail load error:", err);
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
-    }, [vehicleId]);
+    }, [assetId]);
 
     useEffect(() => { load(); }, [load]);
 
@@ -73,7 +87,7 @@ export default function VehicleDetailScreen({ route, navigation }: any) {
         }
         setAddingReply(true);
         try {
-            await addAutoReply(vehicleId, replyLabel.trim(), replyMessage.trim());
+            await addAutoReply(assetId, replyLabel.trim(), replyMessage.trim());
             setReplyLabel("");
             setReplyMessage("");
             setShowAddReply(false);
@@ -122,7 +136,7 @@ export default function VehicleDetailScreen({ route, navigation }: any) {
         );
     }
 
-    const vehicle = data?.vehicle;
+    const asset = data?.asset;
     const autoReplies = data?.autoReplies || [];
     const interactions = data?.interactions || [];
 
@@ -132,15 +146,15 @@ export default function VehicleDetailScreen({ route, navigation }: any) {
                 contentContainerStyle={s.scrollContent}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={theme.primary} />}
             >
-                {/* Vehicle Header */}
-                <View style={s.vehicleHeader}>
-                    <View style={s.vehicleIconBox}>
-                        <Text style={{ fontSize: 24 }}>🚗</Text>
+                {/* Asset Header */}
+                <View style={s.assetHeader}>
+                    <View style={s.assetIconBox}>
+                        <Text style={{ fontSize: 24 }}>{getTypeIcon(asset?.type)}</Text>
                     </View>
                     <View>
-                        <Text style={s.vehicleName}>{vehicle?.color} {vehicle?.model}</Text>
-                        <Text style={s.vehicleMeta}>
-                            {vehicle?.tags?.length || 0} tag(s) · {interactions.length} interaction(s)
+                        <Text style={s.assetName}>{asset?.name}</Text>
+                        <Text style={s.assetMeta}>
+                            {asset?.tags?.length || 0} tag(s) · {interactions.length} interaction(s)
                         </Text>
                     </View>
                 </View>
@@ -283,6 +297,8 @@ function getActionColor(type: string, isDark: boolean) {
         CONTACT_CALL: "rgba(129,140,248,0.1)",
         TOW_ALERT: "rgba(245,158,11,0.1)",
         EMERGENCY: "rgba(239,68,68,0.1)",
+        DELIVERY_KNOCK: "rgba(99,102,241,0.1)",
+        FOUND_REPORT: "rgba(16,185,129,0.1)",
     };
     return colors[type] || (isDark ? "rgba(255,255,255,0.06)" : "#F1F5F9");
 }
@@ -292,14 +308,14 @@ const createStyles = (theme: any, isDark: boolean) =>
         container: { flex: 1, backgroundColor: theme.background },
         scrollContent: { padding: 16, paddingBottom: 40 },
 
-        vehicleHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 24 },
-        vehicleIconBox: {
+        assetHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 24 },
+        assetIconBox: {
             width: 50, height: 50, borderRadius: 14,
             backgroundColor: "rgba(99,102,241,0.1)",
             justifyContent: "center", alignItems: "center",
         },
-        vehicleName: { fontSize: 20, fontWeight: "700", color: theme.text },
-        vehicleMeta: { fontSize: 13, color: theme.textMuted, marginTop: 2 },
+        assetName: { fontSize: 20, fontWeight: "700", color: theme.text },
+        assetMeta: { fontSize: 13, color: theme.textMuted, marginTop: 2 },
 
         section: { marginBottom: 24 },
         sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
