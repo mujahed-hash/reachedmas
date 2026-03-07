@@ -9,6 +9,18 @@ import {
     Switch,
     Alert,
 } from "react-native";
+import { 
+    QrCode, 
+    Link, 
+    Settings, 
+    Check, 
+    Copy, 
+    Car, 
+    Dog, 
+    Home, 
+    User, 
+    Package 
+} from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import QRCode from "react-native-qrcode-svg";
 import * as Clipboard from "expo-clipboard";
@@ -87,13 +99,13 @@ export default function TagSetupScreen({ route, navigation }: any) {
         );
     }
 
-    const getTypeIcon = (type: string) => {
+    const getTypeIcon = (type: string, size = 24, color?: string) => {
         switch (type) {
-            case "CAR": return "🚗";
-            case "PET": return "🐶";
-            case "HOME": return "🏠";
-            case "PERSON": return "🎒";
-            default: return "📦";
+            case "CAR": return <Car size={size} color={color} />;
+            case "PET": return <Dog size={size} color={color} />;
+            case "HOME": return <Home size={size} color={color} />;
+            case "PERSON": return <User size={size} color={color} />;
+            default: return <Package size={size} color={color} />;
         }
     };
 
@@ -103,7 +115,7 @@ export default function TagSetupScreen({ route, navigation }: any) {
                 {/* Asset Info */}
                 <View style={s.assetHeader}>
                     <View style={s.assetIconBox}>
-                        <Text style={{ fontSize: 24 }}>{getTypeIcon(assetType)}</Text>
+                        {getTypeIcon(assetType, 24, theme.primary)}
                     </View>
                     <View>
                         <Text style={s.assetName}>{assetName || "Asset"}</Text>
@@ -114,7 +126,7 @@ export default function TagSetupScreen({ route, navigation }: any) {
                 {/* QR Code Card */}
                 <View style={s.card}>
                     <View style={s.cardHeader}>
-                        <Text style={{ fontSize: 18 }}>📱</Text>
+                        <QrCode size={20} color={theme.text} />
                         <Text style={s.cardTitle}>QR Code</Text>
                     </View>
                     <View style={s.qrContainer}>
@@ -131,7 +143,7 @@ export default function TagSetupScreen({ route, navigation }: any) {
                 {/* URL & NFC Card */}
                 <View style={s.card}>
                     <View style={s.cardHeader}>
-                        <Text style={{ fontSize: 18 }}>🔗</Text>
+                        <Link size={20} color={theme.text} />
                         <Text style={s.cardTitle}>NFC & URL</Text>
                     </View>
 
@@ -139,7 +151,10 @@ export default function TagSetupScreen({ route, navigation }: any) {
                     <View style={s.codeRow}>
                         <Text style={s.codeText} numberOfLines={1}>{tagURL}</Text>
                         <TouchableOpacity style={s.copyBtn} onPress={() => handleCopy(tagURL)}>
-                            <Text style={s.copyBtnText}>{copied ? "✓" : "Copy"}</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                                {copied ? <Check size={14} color="#fff" /> : <Copy size={14} color="#fff" />}
+                                <Text style={s.copyBtnText}>{copied ? "Copied" : "Copy"}</Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
 
@@ -159,7 +174,10 @@ export default function TagSetupScreen({ route, navigation }: any) {
 
                 {/* Tag Controls */}
                 <View style={s.card}>
-                    <Text style={s.cardTitle}>Tag Controls</Text>
+                    <View style={s.cardHeader}>
+                        <Settings size={20} color={theme.text} />
+                        <Text style={s.cardTitle}>Tag Controls</Text>
+                    </View>
                     <View style={s.controlRow}>
                         <View>
                             <Text style={s.controlLabel}>Tag Status</Text>

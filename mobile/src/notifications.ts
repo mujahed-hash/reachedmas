@@ -66,7 +66,7 @@ async function registerForPushNotifications() {
         // Get project ID from app config
         const projectId = Constants.expoConfig?.extra?.eas?.projectId;
         if (!projectId) {
-            console.warn("[PUSH] No projectId configured in app.json. Run `eas project:init` to set one.");
+            console.warn("[PUSH] No projectId configured in app.json. Skipping push registration.");
             return;
         }
 
@@ -91,9 +91,15 @@ async function registerForPushNotifications() {
             });
         }
     } catch (error: any) {
-        // Gracefully handle Expo Go limitation (SDK 53+)
-        if (error?.message?.includes("projectId") || error?.message?.includes("not supported")) {
-            console.warn("[PUSH] Push notifications are not supported in Expo Go. Use a development build for full functionality.");
+        const msg = error?.message || "";
+        // Gracefully handle common development limitations
+        if (
+            msg.includes("projectId") || 
+            msg.includes("not supported") || 
+            msg.includes("entitlement") || 
+            msg.includes("aps-environment")
+        ) {
+            console.log("[PUSH] Push notifications unavailable in this build (likely missing entitlements for development). Realtime alerts will still work via SSE.");
         } else {
             console.error("[PUSH] Error registering for push notifications:", error);
         }

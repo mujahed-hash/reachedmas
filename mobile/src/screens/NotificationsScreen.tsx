@@ -8,18 +8,31 @@ import {
     TouchableOpacity,
     ActivityIndicator,
 } from "react-native";
+import { 
+    Bell, 
+    MessageSquare, 
+    Phone, 
+    Truck, 
+    AlertTriangle, 
+    Package, 
+    Search,
+    CheckCircle2
+} from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchNotifications, markNotificationRead, markAllNotificationsRead } from "../api";
 import { useAppTheme } from "../ThemeProvider";
 
-const typeIcons: Record<string, string> = {
-    SCAN: "👁️",
-    MESSAGE: "💬",
-    CALL: "📞",
-    TOW_ALERT: "🚛",
-    EMERGENCY: "⚠️",
-    DELIVERY_KNOCK: "📦",
-    FOUND_REPORT: "🎒",
+const getNotificationIcon = (type: string, size = 18, color?: string) => {
+    switch (type) {
+        case "SCAN": return <Search size={size} color={color} />;
+        case "MESSAGE": return <MessageSquare size={size} color={color} />;
+        case "CALL": return <Phone size={size} color={color} />;
+        case "TOW_ALERT": return <Truck size={size} color={color} />;
+        case "EMERGENCY": return <AlertTriangle size={size} color={color} />;
+        case "DELIVERY_KNOCK": return <Package size={size} color={color} />;
+        case "FOUND_REPORT": return <Search size={size} color={color} />;
+        default: return <Bell size={size} color={color} />;
+    }
 };
 
 const typeColors: Record<string, { bg: string; text: string }> = {
@@ -32,17 +45,14 @@ const typeColors: Record<string, { bg: string; text: string }> = {
     FOUND_REPORT: { bg: "rgba(16,185,129,0.1)", text: "#10B981" },
 };
 
-const getAssetIcon = (type: string) => {
+const getAssetIcon = (type: string, size = 12, color?: string) => {
     switch (type) {
-        case "CAR": return "🚗";
-        case "PET": return "🐶";
-        case "HOME": return "🏠";
-        case "PERSON": return "🎒";
-        default: return "📦";
+        case "CAR": return <Search size={size} color={color} />; // We can use more specific ones if needed, but keeping it simple
+        default: return <Package size={size} color={color} />;
     }
 };
 
-export default function NotificationsScreen({ onRead }: { onRead?: () => void } = {}) {
+export default function NotificationsScreen({ navigation, onRead }: any) {
     const { theme, isDark } = useAppTheme();
     const [notifications, setNotifications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,6 +71,14 @@ export default function NotificationsScreen({ onRead }: { onRead?: () => void } 
     }, []);
 
     useEffect(() => { load(); }, [load]);
+    
+    // Fix: Refresh when the screen comes into focus
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => {
+            load();
+        });
+        return unsubscribe;
+    }, [navigation, load]);
 
     const handleMarkRead = async (id: string) => {
         try {
@@ -97,11 +115,10 @@ export default function NotificationsScreen({ onRead }: { onRead?: () => void } 
     const renderItem = ({ item }: { item: any }) => {
         const type = item.type || "SCAN";
         const colors = typeColors[type] || typeColors.SCAN;
-        const icon = typeIcons[type] || "🔔";
+        const icon = getNotificationIcon(type, 18, colors.text);
 
         // Use generic asset name and type-aware icon
         const assetName = item.asset?.name;
-        const assetIcon = getAssetIcon(item.asset?.type);
 
         return (
             <TouchableOpacity
@@ -110,7 +127,7 @@ export default function NotificationsScreen({ onRead }: { onRead?: () => void } 
                 activeOpacity={0.7}
             >
                 <View style={[s.notifIcon, { backgroundColor: colors.bg }]}>
-                    <Text style={{ fontSize: 18 }}>{icon}</Text>
+                    {icon}
                 </View>
                 <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2 }}>
@@ -121,7 +138,12 @@ export default function NotificationsScreen({ onRead }: { onRead?: () => void } 
                     </View>
                     <Text style={s.notifBody} numberOfLines={2}>{item.body}</Text>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 }}>
-                        {assetName ? <Text style={s.notifMeta}>{assetIcon} {assetName}</Text> : null}
+                        {assetName ? (
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                                <Package size={12} color={theme.textMuted} />
+                                <Text style={s.notifMeta}>{assetName}</Text>
+                            </View>
+                        ) : null}
                         <Text style={s.notifMeta}>{new Date(item.createdAt).toLocaleString()}</Text>
                     </View>
                 </View>
@@ -151,7 +173,7 @@ export default function NotificationsScreen({ onRead }: { onRead?: () => void } 
                 }
                 ListEmptyComponent={
                     <View style={s.emptyContainer}>
-                        <Text style={{ fontSize: 36, marginBottom: 12 }}>🔔</Text>
+                        <Bell size={48} color={theme.textMuted} style={{ marginBottom: 16, opacity: 0.5 }} />
                         <Text style={s.emptyText}>No notifications yet</Text>
                     </View>
                 }

@@ -9,6 +9,21 @@ import {
     Alert,
     ActivityIndicator,
 } from "react-native";
+import { useNotificationRealtime } from "../useNotificationRealtime";
+import { 
+    Shield, 
+    Eye, 
+    Paperclip, 
+    Car, 
+    Dog, 
+    Home, 
+    User, 
+    Package, 
+    Trash2, 
+    History, 
+    QrCode, 
+    ExternalLink 
+} from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 import { fetchDashboard, deleteAsset as apiDeleteAsset } from "../api";
@@ -29,13 +44,13 @@ interface DashboardData {
     recentNotifications: any[];
 }
 
-const getTypeIcon = (type: string) => {
+const getTypeIcon = (type: string, size = 22, color?: string) => {
     switch (type) {
-        case "CAR": return "🚗";
-        case "PET": return "🐶";
-        case "HOME": return "🏠";
-        case "PERSON": return "🎒";
-        default: return "📦";
+        case "CAR": return <Car size={size} color={color} />;
+        case "PET": return <Dog size={size} color={color} />;
+        case "HOME": return <Home size={size} color={color} />;
+        case "PERSON": return <User size={size} color={color} />;
+        default: return <Package size={size} color={color} />;
     }
 };
 
@@ -58,10 +73,16 @@ export default function DashboardScreen({ navigation }: any) {
     }, []);
 
     useEffect(() => { load(); }, [load]);
-
+ 
     useEffect(() => {
-        return navigation.addListener("focus", load);
+        const unsubscribeFocus = navigation.addListener("focus", load);
+        return unsubscribeFocus;
     }, [navigation, load]);
+
+    // Refresh when a new notification arrives via SSE
+    useNotificationRealtime(() => {
+        load();
+    });
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -118,17 +139,17 @@ export default function DashboardScreen({ navigation }: any) {
                 {/* Stats Grid */}
                 <View style={s.statsRow}>
                     <View style={s.statCard}>
-                        <Text style={s.statIcon}>🛡️</Text>
+                        <Shield size={20} color={theme.primary} style={{ marginBottom: 6 }} />
                         <Text style={s.statValue}>{stats.assetCount}</Text>
                         <Text style={s.statLabel}>Assets</Text>
                     </View>
                     <View style={s.statCard}>
-                        <Text style={s.statIcon}>👁️</Text>
+                        <Eye size={20} color={theme.primary} style={{ marginBottom: 6 }} />
                         <Text style={s.statValue}>{stats.totalScans}</Text>
                         <Text style={s.statLabel}>Total Scans</Text>
                     </View>
                     <View style={s.statCard}>
-                        <Text style={s.statIcon}>📎</Text>
+                        <Paperclip size={20} color={theme.primary} style={{ marginBottom: 6 }} />
                         <Text style={s.statValue}>{stats.activeTags}</Text>
                         <Text style={s.statLabel}>Active Tags</Text>
                     </View>
@@ -148,7 +169,7 @@ export default function DashboardScreen({ navigation }: any) {
 
                     {assets.length === 0 ? (
                         <View style={s.emptyCard}>
-                            <Text style={s.emptyIcon}>🛡️</Text>
+                            <Shield size={40} color={theme.textMuted} style={{ marginBottom: 16 }} />
                             <Text style={s.emptyText}>No assets yet. Add your first asset to get started.</Text>
                         </View>
                     ) : (
@@ -159,7 +180,7 @@ export default function DashboardScreen({ navigation }: any) {
                                 <View key={a.id} style={s.assetCard}>
                                     <View style={s.assetRow}>
                                         <View style={s.assetIconBox}>
-                                            <Text style={{ fontSize: 22 }}>{getTypeIcon(a.type)}</Text>
+                                            {getTypeIcon(a.type, 24, theme.primary)}
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={s.assetName}>{assetName}</Text>
@@ -171,7 +192,7 @@ export default function DashboardScreen({ navigation }: any) {
                                             onPress={() => handleDeleteAsset(a.id, assetName)}
                                             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                                         >
-                                            <Text style={{ fontSize: 18, color: theme.error }}>🗑️</Text>
+                                            <Trash2 size={20} color={theme.error} />
                                         </TouchableOpacity>
                                     </View>
 
@@ -185,7 +206,10 @@ export default function DashboardScreen({ navigation }: any) {
                                                         navigation.navigate("AssetDetail", { assetId: a.id })
                                                     }
                                                 >
-                                                    <Text style={s.tagActionText}>History</Text>
+                                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                                                        <History size={14} color={theme.text} />
+                                                        <Text style={s.tagActionText}>History</Text>
+                                                    </View>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
                                                     style={s.tagActionBtn}
@@ -199,13 +223,19 @@ export default function DashboardScreen({ navigation }: any) {
                                                         })
                                                     }
                                                 >
-                                                    <Text style={s.tagActionText}>📱 QR Code</Text>
+                                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                                                        <QrCode size={14} color={theme.text} />
+                                                        <Text style={s.tagActionText}>Setup</Text>
+                                                    </View>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
                                                     style={[s.tagActionBtn, { backgroundColor: "transparent" }]}
                                                     onPress={() => handlePreview(firstTag.shortCode)}
                                                 >
-                                                    <Text style={[s.tagActionText, { color: theme.textMuted }]}>Preview</Text>
+                                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                                                        <ExternalLink size={14} color={theme.textMuted} />
+                                                        <Text style={[s.tagActionText, { color: theme.textMuted }]}>Preview</Text>
+                                                    </View>
                                                 </TouchableOpacity>
                                             </View>
                                         </View>

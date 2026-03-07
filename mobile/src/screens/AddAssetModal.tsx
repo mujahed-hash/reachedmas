@@ -10,16 +10,25 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from "react-native";
+import { 
+    Car, 
+    Dog, 
+    Home, 
+    User, 
+    Package, 
+    ShieldCheck, 
+    CircleCheck
+} from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { addAsset } from "../api";
 import { useAppTheme } from "../ThemeProvider";
 
 const ASSET_TYPES = [
-    { id: "CAR", label: "Vehicle", icon: "🚗" },
-    { id: "PET", label: "Pet", icon: "🐶" },
-    { id: "HOME", label: "Home", icon: "🏠" },
-    { id: "PERSON", label: "Person", icon: "🎒" },
-    { id: "ASSET", label: "Other Asset", icon: "📦" },
+    { id: "CAR", label: "Vehicle", icon: Car },
+    { id: "PET", label: "Pet", icon: Dog },
+    { id: "HOME", label: "Home", icon: Home },
+    { id: "PERSON", label: "Person", icon: User },
+    { id: "ASSET", label: "Other Asset", icon: Package },
 ];
 
 export default function AddAssetModal({ navigation }: any) {
@@ -64,13 +73,13 @@ export default function AddAssetModal({ navigation }: any) {
                 <ScrollView contentContainerStyle={s.scrollContent} keyboardShouldPersistTaps="handled">
                     {success ? (
                         <View style={s.successBox}>
-                            <Text style={{ fontSize: 48, marginBottom: 16 }}>✅</Text>
+                            <CircleCheck size={64} color={theme.success} style={{ marginBottom: 16 }} />
                             <Text style={s.successText}>{success}</Text>
                         </View>
                     ) : (
                         <>
                             <View style={s.headerRow}>
-                                <Text style={{ fontSize: 22 }}>🛡️</Text>
+                                <ShieldCheck size={28} color={theme.primary} />
                                 <View style={{ marginLeft: 10 }}>
                                     <Text style={s.title}>Add New Asset</Text>
                                     <Text style={s.subtitle}>Protect what matters. Select a type and give it a name.</Text>
@@ -94,7 +103,11 @@ export default function AddAssetModal({ navigation }: any) {
                                         ]}
                                         onPress={() => setType(t.id)}
                                     >
-                                        <Text style={{ fontSize: 20 }}>{t.icon}</Text>
+                                        <t.icon 
+                                            size={24} 
+                                            color={type === t.id ? theme.primary : theme.textMuted} 
+                                            strokeWidth={type === t.id ? 2.5 : 2}
+                                        />
                                         <Text style={[s.typeCardText, type === t.id && s.typeCardTextActive]}>
                                             {t.label}
                                         </Text>
