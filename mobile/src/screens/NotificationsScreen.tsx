@@ -42,7 +42,7 @@ const getAssetIcon = (type: string) => {
     }
 };
 
-export default function NotificationsScreen() {
+export default function NotificationsScreen({ onRead }: { onRead?: () => void } = {}) {
     const { theme, isDark } = useAppTheme();
     const [notifications, setNotifications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -77,6 +77,7 @@ export default function NotificationsScreen() {
         try {
             await markAllNotificationsRead();
             setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+            onRead?.();
         } catch (err) {
             console.error("Mark all read error:", err);
         }

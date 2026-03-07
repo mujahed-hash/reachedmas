@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { StatusBar, ActivityIndicator, View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AuthProvider, useAuth } from "./src/auth";
 import { usePushNotifications } from "./src/notifications";
+import { useNotificationPolling } from "./src/useNotificationPolling";
 import { ThemeProvider, useAppTheme } from "./src/ThemeProvider";
 
 import LoginScreen from "./src/screens/LoginScreen";
@@ -23,6 +24,11 @@ const Tab = createBottomTabNavigator();
 function MainTabs() {
   usePushNotifications();
   const { theme, isDark } = useAppTheme();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useNotificationPolling(() => {
+    setUnreadCount((prev) => prev + 1);
+  });
 
   return (
     <Tab.Navigator
@@ -49,17 +55,48 @@ function MainTabs() {
             Notifications: "🔔",
             Settings: "⚙️",
           };
+          const isNotifications = route.name === "Notifications";
           return (
-            <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>
-              {icons[route.name] || "📱"}
-            </Text>
+            <View>
+              <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>
+                {icons[route.name] || "📱"}
+              </Text>
+              {isNotifications && unreadCount > 0 && (
+                <View style={{
+                  position: "absolute",
+                  top: -4,
+                  right: -8,
+                  backgroundColor: "#EF4444",
+                  borderRadius: 10,
+                  minWidth: 18,
+                  height: 18,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 3,
+                }}>
+                  <Text style={{ color: "#fff", fontSize: 10, fontWeight: "800" }}>
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Text>
+                </View>
+              )}
+            </View>
           );
         },
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: "ReachMasked", tabBarLabel: "Home" }} />
       <Tab.Screen name="Family" component={FamilyScreen} options={{ title: "Family Hub", tabBarLabel: "Family" }} />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ title: "Alerts", tabBarLabel: "Alerts" }} />
+      <Tab.Screen
+        name="Notifications"
+        options={{ title: "Alerts", tabBarLabel: "Alerts" }}
+      >
+        {(props) => (
+          <NotificationsScreen
+            {...props}
+            onRead={() => setUnreadCount(0)}
+          />
+        )}
+      </Tab.Screen>
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: "Settings", tabBarLabel: "Settings" }} />
     </Tab.Navigator>
   );
