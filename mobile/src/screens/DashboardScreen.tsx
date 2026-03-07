@@ -80,9 +80,11 @@ export default function DashboardScreen({ navigation }: any) {
     }, [navigation, load]);
 
     // Refresh when a new notification arrives via SSE
-    useNotificationRealtime(() => {
+    const handleNewNotification = useCallback(() => {
         load();
-    });
+    }, [load]);
+
+    useNotificationRealtime(handleNewNotification);
 
     const onRefresh = () => {
         setRefreshing(true);

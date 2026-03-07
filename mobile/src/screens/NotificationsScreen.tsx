@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
 } from "react-native";
+import { useNotificationRealtime } from "../useNotificationRealtime";
 import { 
     Bell, 
     MessageSquare, 
@@ -72,13 +73,19 @@ export default function NotificationsScreen({ navigation, onRead }: any) {
 
     useEffect(() => { load(); }, [load]);
     
-    // Fix: Refresh when the screen comes into focus
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
             load();
         });
         return unsubscribe;
     }, [navigation, load]);
+
+    // Refresh when a new notification arrives via SSE
+    const handleNewNotification = useCallback(() => {
+        load();
+    }, [load]);
+
+    useNotificationRealtime(handleNewNotification);
 
     const handleMarkRead = async (id: string) => {
         try {
