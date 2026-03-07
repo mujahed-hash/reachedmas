@@ -17,20 +17,36 @@ export async function GET(req: NextRequest) {
             orderBy: { createdAt: "desc" },
             take: 50,
             include: {
-                vehicle: {
-                    select: { model: true, color: true },
-                },
-                tag: {
-                    select: { shortCode: true },
-                },
+                interaction: {
+                    include: {
+                        tag: {
+                            include: {
+                                asset: {
+                                    select: { name: true, type: true },
+                                }
+                            }
+                        }
+                    }
+                }
             },
         });
 
-        const unreadCount = notifications.filter(n => !n.isRead).length;
+        const formattedNotifications = notifications.map(n => ({
+            id: n.id,
+            title: n.title,
+            body: n.body,
+            type: n.type,
+            isRead: n.isRead,
+            createdAt: n.createdAt,
+            asset: n.interaction?.tag?.asset || null,
+            tagCode: n.interaction?.tag?.shortCode || null,
+        }));
+
+        const unreadCount = formattedNotifications.filter(n => !n.isRead).length;
 
         return NextResponse.json({
             success: true,
-            notifications,
+            notifications: formattedNotifications,
             unreadCount,
         });
     } catch (error) {
