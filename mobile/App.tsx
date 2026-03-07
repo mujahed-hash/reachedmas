@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AuthProvider, useAuth } from "./src/auth";
 import { usePushNotifications } from "./src/notifications";
-import { useNotificationPolling } from "./src/useNotificationPolling";
+import { useNotificationRealtime } from "./src/useNotificationRealtime";
 import { ThemeProvider, useAppTheme } from "./src/ThemeProvider";
 
 import LoginScreen from "./src/screens/LoginScreen";
@@ -26,7 +26,7 @@ function MainTabs() {
   const { theme, isDark } = useAppTheme();
   const [unreadCount, setUnreadCount] = useState(0);
 
-  useNotificationPolling(() => {
+  useNotificationRealtime(() => {
     setUnreadCount((prev) => prev + 1);
   });
 
