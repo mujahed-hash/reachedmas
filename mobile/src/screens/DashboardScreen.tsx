@@ -260,13 +260,26 @@ export default function DashboardScreen({ navigation }: any) {
                             )}
                         </View>
                         {notifications.slice(0, 5).map((n: any, i: number) => (
-                            <View key={n.id || i} style={[s.notifCard, !n.isRead && s.notifUnread]}>
-                                <Text style={s.notifTitle}>{n.title}</Text>
-                                <Text style={s.notifBody}>{n.body}</Text>
-                                <Text style={s.notifTime}>
-                                    {new Date(n.createdAt).toLocaleString()}
-                                </Text>
-                            </View>
+                            <TouchableOpacity 
+                                key={n.id || i} 
+                                style={[s.notifCard, !n.isRead && s.notifUnread]}
+                                onPress={() => navigation.navigate("Alerts")}
+                                activeOpacity={0.7}
+                            >
+                                {!n.isRead && <View style={s.unreadAccent} />}
+                                <View style={{ flex: 1, paddingRight: !n.isRead ? 40 : 0 }}>
+                                    <Text style={s.notifTitle}>{n.title}</Text>
+                                    <Text style={s.notifBody} numberOfLines={2}>{n.body}</Text>
+                                    <Text style={s.notifTime}>
+                                        {new Date(n.createdAt).toLocaleString()}
+                                    </Text>
+                                </View>
+                                {!n.isRead && (
+                                    <View style={s.newPill}>
+                                        <Text style={s.newPillText}>NEW</Text>
+                                    </View>
+                                )}
+                            </TouchableOpacity>
                         ))}
                     </View>
                 )}
@@ -379,8 +392,23 @@ const createStyles = (theme: any, isDark: boolean) =>
             marginBottom: 8,
         },
         notifUnread: {
-            borderLeftWidth: 3,
-            borderLeftColor: theme.primary,
+            backgroundColor: isDark ? "rgba(99,102,241,0.08)" : "rgba(99,102,241,0.04)",
+            borderColor: "rgba(99,102,241,0.3)",
+            shadowColor: theme.primary,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.12,
+            shadowRadius: 10,
+            elevation: 4,
+        },
+        unreadAccent: {
+            position: "absolute",
+            left: 0,
+            top: "25%",
+            height: "50%",
+            width: 4,
+            backgroundColor: theme.primary,
+            borderTopRightRadius: 4,
+            borderBottomRightRadius: 4,
         },
         notifTitle: { fontSize: 14, fontWeight: "600", color: theme.text, marginBottom: 2 },
         notifBody: { fontSize: 13, color: theme.textMuted, marginBottom: 4 },
@@ -389,10 +417,29 @@ const createStyles = (theme: any, isDark: boolean) =>
         unreadBadge: {
             backgroundColor: theme.error,
             borderRadius: 10,
-            width: 22,
-            height: 22,
+            width: 20,
+            height: 20,
             justifyContent: "center",
             alignItems: "center",
         },
         unreadBadgeText: { color: "#fff", fontSize: 11, fontWeight: "700" },
+        newPill: {
+            position: "absolute",
+            top: 10,
+            right: 10,
+            backgroundColor: theme.primary,
+            borderRadius: 6,
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+            shadowColor: theme.primary,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4,
+        },
+        newPillText: {
+            color: "#FFFFFF",
+            fontSize: 8,
+            fontWeight: "900",
+            letterSpacing: 0.5,
+        },
     });

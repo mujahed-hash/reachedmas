@@ -133,11 +133,12 @@ export default function NotificationsScreen({ navigation, onRead }: any) {
                 onPress={() => !item.isRead && handleMarkRead(item.id)}
                 activeOpacity={0.7}
             >
+                {!item.isRead && <View style={s.unreadAccent} />}
                 <View style={[s.notifIcon, { backgroundColor: colors.bg }]}>
                     {icon}
                 </View>
                 <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2, paddingRight: 40 }}>
                         <Text style={s.notifTitle}>{item.title}</Text>
                         <View style={[s.typeBadge, { backgroundColor: colors.bg }]}>
                             <Text style={[s.typeBadgeText, { color: colors.text }]}>{type.replace('_', ' ')}</Text>
@@ -154,7 +155,11 @@ export default function NotificationsScreen({ navigation, onRead }: any) {
                         <Text style={s.notifMeta}>{new Date(item.createdAt).toLocaleString()}</Text>
                     </View>
                 </View>
-                {!item.isRead && <View style={s.unreadDot} />}
+                {!item.isRead && (
+                    <View style={s.newPill}>
+                        <Text style={s.newPillText}>NEW</Text>
+                    </View>
+                )}
             </TouchableOpacity>
         );
     };
@@ -217,8 +222,23 @@ const createStyles = (theme: any, isDark: boolean) =>
             marginBottom: 8,
         },
         notifUnread: {
-            borderLeftWidth: 3,
-            borderLeftColor: theme.primary,
+            backgroundColor: isDark ? "rgba(99,102,241,0.08)" : "rgba(99,102,241,0.04)",
+            borderColor: "rgba(99,102,241,0.3)",
+            shadowColor: theme.primary,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.12,
+            shadowRadius: 10,
+            elevation: 4,
+        },
+        unreadAccent: {
+            position: "absolute",
+            left: 0,
+            top: "25%",
+            height: "50%",
+            width: 4,
+            backgroundColor: theme.primary,
+            borderTopRightRadius: 4,
+            borderBottomRightRadius: 4,
         },
         notifIcon: {
             width: 40,
@@ -238,14 +258,24 @@ const createStyles = (theme: any, isDark: boolean) =>
         },
         typeBadgeText: { fontSize: 10, fontWeight: "700" },
 
-        unreadDot: {
-            width: 8,
-            height: 8,
-            borderRadius: 4,
-            backgroundColor: theme.primary,
+        newPill: {
             position: "absolute",
-            top: 8,
-            right: 8,
+            top: 10,
+            right: 10,
+            backgroundColor: theme.primary,
+            borderRadius: 6,
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+            shadowColor: theme.primary,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4,
+        },
+        newPillText: {
+            color: "#FFFFFF",
+            fontSize: 8,
+            fontWeight: "900",
+            letterSpacing: 0.5,
         },
 
         emptyContainer: {
