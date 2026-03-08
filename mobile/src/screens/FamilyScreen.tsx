@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchSettings, updateProfile } from "../api";
 import { useAppTheme } from "../ThemeProvider";
+import { Users, Mail, UserPlus, CheckCircle2, Clock } from "lucide-react-native";
 
 export default function FamilyScreen() {
     const { theme, isDark } = useAppTheme();
@@ -70,13 +71,19 @@ export default function FamilyScreen() {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.primary} />}
             >
                 <View style={s.header}>
-                    <Text style={s.title}>Family Hub</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                        <Users size={28} color={theme.primary} />
+                        <Text style={s.title}>Family Hub</Text>
+                    </View>
                     <Text style={s.subtitle}>Shared assets send alerts to all family members.</Text>
                 </View>
 
                 {/* Invite Section */}
                 <View style={s.card}>
-                    <Text style={s.cardTitle}>Invite Member</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                        <UserPlus size={18} color={theme.primary} />
+                        <Text style={s.cardTitle}>Invite Member</Text>
+                    </View>
                     <View style={s.inviteRow}>
                         <TextInput
                             style={s.input}
@@ -115,9 +122,12 @@ export default function FamilyScreen() {
                                     <Text style={s.memberEmail}>{m.email}</Text>
                                 </View>
                                 <View style={[s.statusBadge, { backgroundColor: m.status === 'ACCEPTED' ? 'rgba(34,197,94,0.1)' : 'rgba(234,179,8,0.1)' }]}>
-                                    <Text style={[s.statusText, { color: m.status === 'ACCEPTED' ? '#22C55E' : '#EAB308' }]}>
-                                        {m.status}
-                                    </Text>
+                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                                        {m.status === 'ACCEPTED' ? <CheckCircle2 size={10} color="#22C55E" /> : <Clock size={10} color="#EAB308" />}
+                                        <Text style={[s.statusText, { color: m.status === 'ACCEPTED' ? '#22C55E' : '#EAB308' }]}>
+                                            {m.status}
+                                        </Text>
+                                    </View>
                                 </View>
                             </View>
                         ))

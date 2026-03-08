@@ -10,6 +10,23 @@ import {
     ActivityIndicator,
     TextInput,
 } from "react-native";
+import { 
+    Search, 
+    MessageSquare, 
+    Phone, 
+    Truck, 
+    AlertTriangle, 
+    Package, 
+    Dog, 
+    Home, 
+    User,
+    CheckCircle2,
+    History,
+    Plus,
+    Trash2,
+    Calendar,
+    MapPin
+} from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
     fetchAssetDetail,
@@ -19,14 +36,17 @@ import {
 } from "../api";
 import { useAppTheme } from "../ThemeProvider";
 
-const actionIcons: Record<string, string> = {
-    SCAN_VIEW: "👁️",
-    CONTACT_SMS: "💬",
-    CONTACT_CALL: "📞",
-    TOW_ALERT: "🚛",
-    EMERGENCY: "⚠️",
-    DELIVERY_KNOCK: "📦",
-    FOUND_REPORT: "🎒",
+const getNotificationIcon = (type: string, size = 18, color?: string) => {
+    switch (type) {
+        case "SCAN_VIEW": return <Search size={size} color={color} />;
+        case "CONTACT_SMS": return <MessageSquare size={size} color={color} />;
+        case "CONTACT_CALL": return <Phone size={size} color={color} />;
+        case "TOW_ALERT": return <Truck size={size} color={color} />;
+        case "EMERGENCY": return <AlertTriangle size={size} color={color} />;
+        case "DELIVERY_KNOCK": return <Package size={size} color={color} />;
+        case "FOUND_REPORT": return <Search size={size} color={color} />;
+        default: return <Search size={size} color={color} />;
+    }
 };
 
 const actionLabels: Record<string, string> = {
@@ -39,13 +59,13 @@ const actionLabels: Record<string, string> = {
     FOUND_REPORT: "Found Report",
 };
 
-const getTypeIcon = (type: string) => {
+const getTypeIcon = (type: string, size = 22, color?: string) => {
     switch (type) {
-        case "CAR": return "🚗";
-        case "PET": return "🐶";
-        case "HOME": return "🏠";
-        case "PERSON": return "🎒";
-        default: return "📦";
+        case "CAR": return <Search size={size} color={color} />; // Keeping it simple, can use more specific later
+        case "PET": return <Dog size={size} color={color} />;
+        case "HOME": return <Home size={size} color={color} />;
+        case "PERSON": return <User size={size} color={color} />;
+        default: return <Package size={size} color={color} />;
     }
 };
 
@@ -149,7 +169,7 @@ export default function AssetDetailScreen({ route, navigation }: any) {
                 {/* Asset Header */}
                 <View style={s.assetHeader}>
                     <View style={s.assetIconBox}>
-                        <Text style={{ fontSize: 24 }}>{getTypeIcon(asset?.type)}</Text>
+                        {getTypeIcon(asset?.type, 24, theme.primary)}
                     </View>
                     <View>
                         <Text style={s.assetName}>{asset?.name}</Text>
@@ -246,7 +266,7 @@ export default function AssetDetailScreen({ route, navigation }: any) {
                     <Text style={s.sectionTitle}>Contact History</Text>
                     {interactions.length === 0 ? (
                         <View style={s.emptyCard}>
-                            <Text style={{ fontSize: 28, marginBottom: 8 }}>👁️</Text>
+                            <Search size={40} color={theme.textMuted} style={{ marginBottom: 16, opacity: 0.5 }} />
                             <Text style={s.emptyText}>
                                 No interactions yet. Share your tag to start receiving contacts!
                             </Text>
@@ -257,9 +277,7 @@ export default function AssetDetailScreen({ route, navigation }: any) {
                             return (
                                 <View key={interaction.id} style={s.interactionCard}>
                                     <View style={[s.interactionIcon, { backgroundColor: iconBg }]}>
-                                        <Text style={{ fontSize: 16 }}>
-                                            {actionIcons[interaction.actionType] || "👁️"}
-                                        </Text>
+                                        {getNotificationIcon(interaction.actionType, 18, theme.text)}
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2 }}>
@@ -272,11 +290,17 @@ export default function AssetDetailScreen({ route, navigation }: any) {
                                             <Text style={s.interactionMessage}>"{interaction.message}"</Text>
                                         )}
                                         <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 }}>
-                                            <Text style={s.interactionTime}>
-                                                {new Date(interaction.timestamp).toLocaleString()}
-                                            </Text>
+                                            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                                                <Calendar size={12} color={theme.textMuted} />
+                                                <Text style={s.interactionTime}>
+                                                    {new Date(interaction.timestamp).toLocaleString()}
+                                                </Text>
+                                            </View>
                                             {interaction.cityGuess && (
-                                                <Text style={s.interactionTime}>📍 {interaction.cityGuess}</Text>
+                                                <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                                                    <MapPin size={12} color={theme.textMuted} />
+                                                    <Text style={s.interactionTime}>{interaction.cityGuess}</Text>
+                                                </View>
                                             )}
                                         </View>
                                     </View>

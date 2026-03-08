@@ -21,6 +21,7 @@ import {
     updateNotificationPrefs,
     changePassword,
 } from "../api";
+import { Sun, Moon, Monitor, User, Phone, Bell, Lock, Palette, LogOut } from "lucide-react-native";
 
 type Section = "profile" | "phone" | "notifs" | "password" | null;
 
@@ -155,7 +156,10 @@ export default function SettingsScreen() {
             <ScrollView contentContainerStyle={s.scrollContent}>
                 {/* Profile */}
                 <View style={s.card}>
-                    <Text style={s.cardTitle}>Profile</Text>
+                    <View style={s.cardHeader}>
+                        <User size={18} color={theme.primary} />
+                        <Text style={s.cardTitle}>Profile</Text>
+                    </View>
                     <FeedbackBadge section="profile" />
                     <View style={s.field}>
                         <Text style={s.label}>Full Name</Text>
@@ -172,7 +176,10 @@ export default function SettingsScreen() {
 
                 {/* Phone */}
                 <View style={s.card}>
-                    <Text style={s.cardTitle}>Phone Number</Text>
+                    <View style={s.cardHeader}>
+                        <Phone size={18} color={theme.primary} />
+                        <Text style={s.cardTitle}>Phone Number</Text>
+                    </View>
                     <FeedbackBadge section="phone" />
                     {settings?.phoneMasked && (
                         <Text style={s.maskedPhone}>Current: {settings.phoneMasked}</Text>
@@ -188,7 +195,10 @@ export default function SettingsScreen() {
 
                 {/* Notification Prefs */}
                 <View style={s.card}>
-                    <Text style={s.cardTitle}>Notification Preferences</Text>
+                    <View style={s.cardHeader}>
+                        <Bell size={18} color={theme.primary} />
+                        <Text style={s.cardTitle}>Notification Preferences</Text>
+                    </View>
                     <FeedbackBadge section="notifs" />
                     <View style={s.switchRow}>
                         <Text style={s.switchLabel}>Email Notifications</Text>
@@ -215,7 +225,10 @@ export default function SettingsScreen() {
 
                 {/* Theme */}
                 <View style={s.card}>
-                    <Text style={s.cardTitle}>Appearance</Text>
+                    <View style={s.cardHeader}>
+                        <Palette size={18} color={theme.primary} />
+                        <Text style={s.cardTitle}>Appearance</Text>
+                    </View>
                     <View style={s.themeRow}>
                         {(["system", "light", "dark"] as const).map((m) => (
                             <TouchableOpacity
@@ -223,8 +236,11 @@ export default function SettingsScreen() {
                                 style={[s.themeOption, mode === m && s.themeOptionActive]}
                                 onPress={() => setMode(m)}
                             >
-                                <Text style={[s.themeOptionText, mode === m && s.themeOptionTextActive]}>
-                                    {m === "system" ? "☀️🌙 System" : m === "light" ? "☀️ Light" : "🌙 Dark"}
+                                {m === "system" ? <Monitor size={18} color={mode === m ? theme.primary : theme.textMuted} /> :
+                                 m === "light" ? <Sun size={18} color={mode === m ? theme.primary : theme.textMuted} /> :
+                                 <Moon size={18} color={mode === m ? theme.primary : theme.textMuted} />}
+                                <Text style={[s.themeOptionText, mode === m && s.themeOptionTextActive, { marginTop: 4 }]}>
+                                    {m.charAt(0).toUpperCase() + m.slice(1)}
                                 </Text>
                             </TouchableOpacity>
                         ))}
@@ -233,7 +249,10 @@ export default function SettingsScreen() {
 
                 {/* Password */}
                 <View style={s.card}>
-                    <Text style={s.cardTitle}>Change Password</Text>
+                    <View style={s.cardHeader}>
+                        <Lock size={18} color={theme.primary} />
+                        <Text style={s.cardTitle}>Change Password</Text>
+                    </View>
                     <FeedbackBadge section="password" />
                     <View style={s.field}>
                         <Text style={s.label}>Current Password</Text>
@@ -254,6 +273,7 @@ export default function SettingsScreen() {
 
                 {/* Sign Out */}
                 <TouchableOpacity style={s.logoutBtn} onPress={handleLogout}>
+                    <LogOut size={18} color={theme.error} style={{ marginRight: 8 }} />
                     <Text style={s.logoutText}>Sign Out</Text>
                 </TouchableOpacity>
 
@@ -273,7 +293,8 @@ const createStyles = (theme: any, isDark: boolean) =>
             borderRadius: 14, borderWidth: 1, borderColor: theme.border,
             padding: 20, marginBottom: 16,
         },
-        cardTitle: { fontSize: 17, fontWeight: "700", color: theme.text, marginBottom: 14 },
+        cardHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14 },
+        cardTitle: { fontSize: 17, fontWeight: "700", color: theme.text },
 
         feedbackBox: { borderRadius: 10, padding: 10, marginBottom: 12 },
 
@@ -318,6 +339,7 @@ const createStyles = (theme: any, isDark: boolean) =>
             backgroundColor: "rgba(239,68,68,0.1)",
             borderRadius: 12, borderWidth: 1, borderColor: "rgba(239,68,68,0.2)",
             paddingVertical: 14, alignItems: "center", marginTop: 8,
+            flexDirection: "row", justifyContent: "center",
         },
         logoutText: { color: theme.error, fontWeight: "700", fontSize: 15 },
 
