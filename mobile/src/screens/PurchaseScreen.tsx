@@ -49,7 +49,7 @@ export default function PurchaseScreen({ navigation }: any) {
         "Unlimited Interaction History",
         "Tow Prevention Mode",
         "Custom Auto-Replies",
-        "Family Sharing (Future)",
+        "Detailed NFC Programming Guide",
     ];
 
     return (
@@ -70,7 +70,7 @@ export default function PurchaseScreen({ navigation }: any) {
                         <Text style={s.price}>24.99</Text>
                         <Text style={s.period}>/year</Text>
                     </View>
-                    <Text style={s.renewalInfo}>Then $4.99/mo after the first year.</Text>
+                    <Text style={s.renewalInfo}>Then $4.99/mo starting the second year.</Text>
                 </View>
 
                 <View style={s.featuresList}>
@@ -82,6 +82,27 @@ export default function PurchaseScreen({ navigation }: any) {
                             <Text style={s.featureText}>{f}</Text>
                         </View>
                     ))}
+                </View>
+
+                {/* NFC Instructions Section */}
+                <View style={s.nfcSection}>
+                    <View style={s.nfcHeader}>
+                        <Zap size={20} color={theme.primary} />
+                        <Text style={s.nfcTitle}>NFC Setup Instructions</Text>
+                    </View>
+                    
+                    <View style={s.nfcInfoCard}>
+                        <Text style={s.nfcSubheader}>Recommended Tags</Text>
+                        <Text style={s.nfcText}>• NTAG213 or NTAG215{"\n"}• Weatherproof sticker or keyfob{"\n"}• No special app required</Text>
+
+                        <Text style={[s.nfcSubheader, { marginTop: 12 }]}>How to Program</Text>
+                        <Text style={s.nfcText}>1. Use any NFC writer app (NFC Tools, etc.){"\n"}2. Write your Tag URL as an NDEF record{"\n"}3. Place tag on your asset</Text>
+                        
+                        <View style={s.privacyNote}>
+                            <Shield size={12} color={theme.textMuted} />
+                            <Text style={s.privacyText}>The NFC tag only stores a URL. No personal data is stored on the chip.</Text>
+                        </View>
+                    </View>
                 </View>
 
                 <View style={s.bottomActions}>
@@ -111,7 +132,7 @@ export default function PurchaseScreen({ navigation }: any) {
 const createStyles = (theme: any, isDark: boolean) =>
     StyleSheet.create({
         container: { flex: 1, backgroundColor: theme.background },
-        content: { padding: 24, alignItems: "center" },
+        content: { padding: 24, paddingBottom: 60, alignItems: "center" },
         header: { alignItems: "center", marginBottom: 32 },
         iconBadge: {
             width: 80,
@@ -147,7 +168,7 @@ const createStyles = (theme: any, isDark: boolean) =>
         period: { fontSize: 18, color: theme.textMuted, fontWeight: "600" },
         renewalInfo: { fontSize: 13, color: theme.textMuted },
 
-        featuresList: { width: "100%", marginBottom: 40 },
+        featuresList: { width: "100%", marginBottom: 32 },
         featureRow: { flexDirection: "row", alignItems: "center", marginBottom: 16, gap: 12 },
         checkCircle: {
             width: 24,
@@ -158,6 +179,22 @@ const createStyles = (theme: any, isDark: boolean) =>
             alignItems: "center",
         },
         featureText: { fontSize: 15, color: theme.text, fontWeight: "500" },
+
+        // NFC Section
+        nfcSection: { width: "100%", marginBottom: 40 },
+        nfcHeader: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 16 },
+        nfcTitle: { fontSize: 18, fontWeight: "700", color: theme.text },
+        nfcInfoCard: {
+            backgroundColor: isDark ? "rgba(255,255,255,0.02)" : "#F8FAFC",
+            borderRadius: 16,
+            padding: 20,
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+        nfcSubheader: { fontSize: 13, fontWeight: "700", color: theme.text, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 },
+        nfcText: { fontSize: 14, color: theme.textMuted, lineHeight: 22 },
+        privacyNote: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: theme.border },
+        privacyText: { fontSize: 11, color: theme.textMuted, flex: 1 },
 
         bottomActions: { width: "100%", gap: 12 },
         buyBtn: {
