@@ -26,23 +26,18 @@ export async function POST(req: Request) {
 
         const stripeSession = await stripe.checkout.sessions.create({
             customer: customer || undefined,
-            mode: "subscription",
+            mode: "payment", // Changed from "subscription" to "payment" to support one-time prices
             payment_method_types: ["card"],
             line_items: [
                 {
-                    price: priceId || "price_placeholder_123", // Should be replaced with actual Price ID from Stripe Dashboard
+                    price: priceId,
                     quantity: 1,
                 },
             ],
-            success_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/pricing`,
+            success_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://reachmasked.com"}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://reachmasked.com"}/pricing`,
             metadata: {
-                userId: user.id, // Very important: links Stripe back to our DB
-            },
-            subscription_data: {
-                metadata: {
-                    userId: user.id,
-                },
+                userId: user.id,
             },
         });
 

@@ -27,24 +27,28 @@ export async function POST(req: Request) {
         return new NextResponse(`Webhook Error: ${message}`, { status: 400 });
     }
 
-    // 1. Handle Web Checkout (Subscriptions)
+    // 1. Handle Web Checkout (Subscriptions or One-time Payments)
     if (event.type === "checkout.session.completed") {
         const session = event.data.object as Stripe.Checkout.Session;
-        const subscriptionId = session.subscription as string;
+        const userId = session.metadata?.userId;
 
-        if (!session?.metadata?.userId) {
+        if (!userId) {
             return new NextResponse("User ID is required", { status: 400 });
         }
 
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const data: any = {
+            plan: "PREMIUM",
+            stripeCustomerId: session.customer as string,
+        };
+
+        // If it was a subscription, save the ID
+        if (session.subscription) {
+            data.stripeSubscriptionId = session.subscription as string;
+        }
 
         await prisma.user.update({
-            where: { id: session.metadata.userId },
-            data: {
-                stripeSubscriptionId: subscription.id,
-                stripeCustomerId: subscription.customer as string,
-                plan: "PREMIUM",
-            },
+            where: { id: userId },
+            data,
         });
     }
 
