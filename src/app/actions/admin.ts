@@ -104,6 +104,32 @@ export async function deleteUser(userId: string): Promise<{ success: boolean; er
     }
 }
 
+export async function updateUserPlan(
+    userId: string,
+    plan: "FREE" | "PREMIUM"
+): Promise<{ success: boolean; error?: string }> {
+    const { isAdmin } = await verifyAdmin();
+
+    if (!isAdmin) {
+        return { success: false, error: "Only admins can update user plans" };
+    }
+
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { plan },
+        });
+
+        revalidatePath("/admin");
+        revalidatePath("/admin/users");
+        revalidatePath(`/admin/users/${userId}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating user plan:", error);
+        return { success: false, error: "Failed to update user plan" };
+    }
+}
+
 // ========== TAG ACTIONS ==========
 
 export async function updateTagStatus(

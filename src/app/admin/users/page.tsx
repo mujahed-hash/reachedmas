@@ -74,6 +74,8 @@ export default async function AdminUsersPage() {
                                         <div className="flex-1">
                                             <div className="flex items-center gap-2 flex-wrap">
                                                 <h3 className="font-semibold text-white">{user.email}</h3>
+                                            </div>
+                                            <div className="flex items-center gap-2 flex-wrap mt-1">
                                                 <Badge
                                                     variant={user.role === "ADMIN" ? "default" : "secondary"}
                                                     className={
@@ -84,14 +86,24 @@ export default async function AdminUsersPage() {
                                                 >
                                                     {user.role}
                                                 </Badge>
+                                                <Badge
+                                                    variant={user.plan === "PREMIUM" ? "default" : "outline"}
+                                                    className={
+                                                        user.plan === "PREMIUM"
+                                                            ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                                                            : "text-slate-500 border-white/5"
+                                                    }
+                                                >
+                                                    {user.plan}
+                                                </Badge>
                                             </div>
-                                            <div className="flex items-center gap-4 mt-2 text-sm text-slate-400 flex-wrap">
+                                            <div className="flex items-center gap-4 mt-3 text-sm text-slate-400 flex-wrap">
                                                 <span className="flex items-center gap-1">
                                                     <Package className="h-4 w-4" />
                                                     {user._count.assets} assets
                                                 </span>
                                                 <span className="flex items-center gap-1">
-                                                    <Bell className="h-4 w-4" />
+                                                    < Bell className="h-4 w-4" />
                                                     {user._count.notifications} alerts
                                                 </span>
                                                 <span className="flex items-center gap-1 text-indigo-400">
@@ -99,8 +111,8 @@ export default async function AdminUsersPage() {
                                                 </span>
                                                 {user.phoneEncrypted && (
                                                     <span className="flex items-center gap-1 text-emerald-400">
-                                                        <Mail className="h-4 w-4" />
-                                                        Identity Verified
+                                                        <Shield className="h-4 w-4" />
+                                                        Verified
                                                     </span>
                                                 )}
                                             </div>
@@ -134,6 +146,7 @@ export default async function AdminUsersPage() {
                                         userId={user.id}
                                         userEmail={user.email}
                                         currentRole={user.role}
+                                        currentPlan={user.plan}
                                         isCurrentUser={user.id === session?.user?.id}
                                     />
                                 </div>
