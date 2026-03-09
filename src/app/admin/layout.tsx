@@ -11,17 +11,10 @@ export default async function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
-    // Detect if we're on a public admin page (login/setup)
+    // SECURITY: Enforce path detection via headers (set in middleware.ts)
     const headersList = await headers();
     const path = headersList.get("x-path") || "";
-    const referer = headersList.get("referer") || "";
-
-    // Check both x-path (reliable from middleware) and referer (fallback)
-    const isPublicPage =
-        path.includes("/login") ||
-        path.includes("/setup") ||
-        referer.includes("/login") ||
-        referer.includes("/setup");
+    const isPublicPage = path.includes("/admin/login") || path.includes("/admin/setup");
 
     const session = await auth();
 
@@ -42,13 +35,12 @@ export default async function AdminLayout({
             select: { role: true },
         });
         isAdmin = user?.role === "ADMIN";
+        console.log(`[ADMIN_DEBUG] User ${session.user.email} role: ${user?.role}, isAdmin: ${isAdmin}, path: ${path}`);
 
-        // Logged in but NOT admin → block
+        // Logged in but NOT admin → redirect to site home
         if (!isAdmin && !isPublicPage) {
-            // SAFETY: Prevent loop
-            if (!path.includes("login") && !path.includes("setup")) {
-                redirect("/admin/login");
-            }
+            console.log(`[ADMIN_DEBUG] Non-admin user ${session.user.email} attempted to access ${path}. Redirecting home.`);
+            redirect("/");
         }
     }
 
