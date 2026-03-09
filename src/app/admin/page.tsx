@@ -72,9 +72,9 @@ export default async function AdminDashboard() {
 
             {/* Quick Links */}
             <div className="grid md:grid-cols-3 gap-6">
-                <AdminLink href="/users" icon={<Users className="h-5 w-5 text-blue-400" />} title="Manage Users" description="View, search, and manage all registered users" />
-                <AdminLink href="/tags" icon={<QrCode className="h-5 w-5 text-indigo-400" />} title="Manage Tags" description="View all tags, disable suspicious activity" />
-                <AdminLink href="/analytics" icon={<BarChart3 className="h-5 w-5 text-amber-400" />} title="Analytics" description="View usage statistics and trends" />
+                <AdminLink href="/admin/users" icon={<Users className="h-5 w-5 text-blue-400" />} title="Manage Users" description="View, search, and manage all registered users" />
+                <AdminLink href="/admin/tags" icon={<QrCode className="h-5 w-5 text-indigo-400" />} title="Manage Tags" description="View all tags, disable suspicious activity" />
+                <AdminLink href="/admin/analytics" icon={<BarChart3 className="h-5 w-5 text-amber-400" />} title="Analytics" description="View usage statistics and trends" />
             </div>
 
             {/* Recent Activity */}

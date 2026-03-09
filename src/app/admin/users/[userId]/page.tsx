@@ -59,7 +59,9 @@ async function getUserDetail(userId: string) {
 
 export default async function AdminUserDetailPage({ params }: { params: Promise<{ userId: string }> }) {
     const { userId } = await params;
+    console.log(`[ADMIN_DEBUG] Accessing User Profile: ${userId}`);
     const session = await auth();
+    console.log(`[ADMIN_DEBUG] Session User ID: ${session?.user?.id}`);
     const user = await getUserDetail(userId);
 
     if (!user) {

@@ -27,6 +27,7 @@ export default async function AdminLayout({
 
     // SECURITY: Enforce auth for non-public admin pages
     if (!session?.user?.id && !isPublicPage) {
+        console.log(`[ADMIN_DEBUG] Unauthorized access attempt to ${path}. Redirecting to /admin/login`);
         // SAFETY: Only redirect if NOT already on a login-adjacent path to prevent loops
         if (!path.includes("login") && !path.includes("setup")) {
             redirect("/admin/login");

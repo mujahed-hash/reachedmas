@@ -10,6 +10,7 @@ import {
     updateUserPlan,
 } from "@/app/actions/admin";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -219,5 +220,3 @@ export function UserActions({ userId, userEmail, currentRole, currentPlan, isCur
         </div>
     );
 }
-
-import Link from "next/link";
