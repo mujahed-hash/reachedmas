@@ -267,9 +267,12 @@ export default function DashboardScreen({ navigation }: any) {
                                 onPress={() => navigation.navigate("Alerts")}
                                 activeOpacity={0.7}
                             >
-                                {!n.isRead && <View style={s.unreadAccent} />}
                                 <View style={{ flex: 1, paddingRight: !n.isRead ? 40 : 0 }}>
-                                    <Text style={s.notifTitle}>{n.title}</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                                        {/* Premium Glow Dot for Unread */}
+                                        {!n.isRead && <View style={s.glowDot} />}
+                                        <Text style={s.notifTitle}>{n.title}</Text>
+                                    </View>
                                     <Text style={s.notifBody} numberOfLines={2}>{n.body}</Text>
                                     <Text style={s.notifTime}>
                                         {new Date(n.createdAt).toLocaleString()}
@@ -393,23 +396,24 @@ const createStyles = (theme: any, isDark: boolean) =>
             marginBottom: 8,
         },
         notifUnread: {
-            backgroundColor: isDark ? "rgba(99,102,241,0.08)" : "rgba(99,102,241,0.04)",
-            borderColor: "rgba(99,102,241,0.3)",
+            backgroundColor: isDark ? "rgba(99,102,241,0.12)" : "rgba(99,102,241,0.06)",
+            borderColor: "rgba(99,102,241,0.4)",
+            borderWidth: 1.5,
             shadowColor: theme.primary,
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.12,
-            shadowRadius: 10,
-            elevation: 4,
+            shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 0.25,
+            shadowRadius: 15,
+            elevation: 8,
         },
-        unreadAccent: {
-            position: "absolute",
-            left: 0,
-            top: "25%",
-            height: "50%",
-            width: 4,
+        glowDot: {
+            width: 8,
+            height: 8,
+            borderRadius: 4,
             backgroundColor: theme.primary,
-            borderTopRightRadius: 4,
-            borderBottomRightRadius: 4,
+            shadowColor: theme.primary,
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 4,
         },
         notifTitle: { fontSize: 14, fontWeight: "600", color: theme.text, marginBottom: 2 },
         notifBody: { fontSize: 13, color: theme.textMuted, marginBottom: 4 },
@@ -434,8 +438,8 @@ const createStyles = (theme: any, isDark: boolean) =>
             paddingVertical: 2,
             shadowColor: theme.primary,
             shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
+            shadowOpacity: 0.5,
+            shadowRadius: 6,
         },
         newPillText: {
             color: "#FFFFFF",

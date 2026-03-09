@@ -214,12 +214,32 @@ export default async function DashboardPage() {
                                     </div>
                                 ) : (
                                     notifications.map((notif) => (
-                                        <div key={notif.id} className={`flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0 ${!notif.isRead ? "bg-primary/5 -mx-4 px-4 py-2 rounded" : ""}`}>
-                                            <div className={`w-2 h-2 rounded-full mt-2 ${!notif.isRead ? "bg-red-500" : "bg-muted-foreground"}`} />
+                                        <div 
+                                            key={notif.id} 
+                                            className={`relative flex items-start gap-4 pb-4 border-b border-border last:border-0 last:pb-0 transition-all ${
+                                                !notif.isRead 
+                                                    ? "bg-primary/10 -mx-4 px-4 py-3 rounded-lg shadow-sm border-l-4 border-l-primary" 
+                                                    : "pt-4"
+                                            }`}
+                                        >
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-foreground">{notif.title}</p>
-                                                <p className="text-xs text-muted-foreground line-clamp-2">{notif.body}</p>
-                                                <p className="text-xs text-muted-foreground mt-1">{new Date(notif.createdAt).toLocaleString()}</p>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    {!notif.isRead && (
+                                                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+                                                    )}
+                                                    <p className={`text-sm font-semibold text-foreground ${!notif.isRead ? "text-primary" : ""}`}>
+                                                        {notif.title}
+                                                    </p>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{notif.body}</p>
+                                                <div className="flex items-center gap-2 mt-2">
+                                                    <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
+                                                        {new Date(notif.createdAt).toLocaleString()}
+                                                    </p>
+                                                    {!notif.isRead && (
+                                                        <span className="text-[9px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded uppercase tracking-tighter">New</span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     ))
@@ -234,12 +254,24 @@ export default async function DashboardPage() {
                                     <p className="text-muted-foreground text-sm text-center py-4">No activity yet</p>
                                 ) : (
                                     recentActivity.map((activity: any) => (
-                                        <div key={activity.id} className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0">
-                                            <div className="w-2 h-2 rounded-full bg-primary mt-2" />
+                                        <div key={activity.id} className="flex items-center gap-4 py-3 border-b border-border last:border-0 last:pb-0 group">
+                                            <div className="flex flex-col items-center">
+                                                <div className="w-1.5 h-10 bg-primary/20 rounded-full overflow-hidden">
+                                                    <div className="w-full h-1/2 bg-primary group-hover:h-full transition-all duration-500" />
+                                                </div>
+                                            </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-foreground">{activity.actionType.replace("_", " ")}</p>
-                                                <p className="text-xs text-muted-foreground truncate">{activity.tag?.asset?.name}</p>
-                                                <p className="text-xs text-muted-foreground">{new Date(activity.timestamp).toLocaleDateString()}</p>
+                                                <p className="text-sm font-semibold text-foreground capitalize tracking-tight">
+                                                    {activity.actionType.toLowerCase().replace("_", " ")}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground truncate font-medium">
+                                                    {activity.tag?.asset?.name}
+                                                </p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[10px] font-bold text-muted-foreground/50 tabular-nums">
+                                                    {new Date(activity.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                                </p>
                                             </div>
                                         </div>
                                     ))

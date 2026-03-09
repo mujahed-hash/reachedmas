@@ -19,7 +19,11 @@ import {
     Dog, 
     Home, 
     User, 
-    Package 
+    Package,
+    Smartphone,
+    PenTool,
+    MapPin,
+    ShieldCheck
 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import QRCode from "react-native-qrcode-svg";
@@ -208,27 +212,57 @@ export default function TagSetupScreen({ route, navigation }: any) {
                     </View>
                 </View>
 
-                {/* NFC Instructions */}
+                {/* NFC Setup Steps */}
                 <View style={s.card}>
-                    <Text style={s.cardTitle}>NFC Setup Instructions</Text>
-                    <View style={s.instructionRow}>
-                        <View style={{ flex: 1 }}>
-                            <Text style={s.instructionHeading}>Recommended Tags</Text>
-                            <Text style={s.instructionText}>• NTAG213 or NTAG215</Text>
-                            <Text style={s.instructionText}>• Weatherproof sticker or keyfob</Text>
-                            <Text style={s.instructionText}>• No special app required</Text>
+                    <View style={s.cardHeader}>
+                        <Smartphone size={20} color={theme.text} />
+                        <Text style={s.cardTitle}>NFC Setup Guide</Text>
+                    </View>
+                    
+                    <View style={s.stepCard}>
+                        <View style={s.stepIconBox}>
+                            <Package size={20} color={theme.primary} />
                         </View>
                         <View style={{ flex: 1 }}>
-                            <Text style={s.instructionHeading}>How to Program</Text>
-                            <Text style={s.instructionText}>• Use any NFC writer app</Text>
-                            <Text style={s.instructionText}>• Write the URL as NDEF record</Text>
-                            <Text style={s.instructionText}>• Place securely on your asset</Text>
+                            <Text style={s.stepTitle}>1. Get your Tag</Text>
+                            <Text style={s.stepDesc}>Use NTAG213 or NTAG215 stickers, keyfobs, or cards.</Text>
                         </View>
                     </View>
-                    <View style={s.privacyBanner}>
+
+                    <View style={s.stepCard}>
+                        <View style={s.stepIconBox}>
+                            <Smartphone size={20} color={theme.primary} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={s.stepTitle}>2. Use NFC App</Text>
+                            <Text style={s.stepDesc}>Download "NFC Tools" (Free) on iOS or Android.</Text>
+                        </View>
+                    </View>
+
+                    <View style={s.stepCard}>
+                        <View style={s.stepIconBox}>
+                            <PenTool size={20} color={theme.primary} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={s.stepTitle}>3. Write URL</Text>
+                            <Text style={s.stepDesc}>Select "Write" &rarr; "Add Record" &rarr; "URL" &rarr; Paste the Tag URL.</Text>
+                        </View>
+                    </View>
+
+                    <View style={s.stepCard}>
+                        <View style={s.stepIconBox}>
+                            <MapPin size={20} color={theme.primary} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={s.stepTitle}>4. Place on Asset</Text>
+                            <Text style={s.stepDesc}>Stick the tag on your dashboard, door, or pet collar.</Text>
+                        </View>
+                    </View>
+
+                    <View style={s.privacyPill}>
+                        <ShieldCheck size={16} color={theme.success} />
                         <Text style={s.privacyText}>
-                            <Text style={{ fontWeight: "700" }}>Privacy Safe: </Text>
-                            The NFC tag only stores a URL. No phone numbers or personal data are stored on the chip.
+                            Privacy Safe: No personal data is stored on the tag chip.
                         </Text>
                     </View>
                 </View>
@@ -298,9 +332,37 @@ const createStyles = (theme: any, isDark: boolean) =>
         instructionHeading: { fontSize: 13, fontWeight: "700", color: theme.text, marginBottom: 4 },
         instructionText: { fontSize: 12, color: theme.textMuted, lineHeight: 18 },
 
-        privacyBanner: {
-            marginTop: 16, padding: 12, borderRadius: 10,
-            backgroundColor: "rgba(99,102,241,0.1)", borderWidth: 1, borderColor: "rgba(99,102,241,0.2)",
+        privacyPill: {
+            marginTop: 20,
+            padding: 12,
+            borderRadius: 12,
+            backgroundColor: isDark ? "rgba(16,185,129,0.1)" : "rgba(16,185,129,0.05)",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            borderWidth: 1,
+            borderColor: "rgba(16,185,129,0.2)",
         },
-        privacyText: { fontSize: 13, color: theme.text, lineHeight: 18 },
+        privacyText: { fontSize: 13, color: isDark ? "#A7F3D0" : "#065F46", fontWeight: "600" },
+        stepCard: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            marginBottom: 16,
+            backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC",
+            padding: 12,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+        stepIconBox: {
+            width: 40,
+            height: 40,
+            borderRadius: 10,
+            backgroundColor: isDark ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.1)",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        stepTitle: { fontSize: 14, fontWeight: "700", color: theme.text, marginBottom: 2 },
+        stepDesc: { fontSize: 12, color: theme.textMuted, lineHeight: 18 },
     });
