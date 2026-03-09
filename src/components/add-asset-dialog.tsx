@@ -15,8 +15,13 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Loader2, CheckCircle, Car, Dog, Home, User, Package } from "lucide-react";
 import { addAsset } from "@/app/actions/asset";
+import Link from "next/link";
 
 type AssetType = "CAR" | "PET" | "HOME" | "PERSON" | "ASSET";
+
+interface AddAssetDialogProps {
+    plan?: string;
+}
 
 const assetTypes: { type: AssetType; icon: any; label: string; desc: string }[] = [
     { type: "CAR", icon: Car, label: "Vehicle", desc: "Car, truck, motorcycle" },
@@ -26,7 +31,8 @@ const assetTypes: { type: AssetType; icon: any; label: string; desc: string }[] 
     { type: "ASSET", icon: Package, label: "Asset", desc: "Bike, luggage, device" },
 ];
 
-export function AddAssetDialog() {
+export function AddAssetDialog({ plan = "FREE" }: AddAssetDialogProps) {
+    const isFree = plan === "FREE";
     const [open, setOpen] = useState(false);
     const [step, setStep] = useState<1 | 2>(1); // 1=choose type, 2=fill form
     const [selectedType, setSelectedType] = useState<AssetType>("CAR");
@@ -78,7 +84,25 @@ export function AddAssetDialog() {
                     </DialogDescription>
                 </DialogHeader>
 
-                {success ? (
+                {isFree ? (
+                    <div className="py-12 flex flex-col items-center text-center space-y-6">
+                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Plus className="h-8 w-8 text-primary" />
+                        </div>
+                        <div className="space-y-2 max-w-sm">
+                            <h3 className="text-xl font-bold text-foreground">Standard Plan Required</h3>
+                            <p className="text-muted-foreground">
+                                To add your first asset, you need to activate a protection plan. 
+                                Secure your vehicles, pets, and home today for just $24.99/year.
+                            </p>
+                        </div>
+                        <Link href="/pricing" className="w-full">
+                            <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all font-bold">
+                                View Pricing & Get Started
+                            </Button>
+                        </Link>
+                    </div>
+                ) : success ? (
                     <div className="py-8 text-center space-y-4">
                         <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto" />
                         <p className="text-foreground font-medium">{success}</p>
@@ -106,7 +130,7 @@ export function AddAssetDialog() {
                         const formData = new FormData(e.currentTarget);
                         handleSubmit(formData);
                     }}>
-                        <div className="space-y-4 py-4">
+                        <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto px-1">
                             {error && (
                                 <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
                                     {error}
@@ -126,7 +150,7 @@ export function AddAssetDialog() {
                                                         "e.g. My Bike"
                                     }
                                     required
-                                    className="bg-muted/50 border-border"
+                                    className="bg-muted/50 border-border shadow-none focus-visible:ring-0 focus-visible:border-primary"
                                 />
                             </div>
 
@@ -148,7 +172,7 @@ export function AddAssetDialog() {
                                                     selectedType === "PERSON" ? "e.g. Daughter" :
                                                         "e.g. Bicycle"
                                     }
-                                    className="bg-muted/50 border-border"
+                                    className="bg-muted/50 border-border shadow-none focus-visible:ring-0 focus-visible:border-primary"
                                 />
                             </div>
 
@@ -242,7 +266,7 @@ export function AddAssetDialog() {
                             )}
                         </div>
 
-                        <DialogFooter>
+                        <DialogFooter className="mt-6 flex gap-3">
                             <Button type="button" variant="outline" onClick={() => setStep(1)} className="border-border">
                                 Back
                             </Button>

@@ -51,13 +51,19 @@ export async function addAsset(formData: FormData): Promise<AddAssetResult> {
 
     console.log(`[addAsset] User found: ${user.id}, plan: ${user.plan}`);
 
-    const limit = user.plan === "PREMIUM" ? 10 : 1;
+    const limit = user.plan === "PREMIUM" ? 1 : 0;
 
-    if (existingCount >= limit) {
-        console.log(`[addAsset] Limit reached: ${existingCount}/${limit}`);
+    if (user.plan === "FREE") {
         return {
             success: false,
-            message: `Your ${user.plan || "FREE"} plan supports up to ${limit} asset(s). Upgrade to add more.`,
+            message: "A paid plan is required to add your first tag. Upgrade to continue.",
+        };
+    }
+
+    if (existingCount >= limit) {
+        return {
+            success: false,
+            message: `Your current plan supports up to ${limit} asset(s). Contact support to add more.`,
         };
     }
 

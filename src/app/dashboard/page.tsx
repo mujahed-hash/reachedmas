@@ -103,12 +103,12 @@ export default async function DashboardPage() {
     }
 
     // Double check user exists in DB (handle stale sessions after resets)
-    const userExists = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-        select: { id: true }
+        select: { id: true, plan: true }
     });
 
-    if (!userExists) {
+    if (!user) {
         console.warn(`[Dashboard] Auth session exists but user record missing: ${session.user.id}`);
         // We can't easily logout from RSC, but redirecting to login should help.
         // Or better, a specialized error page or clear session path.
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
                                 Family
                             </Button>
                         </Link>
-                        <AddAssetDialog />
+                        <AddAssetDialog plan={user.plan} />
                     </div>
                 </div>
 
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
                                     <p className="text-muted-foreground text-sm mb-4">
                                         Add your first asset — a vehicle, pet, home, or anything you want to protect.
                                     </p>
-                                    <AddAssetDialog />
+                                    <AddAssetDialog plan={user.plan} />
                                 </CardContent>
                             </Card>
                         ) : (

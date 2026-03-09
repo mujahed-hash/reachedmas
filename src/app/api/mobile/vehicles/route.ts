@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const limit = user.plan === "PREMIUM" ? 10 : 1;
+        const limit = user.plan === "PREMIUM" ? 1 : 0;
 
         if (existingCount >= limit) {
             return NextResponse.json(

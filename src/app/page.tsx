@@ -20,9 +20,14 @@ import {
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await auth();
+
+  if (session?.user) {
+    redirect("/dashboard");
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary/20">
@@ -182,7 +187,7 @@ export default async function Home() {
                     <p className="text-sm text-muted-foreground mt-3 font-medium">Then $4.99/mo starting the second year.</p>
                   </div>
                   <ul className="mt-8 space-y-4">
-                    <PricingItem>Up to 5 Asset Tags (any type)</PricingItem>
+                    <PricingItem>1 Premium Asset Tag</PricingItem>
                     <PricingItem>Real-time In-App Alerts & Alarms</PricingItem>
                     <PricingItem>Browser Push Notifications</PricingItem>
                     <PricingItem>Email Notifications</PricingItem>
@@ -237,7 +242,7 @@ export default async function Home() {
               />
               <FaqItem
                 q="What does the standard plan include?"
-                a="Up to 5 asset tags of any type, SMS and email alerts, real-time dashboard notifications, masked contact relay, tow-prevention mode, pet found reports, delivery notifications, family dashboard, and scan analytics."
+                a="1 Premium asset tag of any type, SMS and email alerts, real-time dashboard notifications, masked contact relay, tow-prevention mode, pet found reports, delivery notifications, family dashboard, and scan analytics."
               />
             </div>
           </div>
