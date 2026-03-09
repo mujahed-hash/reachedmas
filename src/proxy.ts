@@ -22,11 +22,13 @@ export default auth(async (req) => {
         const cleanPath = pathname.startsWith("/admin") ? pathname.replace("/admin", "") || "/" : pathname;
 
         // WHITELIST: Only these paths are valid on the admin subdomain
+        const isUserDetail = cleanPath.startsWith("/users/") && cleanPath.split("/").length === 3;
         const allowedAdminPaths = ["/", "/users", "/tags", "/analytics", "/setup", "/login"];
-        const isAllowed = allowedAdminPaths.some(p => cleanPath === p);
+        const isAllowed = allowedAdminPaths.some(p => cleanPath === p) || isUserDetail;
 
         // BLOCK: Any path not in the whitelist → redirect to admin root
         if (!isAllowed) {
+            console.log(`[PROXY_DEBUG] Blocked path: ${cleanPath}. Redirecting home.`);
             return NextResponse.redirect(new URL("/", req.url));
         }
 
