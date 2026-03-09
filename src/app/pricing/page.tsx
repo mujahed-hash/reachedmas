@@ -70,7 +70,7 @@ export default async function PricingPage() {
                             {session ? (
                                 <StripeCheckoutButton
                                     className="w-full h-12 text-lg"
-                                    priceId="price_placeholder_123"
+                                    priceId="price_1T8x43CJ2dpZsFD0nCXkS5h1"
                                 />
                             ) : (
                                 <Link href="/register?redirect=/pricing" className="w-full">
