@@ -17,21 +17,78 @@ import {
     ArrowRight
 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as WebBrowser from "expo-web-browser";
-import { fetchPurchaseSession } from "../api";
+import { useStripe } from "@stripe/stripe-react-native";
+import { fetchPaymentIntent, fetchDashboard } from "../api";
 import { useAppTheme } from "../ThemeProvider";
 
 export default function PurchaseScreen({ navigation }: any) {
     const { theme, isDark } = useAppTheme();
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
+
+    const initializePaymentSheet = async () => {
+        const {
+            paymentIntent,
+            ephemeralKey,
+            customer,
+            publishableKey,
+        } = await fetchPaymentIntent();
+
+        const { error } = await initPaymentSheet({
+            merchantDisplayName: "ReachMasked",
+            customerId: customer,
+            customerEphemeralKeySecret: ephemeralKey,
+            paymentIntentClientSecret: paymentIntent,
+            allowsDelayedPaymentMethods: false,
+            defaultBillingDetails: {
+                name: "User",
+            },
+            appearance: {
+                colors: {
+                    primary: theme.primary,
+                    background: theme.background,
+                    componentBackground: isDark ? "rgba(255,255,255,0.05)" : "#F8FAFC",
+                    componentBorder: theme.border,
+                    componentDivider: theme.border,
+                    primaryText: theme.text,
+                    secondaryText: theme.textMuted,
+                    placeholderText: theme.textMuted,
+                    icon: theme.primary,
+                },
+                shapes: {
+                    borderRadius: 12,
+                }
+            }
+        });
+
+        if (error) {
+            console.error("Payment Sheet init error:", error);
+            return false;
+        }
+        return true;
+    };
 
     const handlePurchase = async () => {
         setLoading(true);
         try {
-            const { url } = await fetchPurchaseSession();
-            if (url) {
-                await WebBrowser.openBrowserAsync(url);
-                // Optionally check status after return or just wait for dashboard refresh
+            const ready = await initializePaymentSheet();
+            if (!ready) {
+                setLoading(false);
+                return;
+            }
+
+            const { error } = await presentPaymentSheet();
+
+            if (error) {
+                if (error.code === "Canceled") {
+                    // Handled gracefully
+                } else {
+                    console.error("Payment error:", error.message);
+                }
+            } else {
+                // Success!
+                // Refresh dashboard to reflect PREMIUM status
+                await fetchDashboard();
                 navigation.goBack();
             }
         } catch (err) {

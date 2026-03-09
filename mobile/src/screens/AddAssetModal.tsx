@@ -81,10 +81,9 @@ export default function AddAssetModal({ navigation, route }: any) {
                             <View style={s.premiumBadge}>
                                 <CreditCard size={48} color={theme.primary} />
                             </View>
-                            <Text style={s.purchaseTitle}>Activate Your Protection</Text>
+                            <Text style={s.purchaseTitle}>Subscription Required</Text>
                             <Text style={s.purchaseDesc}>
-                                To add your first asset, you need to activate a protection plan. 
-                                Secure your vehicles, pets, and home today.
+                                To activate your first asset tag, you need to subscribe to the Standard Plan ($24.99/year).
                             </Text>
                             <TouchableOpacity 
                                 style={s.upgradeBtn}
@@ -93,7 +92,7 @@ export default function AddAssetModal({ navigation, route }: any) {
                                     navigation.navigate("Purchase");
                                 }}
                             >
-                                <Text style={s.upgradeText}>View Plans</Text>
+                                <Text style={s.upgradeText}>Activate Protection ($24.99)</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
                                 <Text style={s.backText}>Maybe Later</Text>

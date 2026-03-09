@@ -169,12 +169,16 @@ function AppNavigator() {
   );
 }
 
+import { StripeProvider } from "@stripe/stripe-react-native";
+
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <AppNavigator />
-      </AuthProvider>
-    </ThemeProvider>
+    <StripeProvider publishableKey="pk_test_placeholder">
+      <ThemeProvider>
+        <AuthProvider>
+          <AppNavigator />
+        </AuthProvider>
+      </ThemeProvider>
+    </StripeProvider>
   );
 }

@@ -115,6 +115,12 @@ export async function fetchPurchaseSession() {
     });
 }
 
+export async function fetchPaymentIntent() {
+    return apiFetch("/api/mobile/payment-intent", {
+        method: "POST",
+    });
+}
+
 export async function deleteAsset(assetId: string) {
     return apiFetch(`/api/mobile/vehicles/${assetId}`, { method: "DELETE" });
 }

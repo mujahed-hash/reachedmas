@@ -42,7 +42,8 @@
       ],
       "expo-asset",
       "expo-web-browser",
-      "expo-audio"
+      "expo-audio",
+      "@stripe/stripe-react-native"
     ],
     "extra": {
       "eas": {
