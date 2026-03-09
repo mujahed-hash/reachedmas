@@ -5,6 +5,10 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { generateShortCode } from "@/lib/utils";
 
+export async function GET() {
+    return new NextResponse("Stripe Webhook Endpoint (POST required)", { status: 200 });
+}
+
 export async function POST(req: Request) {
     const body = await req.text();
     const signature = (await headers()).get("Stripe-Signature") as string;
