@@ -6,7 +6,10 @@ import {
     Switch,
     TouchableOpacity,
     Alert,
+    ActivityIndicator,
 } from "react-native";
+import { useStripe } from "@stripe/stripe-react-native";
+import { fetchPaymentIntent, fetchDashboard } from "../api";
 import { useAppTheme } from "../ThemeProvider";
 import { QrCode, Shield, Truck, Settings } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,13 +23,70 @@ interface Vehicle {
     tags: { id: string; shortCode: string; label: string | null; status: string }[];
 }
 
-export default function TagDetailScreen({ route }: any) {
+export default function TagDetailScreen({ route, navigation }: any) {
     const { vehicle } = route.params as { vehicle: Vehicle };
     const { theme, isDark } = useAppTheme();
     const tag = vehicle.tags[0];
 
     const [tagActive, setTagActive] = useState(tag?.status === "ACTIVE");
     const [towMode, setTowMode] = useState(vehicle.towPreventionMode);
+    const [loading, setLoading] = useState(false);
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
+
+    const handleReportLost = () => {
+        Alert.alert(
+            "Replace Lost Tag?",
+            `A new tag will be generated for $10.00. The old tag (${tag?.shortCode}) will be permanently disabled.`,
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Pay $10 & Replace", onPress: processReplacement },
+            ]
+        );
+    };
+
+    const processReplacement = async () => {
+        setLoading(true);
+        try {
+            const {
+                paymentIntent,
+                ephemeralKey,
+                customer,
+            } = await fetchPaymentIntent({ type: "REPLACEMENT", assetId: vehicle.id });
+
+            const { error: initError } = await initPaymentSheet({
+                merchantDisplayName: "ReachMasked",
+                customerId: customer,
+                customerEphemeralKeySecret: ephemeralKey,
+                paymentIntentClientSecret: paymentIntent,
+                allowsDelayedPaymentMethods: false,
+                appearance: {
+                    colors: {
+                        primary: theme.primary,
+                        background: theme.background,
+                    }
+                }
+            });
+
+            if (initError) throw new Error(initError.message);
+
+            const { error: presentError } = await presentPaymentSheet();
+
+            if (presentError) {
+                if (presentError.code !== "Canceled") {
+                    Alert.alert("Error", presentError.message);
+                }
+            } else {
+                Alert.alert("Success", "Tag replacement initiated. Your new tag is ready!");
+                // Refresh dashboard to get updated shortCode
+                await fetchDashboard();
+                navigation.goBack();
+            }
+        } catch (err: any) {
+            Alert.alert("Error", err.message || "Failed to initialize payment");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleTagToggle = (value: boolean) => {
         Alert.alert(
@@ -101,6 +161,32 @@ export default function TagDetailScreen({ route }: any) {
                             thumbColor={towMode ? "#F59E0B" : "#64748B"}
                         />
                     </View>
+                </View>
+
+                {/* Lost Tag Section */}
+                <View style={{ marginTop: 24, padding: 20, backgroundColor: isDark ? "rgba(239, 68, 68, 0.05)" : "#FEF2F2", borderRadius: 16, borderWidth: 1, borderColor: isDark ? "rgba(239, 68, 68, 0.2)" : "#FEE2E2" }}>
+                    <Text style={{ fontSize: 16, fontWeight: "700", color: "#EF4444", marginBottom: 4 }}>Report Lost Tag</Text>
+                    <Text style={{ fontSize: 13, color: theme.textMuted, lineHeight: 18, marginBottom: 16 }}>
+                        Lost your tag? Get a replacement for <Text style={{ fontWeight: "700", color: theme.text }}>$10.00</Text>. 
+                        The old tag <Text style={{ fontWeight: "700" }}>{tag?.shortCode}</Text> will be deactivated immediately.
+                    </Text>
+                    <TouchableOpacity 
+                        style={{ 
+                            backgroundColor: "#EF4444", 
+                            paddingVertical: 12, 
+                            borderRadius: 12, 
+                            alignItems: "center",
+                            opacity: loading ? 0.7 : 1
+                        }}
+                        onPress={handleReportLost}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text style={{ color: "#fff", fontWeight: "700", fontSize: 14 }}>Pay $10 for Replacement</Text>
+                        )}
+                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>

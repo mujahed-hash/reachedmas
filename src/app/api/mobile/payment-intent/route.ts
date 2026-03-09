@@ -40,18 +40,32 @@ export async function POST(req: Request) {
         );
 
         // 3. Create PaymentIntent
-        // Amount in cents: $24.99 = 2499
+        const body = await req.json().catch(() => ({}));
+        const { type, assetId } = body;
+
+        let amount = 2499; // Default Standard Plan
+        let metadata: Record<string, string> = {
+            userId: user.id,
+            planType: "STANDARD_ANNUAL"
+        };
+
+        if (type === "REPLACEMENT") {
+            amount = 1000; // $10.00
+            metadata = {
+                userId: user.id,
+                planType: "REPLACEMENT",
+                assetId: assetId || ""
+            };
+        }
+
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: 2499,
+            amount,
             currency: "usd",
             customer: customerId,
             automatic_payment_methods: {
                 enabled: true,
             },
-            metadata: {
-                userId: user.id,
-                planType: "STANDARD_ANNUAL"
-            }
+            metadata
         });
 
         return NextResponse.json({

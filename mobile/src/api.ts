@@ -115,9 +115,10 @@ export async function fetchPurchaseSession() {
     });
 }
 
-export async function fetchPaymentIntent() {
+export async function fetchPaymentIntent(params?: { type: string; assetId?: string }) {
     return apiFetch("/api/mobile/payment-intent", {
         method: "POST",
+        body: JSON.stringify(params || {}),
     });
 }
 

@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { generateShortCode } from "@/lib/utils";
 
 export async function POST(req: Request) {
     const body = await req.text();
@@ -22,21 +23,19 @@ export async function POST(req: Request) {
         return new NextResponse(`Webhook Error: ${message}`, { status: 400 });
     }
 
-    const session = event.data.object as Stripe.Checkout.Session;
-
+    // 1. Handle Web Checkout (Subscriptions)
     if (event.type === "checkout.session.completed") {
-        const subscription = await stripe.subscriptions.retrieve(
-            session.subscription as string
-        );
+        const session = event.data.object as Stripe.Checkout.Session;
+        const subscriptionId = session.subscription as string;
 
         if (!session?.metadata?.userId) {
             return new NextResponse("User ID is required", { status: 400 });
         }
 
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
         await prisma.user.update({
-            where: {
-                id: session.metadata.userId,
-            },
+            where: { id: session.metadata.userId },
             data: {
                 stripeSubscriptionId: subscription.id,
                 stripeCustomerId: subscription.customer as string,
@@ -45,20 +44,53 @@ export async function POST(req: Request) {
         });
     }
 
-    if (event.type === "invoice.payment_succeeded") {
-        // Find subscription by session.subscription if needed
+    // 2. Handle Native Mobile Payments (PaymentIntents)
+    if (event.type === "payment_intent.succeeded") {
+        const intent = event.data.object as Stripe.PaymentIntent;
+        const { userId, planType, assetId } = intent.metadata;
 
-        // Update the plan status or handle successful recurring payments here
-        // If they already have PREMIUM, nothing major changes unless we track billing periods
+        if (!userId) return new NextResponse("User ID missing in metadata", { status: 400 });
+
+        if (planType === "STANDARD_ANNUAL") {
+            await prisma.user.update({
+                where: { id: userId },
+                data: { plan: "PREMIUM" },
+            });
+        }
+
+        if (planType === "REPLACEMENT" && assetId) {
+            // Disable old tags
+            await prisma.tag.updateMany({
+                where: { assetId: assetId },
+                data: { status: "DISABLED" }
+            });
+
+            // Generate unique shortCode
+            let shortCode = generateShortCode();
+            let attempts = 0;
+            while (attempts < 10) {
+                const existing = await prisma.tag.findUnique({ where: { shortCode } });
+                if (!existing) break;
+                shortCode = generateShortCode();
+                attempts++;
+            }
+
+            // Create new tag
+            await prisma.tag.create({
+                data: {
+                    assetId: assetId,
+                    shortCode,
+                    status: "ACTIVE"
+                }
+            });
+        }
     }
 
+    // 3. Handle Subscription Deletion/Updates
     if (event.type === "customer.subscription.deleted" || event.type === "customer.subscription.updated") {
-        const subscription = await stripe.subscriptions.retrieve(
-            session.id as string // The object here is the subscription itself
-        );
+        const subscription = event.data.object as Stripe.Subscription;
 
         if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
-            // Find user by subscription ID
             const user = await prisma.user.findUnique({
                 where: { stripeSubscriptionId: subscription.id }
             });
