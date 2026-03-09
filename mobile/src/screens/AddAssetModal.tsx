@@ -17,7 +17,9 @@ import {
     User, 
     Package, 
     ShieldCheck, 
-    CircleCheck
+    CircleCheck,
+    CreditCard,
+    ArrowLeft
 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { addAsset } from "../api";
@@ -31,8 +33,11 @@ const ASSET_TYPES = [
     { id: "ASSET", label: "Other Asset", icon: Package },
 ];
 
-export default function AddAssetModal({ navigation }: any) {
+export default function AddAssetModal({ navigation, route }: any) {
     const { theme, isDark } = useAppTheme();
+    const plan = route.params?.plan || "FREE";
+    const isFree = plan === "FREE";
+
     const [name, setName] = useState("");
     const [type, setType] = useState("CAR");
     const [subtitle, setSubtitle] = useState("");
@@ -71,7 +76,30 @@ export default function AddAssetModal({ navigation }: any) {
                 behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
                 <ScrollView contentContainerStyle={s.scrollContent} keyboardShouldPersistTaps="handled">
-                    {success ? (
+                    {isFree ? (
+                        <View style={s.purchasePrompt}>
+                            <View style={s.premiumBadge}>
+                                <CreditCard size={48} color={theme.primary} />
+                            </View>
+                            <Text style={s.purchaseTitle}>Activate Your Protection</Text>
+                            <Text style={s.purchaseDesc}>
+                                To add your first asset, you need to activate a protection plan. 
+                                Secure your vehicles, pets, and home today.
+                            </Text>
+                            <TouchableOpacity 
+                                style={s.upgradeBtn}
+                                onPress={() => {
+                                    navigation.goBack();
+                                    navigation.navigate("Purchase");
+                                }}
+                            >
+                                <Text style={s.upgradeText}>View Plans</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+                                <Text style={s.backText}>Maybe Later</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ) : success ? (
                         <View style={s.successBox}>
                             <CircleCheck size={64} color={theme.success} style={{ marginBottom: 16 }} />
                             <Text style={s.successText}>{success}</Text>
@@ -229,4 +257,34 @@ const createStyles = (theme: any, isDark: boolean) =>
             paddingVertical: 40,
         },
         successText: { fontSize: 16, fontWeight: "600", color: theme.text },
+
+        // Purchase Prompt
+        purchasePrompt: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingVertical: 40,
+        },
+        premiumBadge: {
+            width: 90,
+            height: 90,
+            borderRadius: 45,
+            backgroundColor: isDark ? "rgba(99,102,241,0.1)" : "rgba(99,102,241,0.05)",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 24,
+        },
+        purchaseTitle: { fontSize: 24, fontWeight: "800", color: theme.text, marginBottom: 12, textAlign: "center" },
+        purchaseDesc: { fontSize: 15, color: theme.textMuted, textAlign: "center", marginBottom: 32, lineHeight: 22 },
+        upgradeBtn: {
+            width: "100%",
+            backgroundColor: theme.primary,
+            borderRadius: 14,
+            paddingVertical: 16,
+            alignItems: "center",
+            marginBottom: 12,
+        },
+        upgradeText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+        backBtn: { padding: 12 },
+        backText: { color: theme.textMuted, fontSize: 14, fontWeight: "600" },
     });

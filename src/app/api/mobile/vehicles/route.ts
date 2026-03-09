@@ -37,13 +37,24 @@ export async function POST(req: NextRequest) {
             where: { id: session.user.id },
             select: { plan: true },
         });
-        const limit = user?.plan === "PREMIUM" ? 10 : 1;
+
+        if (!user || user.plan === "FREE") {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "A paid plan is required to add your first tag. Upgrade to continue.",
+                },
+                { status: 403 }
+            );
+        }
+
+        const limit = user.plan === "PREMIUM" ? 10 : 1;
 
         if (existingCount >= limit) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: `Your ${user?.plan || "FREE"} plan supports up to ${limit} asset(s). Upgrade to add more.`,
+                    message: `Your ${user.plan} plan supports up to ${limit} asset(s). Upgrade to add more.`,
                 },
                 { status: 403 }
             );

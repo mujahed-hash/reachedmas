@@ -7,6 +7,8 @@ import { AuthProvider, useAuth } from "./src/auth";
 import { LayoutDashboard, Users, Bell, Settings as SettingsIcon } from "lucide-react-native";
 import { usePushNotifications } from "./src/notifications";
 import { useNotificationRealtime } from "./src/useNotificationRealtime";
+import TagDetailScreen from "./src/screens/TagDetailScreen";
+import PurchaseScreen from "./src/screens/PurchaseScreen";
 import { ThemeProvider, useAppTheme } from "./src/ThemeProvider";
 
 import LoginScreen from "./src/screens/LoginScreen";
@@ -125,6 +127,8 @@ function MainStack() {
       <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
       <Stack.Screen name="AssetDetail" component={AssetDetailScreen} options={{ title: "Interaction History" }} />
       <Stack.Screen name="TagSetup" component={TagSetupScreen} options={{ title: "Tag Setup" }} />
+      <Stack.Screen name="TagDetail" component={TagDetailScreen} options={{ title: "Tag Settings" }} />
+      <Stack.Screen name="Purchase" component={PurchaseScreen} options={{ title: "Upgrade Plan", headerTransparent: true, headerTitle: "" }} />
       <Stack.Screen
         name="AddAssetModal"
         component={AddAssetModal}

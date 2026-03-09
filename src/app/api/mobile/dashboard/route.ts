@@ -57,11 +57,17 @@ export async function GET(req: NextRequest) {
             0
         );
 
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { plan: true }
+        });
+
         return NextResponse.json({
             // Keep backward compat: send both `vehicles` and `assets`
             vehicles: assets,
             assets,
             recentNotifications,
+            plan: user?.plan || "FREE",
             stats: {
                 totalScans,
                 activeTags,

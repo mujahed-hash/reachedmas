@@ -42,6 +42,7 @@ interface DashboardData {
     assets: Asset[];
     stats: { totalScans: number; activeTags: number; assetCount: number };
     recentNotifications: any[];
+    plan: string;
 }
 
 const getTypeIcon = (type: string, size = 22, color?: string) => {
@@ -163,7 +164,7 @@ export default function DashboardScreen({ navigation }: any) {
                         <Text style={s.sectionTitle}>Your Assets</Text>
                         <TouchableOpacity
                             style={s.addButton}
-                            onPress={() => navigation.navigate("AddAssetModal")}
+                            onPress={() => navigation.navigate("AddAssetModal", { plan: data?.plan || "FREE" })}
                         >
                             <Text style={s.addButtonText}>+ Add Asset</Text>
                         </TouchableOpacity>

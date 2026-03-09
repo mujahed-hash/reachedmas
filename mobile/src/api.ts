@@ -109,6 +109,12 @@ export async function addAsset(data: { name: string; type: string; subtitle?: st
     });
 }
 
+export async function fetchPurchaseSession() {
+    return apiFetch("/api/mobile/purchase-session", {
+        method: "POST",
+    });
+}
+
 export async function deleteAsset(assetId: string) {
     return apiFetch(`/api/mobile/vehicles/${assetId}`, { method: "DELETE" });
 }
