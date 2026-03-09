@@ -20,6 +20,8 @@ import {
     Tag as TagIcon
 } from "lucide-react";
 import { UserActions } from "@/components/admin/user-actions";
+import { TagActions } from "@/components/admin/tag-actions";
+import { AssetActions } from "@/components/admin/asset-actions";
 
 async function getUserDetail(userId: string) {
     return prisma.user.findUnique({
@@ -55,9 +57,10 @@ async function getUserDetail(userId: string) {
     });
 }
 
-export default async function AdminUserDetailPage({ params }: { params: { userId: string } }) {
+export default async function AdminUserDetailPage({ params }: { params: Promise<{ userId: string }> }) {
+    const { userId } = await params;
     const session = await auth();
-    const user = await getUserDetail(params.userId);
+    const user = await getUserDetail(userId);
 
     if (!user) {
         notFound();
@@ -198,24 +201,28 @@ export default async function AdminUserDetailPage({ params }: { params: { userId
                                         <div className="flex items-center justify-between mb-3">
                                             <div>
                                                 <h4 className="font-semibold text-white">{asset.name}</h4>
-                                                <p className="text-xs text-slate-500 uppercase tracking-wide font-bold">{asset.type}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-xs text-slate-500 uppercase tracking-wide font-bold">{asset.type}</p>
+                                                    <Badge variant={asset.isActive ? "default" : "outline"} className={asset.isActive ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 py-0 h-4 text-[10px]" : "text-slate-500 border-white/5 py-0 h-4 text-[10px]"}>
+                                                        {asset.isActive ? "Active" : "Locked"}
+                                                    </Badge>
+                                                </div>
                                             </div>
-                                            <Badge variant={asset.isActive ? "default" : "outline"} className={asset.isActive ? "bg-emerald-500/10 text-emerald-500" : "text-slate-500"}>
-                                                {asset.isActive ? "Active" : "Locked"}
-                                            </Badge>
+                                            <AssetActions assetId={asset.id} assetName={asset.name} isActive={asset.isActive} />
                                         </div>
                                         <div className="space-y-2">
                                             {asset.tags.map((tag) => (
-                                                <div key={tag.id} className="flex items-center justify-between bg-black/20 p-2 rounded text-sm">
+                                                <div key={tag.id} className="flex items-center justify-between bg-black/20 p-2 rounded text-sm group">
                                                     <div className="flex items-center gap-3">
                                                         <TagIcon className="h-3 w-3 text-slate-500" />
                                                         <span className="font-mono text-indigo-400">{tag.shortCode}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-4">
-                                                        <span className="text-xs text-slate-500 font-bold">{tag._count.interactions} interactions</span>
                                                         <Badge className={tag.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}>
                                                             {tag.status}
                                                         </Badge>
+                                                    </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <span className="text-xs text-slate-500 font-bold">{tag._count.interactions} scans</span>
+                                                        <TagActions tagId={tag.id} shortCode={tag.shortCode} currentStatus={tag.status} />
                                                     </div>
                                                 </div>
                                             ))}

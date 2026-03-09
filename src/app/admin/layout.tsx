@@ -66,11 +66,11 @@ export default async function AdminLayout({
 
                         {isAdmin && (
                             <nav className="hidden md:flex items-center gap-1">
-                                <NavLink href="/" icon={<LayoutDashboard className="h-4 w-4" />} label="Overview" />
-                                <NavLink href="/users" icon={<Users className="h-4 w-4" />} label="Users" />
-                                <NavLink href="/tags" icon={<QrCode className="h-4 w-4" />} label="Tags" />
-                                <NavLink href="/analytics" icon={<BarChart3 className="h-4 w-4" />} label="Analytics" />
-                                <NavLink href="/setup" icon={<Settings className="h-4 w-4" />} label="Setup" />
+                                <NavLink href="/admin" icon={<LayoutDashboard className="h-4 w-4" />} label="Overview" />
+                                <NavLink href="/admin/users" icon={<Users className="h-4 w-4" />} label="Users" />
+                                <NavLink href="/admin/tags" icon={<QrCode className="h-4 w-4" />} label="Tags" />
+                                <NavLink href="/admin/analytics" icon={<BarChart3 className="h-4 w-4" />} label="Analytics" />
+                                <NavLink href="/admin/setup" icon={<Settings className="h-4 w-4" />} label="Setup" />
                             </nav>
                         )}
                     </div>
