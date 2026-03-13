@@ -22,6 +22,9 @@ import {
 import { UserActions } from "@/components/admin/user-actions";
 import { TagActions } from "@/components/admin/tag-actions";
 import { AssetActions } from "@/components/admin/asset-actions";
+import { StickerCard } from "@/components/admin/sticker-card";
+
+const BASE_URL = process.env.NEXTAUTH_URL || "https://reachmasked.com";
 
 async function getUserDetail(userId: string) {
     return prisma.user.findUnique({
@@ -214,17 +217,31 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                                         </div>
                                         <div className="space-y-2">
                                             {asset.tags.map((tag) => (
-                                                <div key={tag.id} className="flex items-center justify-between bg-black/20 p-2 rounded text-sm group">
-                                                    <div className="flex items-center gap-3">
-                                                        <TagIcon className="h-3 w-3 text-slate-500" />
-                                                        <span className="font-mono text-indigo-400">{tag.shortCode}</span>
-                                                        <Badge className={tag.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}>
-                                                            {tag.status}
-                                                        </Badge>
+                                                <div key={tag.id} className="space-y-2 border-b border-white/5 pb-4 last:border-0 last:pb-0">
+                                                    <div className="flex items-center justify-between bg-black/20 p-2 rounded text-sm group">
+                                                        <div className="flex items-center gap-3">
+                                                            <TagIcon className="h-3 w-3 text-slate-500" />
+                                                            <span className="font-mono text-indigo-400">{tag.shortCode}</span>
+                                                            <Badge className={tag.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}>
+                                                                {tag.status}
+                                                            </Badge>
+                                                        </div>
+                                                        <div className="flex items-center gap-4">
+                                                            <span className="text-xs text-slate-500 font-bold">{tag._count.interactions} scans</span>
+                                                            <TagActions tagId={tag.id} shortCode={tag.shortCode} currentStatus={tag.status} />
+                                                        </div>
                                                     </div>
-                                                    <div className="flex items-center gap-4">
-                                                        <span className="text-xs text-slate-500 font-bold">{tag._count.interactions} scans</span>
-                                                        <TagActions tagId={tag.id} shortCode={tag.shortCode} currentStatus={tag.status} />
+                                                    
+                                                    {/* Sticker Preview & Download for Admin */}
+                                                    <div className="p-4 rounded bg-black/40 flex justify-center overflow-x-auto">
+                                                        <div className="scale-75 origin-top">
+                                                            <StickerCard 
+                                                                shortCode={tag.shortCode}
+                                                                assetName={asset.name}
+                                                                assetType={asset.type}
+                                                                tagUrl={`${BASE_URL}/t/${tag.shortCode}`}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}

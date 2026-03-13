@@ -8,6 +8,9 @@ import { Car, Dog, Home, User, Package, Smartphone, QrCode } from "lucide-react"
 import Image from "next/image";
 import { CopyButton } from "@/components/copy-button";
 import { DownloadQRButton } from "@/components/download-qr-button";
+import { StickerCard } from "@/components/admin/sticker-card";
+
+const BASE_URL = process.env.NEXTAUTH_URL || "https://reachmasked.com";
 
 const typeIcons: Record<string, any> = {
     CAR: Car, PET: Dog, HOME: Home, PERSON: User, ASSET: Package,
@@ -130,17 +133,35 @@ export default async function TagDetailsPage({
                                     Program this URL onto an NTAG213/215 NFC tag. No encrypted data needed.
                                 </p>
                             </div>
-
-                            {/* Stats */}
-                            <div className="pt-4 border-t border-border">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-muted-foreground">Total Scans</span>
-                                    <span className="text-lg font-bold text-foreground">{tag._count.interactions}</span>
-                                </div>
-                            </div>
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* Printable Sticker Section */}
+                <Card className="mt-6 border-border bg-card">
+                    <CardHeader>
+                        <CardTitle className="text-foreground flex items-center gap-2">
+                            <Smartphone className="h-5 w-5 text-primary" />
+                            Printable Sticker Card
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="flex justify-center overflow-x-auto p-4 bg-muted/30 rounded-xl">
+                            <div className="scale-90 md:scale-100 origin-center">
+                                <StickerCard 
+                                    shortCode={tag.shortCode}
+                                    assetName={tag.asset.name}
+                                    assetType={tag.asset.type}
+                                    tagUrl={`${BASE_URL}/t/${tag.shortCode}`}
+                                />
+                            </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground text-center">
+                            Download this premium sticker design for your vehicle or asset. 
+                            It supports both <strong>QR Scan</strong> and <strong>NFC Tap</strong>.
+                        </p>
+                    </CardContent>
+                </Card>
 
                 {/* NFC Instructions */}
                 <Card className="mt-6 border-border bg-card">
