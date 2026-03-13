@@ -302,7 +302,6 @@ export default async function DashboardPage() {
         </div>
     );
 }
-}
 
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
     return (
