@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Save, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { updateSetting, getSettingValue, SETTING_DEFAULTS } from "@/actions/admin/system-settings";
+import { updateSetting } from "@/actions/admin/system-settings";
+import { SETTING_DEFAULTS } from "@/lib/settings-constants";
 
 interface SettingControl {
     key: string;
