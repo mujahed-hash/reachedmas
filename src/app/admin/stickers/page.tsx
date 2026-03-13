@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Printer, QrCode } from "lucide-react";
 import { StickerCard } from "@/components/admin/sticker-card";
+import { generateQRDataURL } from "@/lib/qr";
 
 async function getTagsForStickers() {
     return prisma.tag.findMany({
@@ -22,6 +23,14 @@ const BASE_URL = process.env.NEXTAUTH_URL || "https://reachmasked.com";
 
 export default async function AdminStickersPage() {
     const tags = await getTagsForStickers();
+
+    // Generate QR codes for all stickers server-side
+    const qrDataUrls: Record<string, string> = {};
+    await Promise.all(
+        tags.map(async (tag) => {
+            qrDataUrls[tag.id] = await generateQRDataURL(tag.shortCode);
+        })
+    );
 
     return (
         <div className="space-y-8">
@@ -96,6 +105,7 @@ export default async function AdminStickersPage() {
                                         assetName={tag.asset.name}
                                         assetType={tag.asset.type}
                                         tagUrl={`${BASE_URL}/t/${tag.shortCode}`}
+                                        qrDataUrl={qrDataUrls[tag.id]}
                                     />
                                 </div>
 

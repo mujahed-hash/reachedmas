@@ -153,6 +153,7 @@ export default async function TagDetailsPage({
                                     assetName={tag.asset.name}
                                     assetType={tag.asset.type}
                                     tagUrl={`${BASE_URL}/t/${tag.shortCode}`}
+                                    qrDataUrl={qrDataURL}
                                 />
                             </div>
                         </div>

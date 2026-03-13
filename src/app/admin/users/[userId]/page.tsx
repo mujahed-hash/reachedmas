@@ -25,6 +25,7 @@ import { AssetActions } from "@/components/admin/asset-actions";
 import { StickerCard } from "@/components/admin/sticker-card";
 import { FreeTagControls } from "@/components/admin/free-tag-controls";
 import { getFreeTagStatus } from "@/lib/free-tag";
+import { generateQRDataURL } from "@/lib/qr";
 
 const BASE_URL = process.env.NEXTAUTH_URL || "https://reachmasked.com";
 
@@ -86,6 +87,15 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
         freeTagGraceDays: user.freeTagGraceDays,
         plan: user.plan,
     });
+
+    // Generate QR codes server-side for all tags (no CORS issues)
+    const allTags = user.assets.flatMap(a => a.tags);
+    const qrDataUrls: Record<string, string> = {};
+    await Promise.all(
+        allTags.map(async (tag) => {
+            qrDataUrls[tag.id] = await generateQRDataURL(tag.shortCode);
+        })
+    );
 
     return (
         <div className="space-y-8 pb-10">
@@ -266,6 +276,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                                                                 assetName={asset.name}
                                                                 assetType={asset.type}
                                                                 tagUrl={`${BASE_URL}/t/${tag.shortCode}`}
+                                                                qrDataUrl={qrDataUrls[tag.id]}
                                                             />
                                                         </div>
                                                     </div>

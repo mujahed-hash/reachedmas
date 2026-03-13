@@ -9,6 +9,8 @@ interface StickerCardProps {
     assetName: string;
     assetType: string;
     tagUrl: string;
+    /** Base64 PNG data URL generated server-side — no CORS issues on canvas */
+    qrDataUrl: string;
 }
 
 // ─── Canvas constants ────────────────────────────────────────────────────────
@@ -37,21 +39,16 @@ function roundRect(
     ctx.closePath();
 }
 
-export function StickerCard({ shortCode, assetName, assetType, tagUrl }: StickerCardProps) {
+export function StickerCard({ shortCode, assetName, assetType, tagUrl, qrDataUrl }: StickerCardProps) {
     const previewRef = useRef<HTMLDivElement>(null);
 
-    // ── QR code URL (Google Charts, free) ────────────────────────────────────
-    const qrUrlExternal = `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(tagUrl)}&chs=400x400&chco=1a2a4a&chf=bg,s,FFFFFF00`;
-    // Routed through our Next.js proxy to avoid CORS on canvas
-    const qrUrlProxy = `/api/qr-proxy?url=${encodeURIComponent(qrUrlExternal)}`;
-
     async function handleDownload() {
-        // Load QR image through proxy
+        // Load QR image from base64 data URL — no CORS, always works
         const qrImg = await new Promise<HTMLImageElement>((resolve, reject) => {
             const img = new Image();
             img.onload = () => resolve(img);
             img.onerror = reject;
-            img.src = qrUrlProxy;
+            img.src = qrDataUrl;
         });
 
         const canvas = document.createElement("canvas");
@@ -214,7 +211,6 @@ export function StickerCard({ shortCode, assetName, assetType, tagUrl }: Sticker
     }
 
     // ── Small in-page preview (keep the styled HTML card) ────────────────────
-    const qrUrlDirect = `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(tagUrl)}&chs=300x300&chco=1a2a4a&chf=bg,s,0F2044`;
 
     return (
         <div className="flex flex-col items-center gap-3">
@@ -255,7 +251,7 @@ export function StickerCard({ shortCode, assetName, assetType, tagUrl }: Sticker
                     {/* QR Code – white bg so it's readable */}
                     <div style={{ background: "#ffffff", padding: "8px", borderRadius: "8px" }}>
                         <img
-                            src={qrUrlDirect}
+                            src={qrDataUrl}
                             alt="QR Code"
                             style={{ width: "148px", height: "148px", display: "block" }}
                         />
