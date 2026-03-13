@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { sendPushToUser } from "@/lib/push";
+import { emitNotification } from "@/lib/notification-emitter";
 
 // Helper to verify admin access
 async function verifyAdmin(): Promise<{ isAdmin: boolean; userId?: string }> {
@@ -124,6 +126,15 @@ export async function updateUserPlan(
         revalidatePath("/admin");
         revalidatePath("/admin/users");
         revalidatePath(`/admin/users/${userId}`);
+
+        const notifTitle = "Plan Updated";
+        const notifBody = `Your account has been ${plan === "PREMIUM" ? "upgraded" : "downgraded"} to ${plan} plan.`;
+        const dbNotif = await prisma.notification.create({
+            data: { userId, type: "SYSTEM_ALERT", title: notifTitle, body: notifBody },
+        });
+        emitNotification(userId, { id: dbNotif.id, type: dbNotif.type, title: notifTitle, body: notifBody, asset: "System", tagCode: "", createdAt: dbNotif.createdAt.toISOString() });
+        await sendPushToUser(userId, notifTitle, notifBody, { type: "SYSTEM_ALERT" });
+
         return { success: true };
     } catch (error) {
         console.error("Error updating user plan:", error);
@@ -176,6 +187,19 @@ export async function updateTagStatus(
 
         revalidatePath("/admin");
         revalidatePath("/admin/tags");
+
+        const tag = await prisma.tag.findUnique({ where: { id: tagId }, select: { asset: { select: { ownerId: true, name: true } }, shortCode: true } });
+        if (tag?.asset?.ownerId) {
+            const userId = tag.asset.ownerId;
+            const notifTitle = "Tag Status Updated";
+            const notifBody = `Your tag for ${tag.asset.name} (${tag.shortCode}) is now ${status}.`;
+            const dbNotif = await prisma.notification.create({
+                data: { userId, type: "SYSTEM_ALERT", title: notifTitle, body: notifBody },
+            });
+            emitNotification(userId, { id: dbNotif.id, type: dbNotif.type, title: notifTitle, body: notifBody, asset: tag.asset.name, tagCode: tag.shortCode, createdAt: dbNotif.createdAt.toISOString() });
+            await sendPushToUser(userId, notifTitle, notifBody, { type: "SYSTEM_ALERT" });
+        }
+
         return { success: true };
     } catch (error) {
         console.error("Error updating tag status:", error);
@@ -249,6 +273,15 @@ export async function toggleVehicleActive(vehicleId: string): Promise<{ success:
         });
 
         revalidatePath("/admin");
+
+        const notifTitle = asset.isActive ? "Asset Deactivated" : "Asset Activated";
+        const notifBody = `Your asset "${asset.name}" has been ${asset.isActive ? "deactivated" : "activated"} by an admin.`;
+        const dbNotif = await prisma.notification.create({
+            data: { userId: asset.ownerId, type: "SYSTEM_ALERT", title: notifTitle, body: notifBody },
+        });
+        emitNotification(asset.ownerId, { id: dbNotif.id, type: dbNotif.type, title: notifTitle, body: notifBody, asset: asset.name, tagCode: "", createdAt: dbNotif.createdAt.toISOString() });
+        await sendPushToUser(asset.ownerId, notifTitle, notifBody, { type: "SYSTEM_ALERT" });
+
         return { success: true };
     } catch (error) {
         console.error("Error toggling asset:", error);

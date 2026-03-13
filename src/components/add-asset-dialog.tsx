@@ -157,7 +157,7 @@ export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: Add
 
                             <div className="space-y-2">
                                 <Label htmlFor="subtitle">
-                                    {selectedType === "CAR" ? "Color" :
+                                    {selectedType === "CAR" ? "Model" :
                                         selectedType === "PET" ? "Breed" :
                                             selectedType === "HOME" ? "Unit/Apt" :
                                                 selectedType === "PERSON" ? "Relationship" :
@@ -167,7 +167,7 @@ export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: Add
                                     id="subtitle"
                                     name="subtitle"
                                     placeholder={
-                                        selectedType === "CAR" ? "e.g. Silver, Black" :
+                                        selectedType === "CAR" ? "e.g. Camry, Civic" :
                                             selectedType === "PET" ? "e.g. Golden Retriever" :
                                                 selectedType === "HOME" ? "e.g. Apt 4B" :
                                                     selectedType === "PERSON" ? "e.g. Daughter" :
@@ -180,10 +180,7 @@ export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: Add
                             {/* Type-specific extra fields */}
                             {selectedType === "CAR" && (
                                 <>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="model">Model</Label>
-                                        <Input id="model" name="model" placeholder="e.g. Camry, Civic" className="bg-muted/50 border-border" />
-                                    </div>
+
                                     <div className="space-y-2">
                                         <Label htmlFor="color">Color</Label>
                                         <Input id="color" name="color" placeholder="e.g. Silver" className="bg-muted/50 border-border" />

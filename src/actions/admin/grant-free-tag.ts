@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { sendPushToUser } from "@/lib/push";
+import { emitNotification } from "@/lib/notification-emitter";
 
 async function requireAdmin() {
     const session = await auth();
@@ -22,6 +24,22 @@ export async function grantFreeTag(userId: string, trialDays = 30, graceDays = 5
             freeTagGraceDays: graceDays,
         },
     });
+
+    const notifTitle = "Free Tag Granted!";
+    const notifBody = `Congratulations! You have been granted a Free Tag Trial for ${trialDays} days. Add an asset to activate.`;
+    const dbNotif = await prisma.notification.create({
+        data: {
+            userId,
+            type: "SYSTEM_ALERT",
+            title: notifTitle,
+            body: notifBody,
+        },
+    });
+    emitNotification(userId, {
+        id: dbNotif.id, type: dbNotif.type, title: notifTitle, body: notifBody, createdAt: dbNotif.createdAt.toISOString(), asset: "System", tagCode: ""
+    });
+    await sendPushToUser(userId, notifTitle, notifBody, { type: "SYSTEM_ALERT" });
+
     revalidatePath(`/admin/users/${userId}`);
     return { success: true, message: `Free tag granted for ${trialDays} days with ${graceDays} days grace.` };
 }
@@ -52,6 +70,15 @@ export async function revokeFreeTag(userId: string) {
             freeTagGrantedAt: null,
         },
     });
+
+    const notifTitle = "Free Tag Revoked";
+    const notifBody = `Your Free Tag Trial has been revoked.`;
+    const dbNotif = await prisma.notification.create({
+        data: { userId, type: "SYSTEM_ALERT", title: notifTitle, body: notifBody },
+    });
+    emitNotification(userId, { id: dbNotif.id, type: dbNotif.type, title: notifTitle, body: notifBody, createdAt: dbNotif.createdAt.toISOString(), asset: "System", tagCode: "" });
+    await sendPushToUser(userId, notifTitle, notifBody, { type: "SYSTEM_ALERT" });
+
     revalidatePath(`/admin/users/${userId}`);
     return { success: true, message: "Free tag grant revoked." };
 }
@@ -62,6 +89,14 @@ export async function updateFreeTagSettings(userId: string, trialDays: number, g
         where: { id: userId },
         data: { freeTagTrialDays: trialDays, freeTagGraceDays: graceDays },
     });
+
+    const notifTitle = "Free Tag Trial Updated";
+    const notifBody = `Your Free Tag Trial settings have been updated to ${trialDays} days.`;
+    const dbNotif = await prisma.notification.create({
+        data: { userId, type: "SYSTEM_ALERT", title: notifTitle, body: notifBody },
+    });
+    emitNotification(userId, { id: dbNotif.id, type: dbNotif.type, title: notifTitle, body: notifBody, createdAt: dbNotif.createdAt.toISOString(), asset: "System", tagCode: "" });
+
     revalidatePath(`/admin/users/${userId}`);
     return { success: true };
 }
@@ -84,6 +119,15 @@ export async function adminForceLockTag(userId: string) {
         )
     );
     revalidatePath(`/admin/users/${userId}`);
+
+    const notifTitle = "⚠️ Tags Locked";
+    const notifBody = "Your tags have been locked because your trial expired.";
+    const dbNotif = await prisma.notification.create({
+        data: { userId, type: "SYSTEM_ALERT", title: notifTitle, body: notifBody },
+    });
+    emitNotification(userId, { id: dbNotif.id, type: dbNotif.type, title: notifTitle, body: notifBody, createdAt: dbNotif.createdAt.toISOString(), asset: "System", tagCode: "" });
+    await sendPushToUser(userId, notifTitle, notifBody, { type: "SYSTEM_ALERT" });
+
     return { success: true };
 }
 
@@ -104,5 +148,14 @@ export async function adminForceUnlockTag(userId: string) {
         )
     );
     revalidatePath(`/admin/users/${userId}`);
+
+    const notifTitle = "Tags Unlocked!";
+    const notifBody = "Your tags have been unlocked. Thank you for subscribing!";
+    const dbNotif = await prisma.notification.create({
+        data: { userId, type: "SYSTEM_ALERT", title: notifTitle, body: notifBody },
+    });
+    emitNotification(userId, { id: dbNotif.id, type: dbNotif.type, title: notifTitle, body: notifBody, createdAt: dbNotif.createdAt.toISOString(), asset: "System", tagCode: "" });
+    await sendPushToUser(userId, notifTitle, notifBody, { type: "SYSTEM_ALERT" });
+
     return { success: true };
 }
