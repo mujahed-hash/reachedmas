@@ -116,7 +116,7 @@ export default async function AdminSettingsPage() {
                     return (
                         <Card key={section.id} className="border-white/10 bg-white/5 backdrop-blur-sm">
                             <CardHeader className="border-b border-white/5 pb-4">
-                                <CardTitle className="text-lg flex items-center gap-2">
+                                <CardTitle className="text-lg flex items-center gap-2 text-white">
                                     <Icon className={`h-5 w-5 ${section.color}`} />
                                     {section.title}
                                 </CardTitle>

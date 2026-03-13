@@ -121,8 +121,8 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                 {/* User Info Card */}
                 <Card className="border-white/10 bg-white/5 backdrop-blur-sm">
                     <CardHeader>
-                        <CardTitle className="text-lg flex items-center gap-2">
-                            <Shield className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg flex items-center gap-2 text-white">
+                            <Shield className="h-5 w-5 text-indigo-400" />
                             Profile Details
                         </CardTitle>
                     </CardHeader>
@@ -292,9 +292,9 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                         <CardContent>
                             <div className="space-y-3">
                                 {user.notifications.map((notif) => (
-                                    <div key={notif.id} className="flex items-start gap-3 p-3 rounded bg-white/5 border-l-2 border-primary/30">
+                                    <div key={notif.id} className="flex items-start gap-3 p-3 rounded bg-white/5 border-l-2 border-indigo-500/30">
                                         <div className="mt-1">
-                                            <Bell className="h-4 w-4 text-primary" />
+                                            <Bell className="h-4 w-4 text-indigo-400" />
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between">
