@@ -76,11 +76,15 @@ export default async function AdminLayout({
                                     <p className="text-[10px] text-slate-500 uppercase tracking-widest leading-none mb-1">Authenticated</p>
                                     <p className="text-sm font-medium text-white ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">{session.user.email}</p>
                                 </div>
-                                <Link href="/api/auth/signout">
-                                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-white/5">
+                                <form action={async () => {
+                                    "use server";
+                                    const { signOut } = await import("@/lib/auth");
+                                    await signOut({ redirectTo: "/admin/login" });
+                                }}>
+                                    <Button variant="ghost" size="icon" type="submit" className="text-slate-400 hover:text-white hover:bg-white/5">
                                         <LogOut className="h-5 w-5" />
                                     </Button>
-                                </Link>
+                                </form>
                             </>
                         )}
                     </div>
