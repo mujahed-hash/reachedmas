@@ -23,7 +23,7 @@ export default auth(async (req) => {
 
         // WHITELIST: Only these paths are valid on the admin subdomain
         const isUserDetail = cleanPath.startsWith("/users/") && cleanPath.split("/").length === 3;
-        const allowedAdminPaths = ["/", "/users", "/tags", "/analytics", "/setup", "/login"];
+        const allowedAdminPaths = ["/", "/users", "/tags", "/analytics", "/setup", "/login", "/stickers"];
         const isAllowed = allowedAdminPaths.some(p => cleanPath === p) || isUserDetail;
 
         // BLOCK: Any path not in the whitelist → redirect to admin root

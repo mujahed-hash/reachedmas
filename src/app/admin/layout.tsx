@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { Shield, LayoutDashboard, Users, QrCode, BarChart3, Settings, LogOut } from "lucide-react";
+import { Shield, LayoutDashboard, Users, QrCode, BarChart3, Settings, LogOut, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default async function AdminLayout({
@@ -62,6 +62,7 @@ export default async function AdminLayout({
                                 <NavLink href="/admin" icon={<LayoutDashboard className="h-4 w-4" />} label="Overview" />
                                 <NavLink href="/admin/users" icon={<Users className="h-4 w-4" />} label="Users" />
                                 <NavLink href="/admin/tags" icon={<QrCode className="h-4 w-4" />} label="Tags" />
+                                <NavLink href="/admin/stickers" icon={<Printer className="h-4 w-4" />} label="Stickers" />
                                 <NavLink href="/admin/analytics" icon={<BarChart3 className="h-4 w-4" />} label="Analytics" />
                                 <NavLink href="/admin/setup" icon={<Settings className="h-4 w-4" />} label="Setup" />
                             </nav>
