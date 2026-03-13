@@ -220,7 +220,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                     {/* Assets & Tags */}
                     <Card className="border-white/10 bg-white/5 lg:col-span-1">
                         <CardHeader>
-                            <CardTitle className="text-lg flex items-center gap-2">
+                            <CardTitle className="text-lg flex items-center gap-2 text-white">
                                 <Package className="h-5 w-5 text-indigo-400" />
                                 Registered Assets ({user.assets.length})
                             </CardTitle>
