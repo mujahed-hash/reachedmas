@@ -203,10 +203,6 @@ export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: Add
                                         <Input id="species" name="species" placeholder="e.g. Dog, Cat" className="bg-muted/50 border-border" />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="breed">Breed</Label>
-                                        <Input id="breed" name="breed" placeholder="e.g. Labrador" className="bg-muted/50 border-border" />
-                                    </div>
-                                    <div className="space-y-2">
                                         <Label htmlFor="microchipId">Microchip ID (Optional)</Label>
                                         <Input id="microchipId" name="microchipId" placeholder="Chip number" className="bg-muted/50 border-border" />
                                     </div>
@@ -239,10 +235,6 @@ export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: Add
                             {selectedType === "PERSON" && (
                                 <>
                                     <div className="space-y-2">
-                                        <Label htmlFor="relationship">Relationship</Label>
-                                        <Input id="relationship" name="relationship" placeholder="e.g. Son, Mother" className="bg-muted/50 border-border" />
-                                    </div>
-                                    <div className="space-y-2">
                                         <Label htmlFor="age">Age (Optional)</Label>
                                         <Input id="age" name="age" placeholder="e.g. 12" type="number" className="bg-muted/50 border-border" />
                                     </div>
@@ -252,16 +244,8 @@ export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: Add
                             {selectedType === "ASSET" && (
                                 <>
                                     <div className="space-y-2">
-                                        <Label htmlFor="category">Category</Label>
-                                        <Input id="category" name="category" placeholder="e.g. Bicycle, Laptop" className="bg-muted/50 border-border" />
-                                    </div>
-                                    <div className="space-y-2">
                                         <Label htmlFor="serialNumber">Serial Number (Optional)</Label>
                                         <Input id="serialNumber" name="serialNumber" placeholder="S/N" className="bg-muted/50 border-border" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="description">Description</Label>
-                                        <Input id="description" name="description" placeholder="Brief description" className="bg-muted/50 border-border" />
                                     </div>
                                 </>
                             )}
