@@ -21,6 +21,7 @@ type AssetType = "CAR" | "PET" | "HOME" | "PERSON" | "ASSET";
 
 interface AddAssetDialogProps {
     plan?: string;
+    isFreeTagEligible?: boolean;
 }
 
 const assetTypes: { type: AssetType; icon: any; label: string; desc: string }[] = [
@@ -31,8 +32,8 @@ const assetTypes: { type: AssetType; icon: any; label: string; desc: string }[] 
     { type: "ASSET", icon: Package, label: "Asset", desc: "Bike, luggage, device" },
 ];
 
-export function AddAssetDialog({ plan = "FREE" }: AddAssetDialogProps) {
-    const isFree = plan === "FREE";
+export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: AddAssetDialogProps) {
+    const isFree = plan === "FREE" && !isFreeTagEligible;
     const [open, setOpen] = useState(false);
     const [step, setStep] = useState<1 | 2>(1); // 1=choose type, 2=fill form
     const [selectedType, setSelectedType] = useState<AssetType>("CAR");

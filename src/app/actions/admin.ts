@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
 
 // Helper to verify admin access
 async function verifyAdmin(): Promise<{ isAdmin: boolean; userId?: string }> {
@@ -127,6 +128,31 @@ export async function updateUserPlan(
     } catch (error) {
         console.error("Error updating user plan:", error);
         return { success: false, error: "Failed to update user plan" };
+    }
+}
+
+export async function resetUserPassword(userId: string): Promise<{ success: boolean; error?: string }> {
+    const { isAdmin } = await verifyAdmin();
+
+    if (!isAdmin) {
+        return { success: false, error: "Only admins can reset user passwords" };
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash("ReachAdminPassword123!", 10);
+        
+        await prisma.user.update({
+            where: { id: userId },
+            data: { passwordHash: hashedPassword },
+        });
+
+        revalidatePath("/admin");
+        revalidatePath("/admin/users");
+        revalidatePath(`/admin/users/${userId}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Error resetting user password:", error);
+        return { success: false, error: "Failed to reset password" };
     }
 }
 

@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { getFreeTagStatus } from "@/lib/free-tag";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -99,14 +100,10 @@ const typeIcons: Record<string, any> = {
 export default async function DashboardPage() {
     const session = await auth();
     if (!session?.user?.id) {
-        redirect("/login");
-    }
-
     // Double check user exists in DB (handle stale sessions after resets)
     const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-        select: { id: true, plan: true }
-    });
+    }) as any;
 
     if (!user) {
         console.warn(`[Dashboard] Auth session exists but user record missing: ${session.user.id}`);
@@ -116,6 +113,24 @@ export default async function DashboardPage() {
     }
 
     const { assets, totalScans, recentActivity, notifications, unreadCount } = await getDashboardData(session.user.id);
+    
+    // Check if user is eligible to bypass paywall via free tag grant
+    const freeTagInfo = getFreeTagStatus({
+        freeTagGranted: user?.freeTagGranted || false,
+        freeTagGrantedAt: user?.freeTagGrantedAt || null,
+        freeTagTrialDays: user?.freeTagTrialDays || 0,
+        freeTagGraceDays: user?.freeTagGraceDays || 0,
+        plan: user?.plan || "FREE"
+    });
+    // Eligible if they have an active or grace free tag AND they haven't used it (0 assets)
+    const isFreeTagEligible = (freeTagInfo.status === "ACTIVE" || freeTagInfo.status === "GRACE") && assets.length === 0;
+
+    console.log("[Dashboard] Free Tag Auth Trace:", {
+        userId: session.user.id,
+        freeTagInfo: freeTagInfo,
+        assetsLength: assets.length,
+        isFreeTagEligible: isFreeTagEligible
+    });
 
     // Group assets by type for display
     const assetsByType = assets.reduce((acc: Record<string, AssetWithTags[]>, asset: AssetWithTags) => {
@@ -147,7 +162,7 @@ export default async function DashboardPage() {
                                 Family
                             </Button>
                         </Link>
-                        <AddAssetDialog plan={user.plan} />
+                        <AddAssetDialog plan={user.plan} isFreeTagEligible={isFreeTagEligible} />
                     </div>
                 </div>
 
@@ -170,7 +185,7 @@ export default async function DashboardPage() {
                                     <p className="text-muted-foreground text-sm mb-4">
                                         Add your first asset — a vehicle, pet, home, or anything you want to protect.
                                     </p>
-                                    <AddAssetDialog plan={user.plan} />
+                                    <AddAssetDialog plan={user.plan} isFreeTagEligible={isFreeTagEligible} />
                                 </CardContent>
                             </Card>
                         ) : (
@@ -283,6 +298,7 @@ export default async function DashboardPage() {
             </main>
         </div>
     );
+}
 }
 
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {

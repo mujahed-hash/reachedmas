@@ -1,5 +1,7 @@
 "use server";
 
+import { getFreeTagStatus } from "@/lib/free-tag";
+
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
@@ -34,7 +36,7 @@ export async function addAsset(formData: FormData): Promise<AddAssetResult> {
         where: { ownerId: session.user.id },
     });
 
-    const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { id: true, plan: true } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } }) as any;
 
     if (!user) {
         console.error(`[addAsset] User not found in database for ID: ${session.user.id}`);
@@ -43,19 +45,33 @@ export async function addAsset(formData: FormData): Promise<AddAssetResult> {
 
     console.log(`[addAsset] User found: ${user.id}, plan: ${user.plan}`);
 
+    // Check if user is eligible to bypass paywall via free tag grant
+    const freeTagInfo = getFreeTagStatus({
+        freeTagGranted: user.freeTagGranted,
+        freeTagGrantedAt: user.freeTagGrantedAt,
+        freeTagTrialDays: user.freeTagTrialDays,
+        freeTagGraceDays: user.freeTagGraceDays,
+        plan: user.plan
+    });
+    // Eligible if they have an active or grace free tag AND they haven't used it (0 assets)
+    const isFreeTagEligible = (freeTagInfo.status === "ACTIVE" || freeTagInfo.status === "GRACE") && existingCount === 0;
+
     const limit = user.plan === "PREMIUM" ? 1 : 0;
 
-    if (user.plan === "FREE") {
+    if (user.plan === "FREE" && !isFreeTagEligible) {
         return {
             success: false,
             message: "A paid plan is required to add your first tag. Upgrade to continue.",
         };
     }
 
-    if (existingCount >= limit) {
+    // A free tag only grants 1 asset. So if they are on a free plan but eligible, limit is 1.
+    const effectiveLimit = user.plan === "PREMIUM" ? limit : (isFreeTagEligible ? 1 : 0);
+
+    if (existingCount >= effectiveLimit) {
         return {
             success: false,
-            message: `Your current plan supports up to ${limit} asset(s). Contact support to add more.`,
+            message: `Your current plan supports up to ${effectiveLimit} asset(s). Contact support to add more.`,
         };
     }
 

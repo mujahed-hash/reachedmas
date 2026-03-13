@@ -8,6 +8,7 @@ import {
     demoteFromAdmin,
     deleteUser,
     updateUserPlan,
+    resetUserPassword,
 } from "@/app/actions/admin";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -22,7 +23,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ShieldCheck, ShieldOff, Trash2, Loader2, Star, StarOff, User as UserIcon } from "lucide-react";
+import { ShieldCheck, ShieldOff, Trash2, Loader2, Star, StarOff, User as UserIcon, KeyRound } from "lucide-react";
 
 interface UserActionsProps {
     userId: string;
@@ -82,6 +83,20 @@ export function UserActions({ userId, userEmail, currentRole, currentPlan, isCur
             setError(result.error || "Failed");
         } else {
             router.refresh();
+        }
+    }
+
+    async function handleResetPassword() {
+        if (!confirm(`Are you sure you want to reset the password for ${userEmail}? It will be reset to ReachAdminPassword123!`)) return;
+        
+        setLoading(true);
+        setError(null);
+        const result = await resetUserPassword(userId);
+        setLoading(false);
+        if (!result.success) {
+            setError(result.error || "Failed to reset password");
+        } else {
+            alert(`Password successfully reset to: ReachAdminPassword123!`);
         }
     }
 
@@ -185,6 +200,24 @@ export function UserActions({ userId, userEmail, currentRole, currentPlan, isCur
                     )}
                 </Button>
             )}
+
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={handleResetPassword}
+                disabled={loading}
+                className="text-blue-500 hover:text-blue-600 border-blue-500/20 bg-blue-500/5"
+                title="Reset Password to ReachAdminPassword123!"
+            >
+                {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                    <>
+                        <KeyRound className="h-4 w-4 mr-1" />
+                        Reset Pass
+                    </>
+                )}
+            </Button>
 
             <AlertDialog>
                 <AlertDialogTrigger asChild>
