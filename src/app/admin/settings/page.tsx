@@ -1,4 +1,4 @@
-import { getSettings, getSettingValue, updateSetting } from "@/actions/admin/system-settings";
+import { getSettings } from "@/actions/admin/system-settings";
 import { AdminSettingsForm } from "@/components/admin/admin-settings-form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
