@@ -284,7 +284,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                     {/* Recent Notifications */}
                     <Card className="border-white/10 bg-white/5">
                         <CardHeader>
-                            <CardTitle className="text-lg flex items-center gap-2">
+                            <CardTitle className="text-lg flex items-center gap-2 text-white">
                                 <History className="h-5 w-5 text-orange-400" />
                                 Recent Activity
                             </CardTitle>

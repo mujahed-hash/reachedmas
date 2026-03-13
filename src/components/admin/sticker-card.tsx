@@ -88,36 +88,37 @@ export function StickerCard({ shortCode, assetName, assetType, tagUrl }: Sticker
                     }}
                 >
                     {/* Top: Brand */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ marginRight: "7px" }}>
                             <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="#0f2044" />
                             <path d="M10 17L7 14L8.41 12.59L10 14.17L15.59 8.58L17 10L10 17Z" fill="#00D4B4" />
                         </svg>
-                        <span style={{ fontSize: "13px", fontWeight: 700, color: "#0f2044", letterSpacing: "0.01em" }}>
+                        <span style={{ fontSize: "14px", fontWeight: 700, color: "#0f2044" }}>
                             ReachMasked.com
                         </span>
                     </div>
 
                     {/* Middle: Call to action */}
                     <div>
-                        <div style={{ fontSize: "20px", fontWeight: 800, color: "#0f2044", lineHeight: 1.2, marginBottom: "8px" }}>
+                        <div style={{ fontSize: "20px", fontWeight: 800, color: "#0f2044", lineHeight: "24px", marginBottom: "8px" }}>
                             Scan or Tap to<br />reach the owner
                         </div>
                         {/* Teal accent bar */}
                         <div style={{ width: "48px", height: "3px", background: "#00D4B4", borderRadius: "2px", marginBottom: "12px" }} />
                         {/* Badges */}
-                        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                        <div style={{ display: "flex", flexWrap: "wrap" }}>
                             {["Anonymous", "Private", "No App"].map((label) => (
                                 <span
                                     key={label}
                                     style={{
                                         background: "#00D4B4",
                                         color: "#0a1a2e",
-                                        fontSize: "10px",
+                                        fontSize: "11px",
                                         fontWeight: 700,
-                                        padding: "3px 10px",
+                                        padding: "4px 10px",
                                         borderRadius: "20px",
-                                        letterSpacing: "0.04em",
+                                        marginRight: "6px",
+                                        marginBottom: "6px",
                                     }}
                                 >
                                     {label}
@@ -129,10 +130,10 @@ export function StickerCard({ shortCode, assetName, assetType, tagUrl }: Sticker
                     {/* Bottom: Tag code + URL */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                         <div>
-                            <div style={{ fontSize: "9px", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "2px" }}>
+                            <div style={{ fontSize: "10px", color: "#94a3b8", textTransform: "uppercase", marginBottom: "2px", fontWeight: 600 }}>
                                 {assetType} · {assetName}
                             </div>
-                            <code style={{ fontSize: "11px", color: "#0f2044", fontWeight: 700, fontFamily: "monospace" }}>
+                            <code style={{ fontSize: "12px", color: "#0f2044", fontWeight: 700, fontFamily: "monospace" }}>
                                 {shortCode}
                             </code>
                         </div>
@@ -140,11 +141,10 @@ export function StickerCard({ shortCode, assetName, assetType, tagUrl }: Sticker
                             style={{
                                 background: "#0f2044",
                                 color: "#fff",
-                                fontSize: "9px",
+                                fontSize: "10px",
                                 fontWeight: 600,
                                 padding: "4px 10px",
                                 borderRadius: "6px",
-                                letterSpacing: "0.03em",
                             }}
                         >
                             100% private contact

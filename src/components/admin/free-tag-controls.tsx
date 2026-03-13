@@ -57,7 +57,7 @@ export function FreeTagControls({
     return (
         <Card className="border-white/10 bg-white/5">
             <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 text-white">
                     <Gift className="h-5 w-5 text-teal-400" />
                     Free Tag Grant
                 </CardTitle>
