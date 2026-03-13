@@ -19,6 +19,11 @@ model User {
   stripeCustomerId     String?        @unique
   stripeSubscriptionId String?        @unique
   plan                 String         @default("FREE")
+  // Free Tag Grant
+  freeTagGranted       Boolean        @default(false)
+  freeTagGrantedAt     DateTime?
+  freeTagTrialDays     Int            @default(30)
+  freeTagGraceDays     Int            @default(5)
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
   assets               Asset[]
@@ -59,6 +64,8 @@ model Tag {
   nfcPayload   String?
   label        String?
   status       String        @default("ACTIVE")
+  lockedReason String?       // "TRIAL_EXPIRED" | "ADMIN_LOCK" | null
+  lockedAt     DateTime?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   interactions Interaction[]
@@ -154,4 +161,13 @@ model ChatMessage {
   thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
 
   @@map("chat_messages")
+}
+
+model SystemSettings {
+  id        String   @id @default("global")
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
 }

@@ -23,6 +23,8 @@ import { UserActions } from "@/components/admin/user-actions";
 import { TagActions } from "@/components/admin/tag-actions";
 import { AssetActions } from "@/components/admin/asset-actions";
 import { StickerCard } from "@/components/admin/sticker-card";
+import { FreeTagControls } from "@/components/admin/free-tag-controls";
+import { getFreeTagStatus } from "@/lib/free-tag";
 
 const BASE_URL = process.env.NEXTAUTH_URL || "https://reachmasked.com";
 
@@ -60,6 +62,7 @@ async function getUserDetail(userId: string) {
     });
 }
 
+
 export default async function AdminUserDetailPage({ params }: { params: Promise<{ userId: string }> }) {
     const { userId } = await params;
     console.log(`[ADMIN_DEBUG] Accessing User Profile: ${userId}`);
@@ -75,6 +78,14 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
         (sum, a) => sum + a.tags.reduce((ts, t) => ts + t._count.interactions, 0),
         0
     );
+
+    const freeTagInfo = getFreeTagStatus({
+        freeTagGranted: user.freeTagGranted,
+        freeTagGrantedAt: user.freeTagGrantedAt,
+        freeTagTrialDays: user.freeTagTrialDays,
+        freeTagGraceDays: user.freeTagGraceDays,
+        plan: user.plan,
+    });
 
     return (
         <div className="space-y-8 pb-10">
@@ -105,8 +116,10 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left column: Profile Details + Free Tag Controls */}
+                <div className="lg:col-span-1 space-y-6">
                 {/* User Info Card */}
-                <Card className="lg:col-span-1 border-white/10 bg-white/5 backdrop-blur-sm">
+                <Card className="border-white/10 bg-white/5 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle className="text-lg flex items-center gap-2">
                             <Shield className="h-5 w-5 text-primary" />
@@ -173,6 +186,19 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Free Tag Grant Controls */}
+                <FreeTagControls
+                    userId={user.id}
+                    freeTagGranted={user.freeTagGranted}
+                    freeTagGrantedAt={user.freeTagGrantedAt}
+                    freeTagTrialDays={user.freeTagTrialDays}
+                    freeTagGraceDays={user.freeTagGraceDays}
+                    freeTagStatus={freeTagInfo.status}
+                    daysRemaining={freeTagInfo.daysRemaining}
+                    graceDaysRemaining={freeTagInfo.graceDaysRemaining}
+                />
+                </div>
 
                 {/* Engagement Stats */}
                 <div className="lg:col-span-2 space-y-6">

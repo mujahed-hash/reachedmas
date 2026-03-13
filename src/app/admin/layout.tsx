@@ -64,7 +64,7 @@ export default async function AdminLayout({
                                 <NavLink href="/admin/tags" icon={<QrCode className="h-4 w-4" />} label="Tags" />
                                 <NavLink href="/admin/stickers" icon={<Printer className="h-4 w-4" />} label="Stickers" />
                                 <NavLink href="/admin/analytics" icon={<BarChart3 className="h-4 w-4" />} label="Analytics" />
-                                <NavLink href="/admin/setup" icon={<Settings className="h-4 w-4" />} label="Setup" />
+                                <NavLink href="/admin/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
                             </nav>
                         )}
                     </div>
