@@ -164,7 +164,7 @@ model ChatMessage {
 }
 
 model SystemSettings {
-  id        String   @id @default("global")
+  id        String   @id @default(cuid())
   key       String   @unique
   value     String
   updatedAt DateTime @updatedAt
