@@ -4,10 +4,29 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Settings, Gift, Shield, Bell, Zap, Users, Lock, Sliders } from "lucide-react";
 
+type SettingControl = {
+    key: string;
+    label: string;
+    type: "toggle" | "number" | "text";
+    min?: number;
+    max?: number;
+    description?: string;
+    danger?: boolean;
+};
+
+type Section = {
+    id: string;
+    icon: any;
+    color: string;
+    title: string;
+    description: string;
+    controls: SettingControl[];
+};
+
 export default async function AdminSettingsPage() {
     const settings = await getSettings();
 
-    const sections = [
+    const sections: Section[] = [
         {
             id: "free_tag",
             icon: Gift,

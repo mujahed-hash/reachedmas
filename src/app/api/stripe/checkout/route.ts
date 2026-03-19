@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
         const stripeSession = await stripe.checkout.sessions.create({
             customer: customer || undefined,
-            mode: "payment", // Changed from "subscription" to "payment" to support one-time prices
+            mode: "subscription",
             payment_method_types: ["card"],
             line_items: [
                 {
@@ -38,6 +38,11 @@ export async function POST(req: Request) {
             cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://reachmasked.com"}/pricing`,
             metadata: {
                 userId: user.id,
+            },
+            subscription_data: {
+                metadata: {
+                    userId: user.id,
+                },
             },
         });
 

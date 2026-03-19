@@ -55,9 +55,13 @@ export async function POST(req: Request) {
     // 2. Handle Native Mobile Payments (PaymentIntents)
     if (event.type === "payment_intent.succeeded") {
         const intent = event.data.object as Stripe.PaymentIntent;
-        const { userId, planType, assetId } = intent.metadata;
+        const metadata = intent.metadata || {};
+        const { userId, planType, assetId } = metadata;
 
-        if (!userId) return new NextResponse("User ID missing in metadata", { status: 400 });
+        if (!userId) {
+            console.log("[WEBHOOK] payment_intent.succeeded ignored (no userId in metadata, likely from web checkout)");
+            return new NextResponse(null, { status: 200 });
+        }
 
         if (planType === "STANDARD_ANNUAL") {
             await prisma.user.update({

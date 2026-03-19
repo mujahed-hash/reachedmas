@@ -15,20 +15,21 @@ async function main() {
 
     console.log("Created user:", user.publicId);
 
-    // Create a demo vehicle
-    const vehicle = await prisma.vehicle.upsert({
-        where: { publicId: "demo-vehicle-001" },
+    // Create a demo asset
+    const asset = await prisma.asset.upsert({
+        where: { publicId: "demo-asset-001" },
         update: {},
         create: {
-            publicId: "demo-vehicle-001",
+            publicId: "demo-asset-001",
             ownerId: user.id,
-            model: "Toyota Camry",
-            color: "Silver",
-            licensePlateHash: "hashed_license_plate",
+            name: "Toyota Camry",
+            type: "CAR",
+            subtitle: "Model S",
+            metadata: JSON.stringify({ color: "Silver", licensePlateHash: "hashed_license_plate" })
         },
     });
 
-    console.log("Created vehicle:", vehicle.publicId);
+    console.log("Created asset:", asset.publicId);
 
     // Create a demo tag
     const tag = await prisma.tag.upsert({
@@ -36,7 +37,7 @@ async function main() {
         update: {},
         create: {
             shortCode: "ABC1234",
-            vehicleId: vehicle.id,
+            assetId: asset.id,
             nfcPayload: "https://reachmasked.com/t/ABC1234",
             status: "ACTIVE",
         },
