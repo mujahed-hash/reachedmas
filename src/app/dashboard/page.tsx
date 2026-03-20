@@ -3,7 +3,7 @@ import { getFreeTagStatus } from "@/lib/free-tag";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Car, BarChart3, QrCode, MessageCircle, Dog, Home, User, Package, Users } from "lucide-react";
+import { Car, BarChart3, QrCode, MessageCircle, Dog, Home, User, Package, Users, Tag as TagIcon } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { AddAssetDialog } from "@/components/add-asset-dialog";
@@ -143,24 +143,30 @@ export default async function DashboardPage() {
         return acc;
     }, {});
 
+    const activeTagsCount = assets.reduce((sum: number, asset: AssetWithTags) => {
+        return sum + (asset.tags && asset.tags.length > 0 ? 1 : 0);
+    }, 0);
+
     const typeLabels: Record<string, string> = {
         CAR: "Vehicles", PET: "Pets", HOME: "Homes", PERSON: "People", ASSET: "Assets",
     };
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
+        <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
             <Header variant="dashboard" session={session} unreadCount={unreadCount} />
 
-            <main className="container mx-auto px-4 py-8">
+            <main className="container max-w-2xl mx-auto px-4 py-8">
                 {/* Page Title */}
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-                        <p className="text-muted-foreground">Manage your assets and tags</p>
+                <div className="flex items-center justify-between mb-10 mt-4">
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-3xl font-extrabold text-foreground tracking-tight">My Tags</h1>
+                        <span className="bg-primary/20 text-primary dark:text-[#95C8FF] text-sm px-3 py-1 rounded-full font-bold">
+                            {assets.length}
+                        </span>
                     </div>
                     <div className="flex items-center gap-3">
                         <Link href="/dashboard/family">
-                            <Button variant="outline" size="sm" className="gap-2">
+                            <Button variant="ghost" size="sm" className="gap-2 hidden sm:flex text-muted-foreground hover:text-foreground">
                                 <Users className="h-4 w-4" />
                                 Family
                             </Button>
@@ -169,24 +175,29 @@ export default async function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <StatCard icon={<QrCode className="h-5 w-5" />} label="Total Assets" value={assets.length.toString()} />
-                    <StatCard icon={<BarChart3 className="h-5 w-5" />} label="Total Scans" value={totalScans.toString()} />
-                    <StatCard icon={<Car className="h-5 w-5" />} label="Active Tags" value={assets.reduce((acc: number, a: { tags: unknown[] }) => acc + a.tags.length, 0).toString()} />
+                {/* Header Description & Stats Grid */}
+                <div className="mb-10 relative group pb-4">
+                    <p className="text-muted-foreground font-semibold tracking-wide mb-6 relative z-10 px-2 lg:px-0">Manage your assets and tags</p>
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5 relative z-10 px-1">
+                        <StatCard icon={<Package className="h-5 w-5 md:h-6 md:w-6 text-foreground/80 group-hover:text-foreground transition-colors" />} label="Total Assets" value={assets.length.toString()} />
+                        <StatCard icon={<QrCode className="h-5 w-5 md:h-6 md:w-6 text-foreground/80 group-hover:text-foreground transition-colors" />} label="Total Scans" value={totalScans.toString()} />
+                        <StatCard highlight className="col-span-2 lg:col-span-1" icon={<TagIcon className="h-6 w-6 text-primary dark:text-[#6C60FF]" />} label="Active Tags" value={activeTagsCount.toString()} />
+                    </div>
                 </div>
 
-                {/* Two Column Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Single Column Layout */}
+                <div className="flex flex-col gap-10">
                     {/* Assets grouped by type */}
-                    <div className="lg:col-span-2 space-y-6">
+                    <div className="space-y-8">
                         {assets.length === 0 ? (
-                            <Card className="border-border bg-card">
-                                <CardContent className="p-8 text-center">
-                                    <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                    <h3 className="font-semibold text-foreground mb-2">No assets yet</h3>
-                                    <p className="text-muted-foreground text-sm mb-4">
-                                        Add your first asset — a vehicle, pet, home, or anything you want to protect.
+                            <Card className="rounded-[2rem] border-border bg-card/50 backdrop-blur-md">
+                                <CardContent className="p-10 text-center flex flex-col items-center">
+                                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 shadow-[inset_0_0_12px_rgba(33,19,255,0.1)]">
+                                        <Package className="h-8 w-8 text-primary dark:text-[#6C60FF]" />
+                                    </div>
+                                    <h3 className="font-semibold text-lg text-foreground mb-2">No tags active</h3>
+                                    <p className="text-muted-foreground text-sm mb-8 max-w-xs mx-auto">
+                                        Add your first asset to generate a secure, anonymous contact code.
                                     </p>
                                     <AddAssetDialog plan={user.plan} isFreeTagEligible={isFreeTagEligible} />
                                 </CardContent>
@@ -197,14 +208,11 @@ export default async function DashboardPage() {
                                 const typedAssets = typeAssets as AssetWithTags[];
                                 return (
                                     <div key={type}>
-                                        <div className="flex items-center gap-2 mb-3">
+                                        <div className="flex items-center gap-2 mb-4 px-2">
                                             <Icon className="h-4 w-4 text-muted-foreground" />
-                                            <h2 className="text-lg font-semibold text-foreground">
+                                            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                                                 {typeLabels[type] || type}
                                             </h2>
-                                            <span className="text-xs text-muted-foreground bg-muted rounded-full px-2 py-0.5">
-                                                {typedAssets.length}
-                                            </span>
                                         </div>
                                         <div className="space-y-4">
                                             {typedAssets.map((asset) => (
@@ -217,16 +225,16 @@ export default async function DashboardPage() {
                         )}
                     </div>
 
-                    {/* Right Column: Notifications + Activity */}
-                    <div className="space-y-4">
-                        <h2 className="text-xl font-semibold text-foreground">Messages Received</h2>
-                        <Card className="border-border bg-card">
-                            <CardContent className="p-4 space-y-4">
+                    {/* Messages & Notifications Stack */}
+                    <div className="space-y-4 pt-6 border-t border-border/50">
+                        <h2 className="text-lg font-bold text-foreground px-2">Messages & Alerts</h2>
+                        <Card className="rounded-[2rem] border-border bg-card/50 backdrop-blur-md">
+                            <CardContent className="p-6 flex flex-col gap-4">
                                 {notifications.length === 0 ? (
                                     <div className="text-center py-6">
-                                        <MessageCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                                        <p className="text-muted-foreground text-sm">No messages yet</p>
-                                        <p className="text-xs text-muted-foreground mt-1">
+                                        <MessageCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                                        <p className="text-muted-foreground text-sm font-medium">No messages yet</p>
+                                        <p className="text-xs text-muted-foreground mt-1 max-w-[200px] mx-auto">
                                             When someone contacts you about your asset, you&apos;ll see it here.
                                         </p>
                                     </div>
@@ -234,61 +242,61 @@ export default async function DashboardPage() {
                                     notifications.map((notif) => (
                                         <div 
                                             key={notif.id} 
-                                            className={`relative flex items-start gap-4 pb-4 border-b border-border last:border-0 last:pb-0 transition-all ${
+                                            className={`relative flex flex-col gap-2 p-5 transition-all duration-300 rounded-[1.25rem] border ${
                                                 !notif.isRead 
-                                                    ? "bg-primary/10 -mx-4 px-4 py-3 rounded-lg shadow-sm border-l-4 border-l-primary" 
-                                                    : "pt-4"
+                                                    ? "bg-primary/10 border-primary/20 shadow-[inset_0_0_15px_rgba(33,19,255,0.05)]" 
+                                                    : "bg-white/5 border-white/5 hover:bg-white/10"
                                             }`}
                                         >
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-1">
+                                            <div className="flex items-start justify-between gap-4">
+                                                <div className="flex items-center gap-2">
                                                     {!notif.isRead && (
-                                                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+                                                        <div className="w-2 h-2 rounded-full bg-[#2113FF] animate-pulse shadow-[0_0_12px_rgba(33,19,255,0.8)] flex-shrink-0" />
                                                     )}
-                                                    <p className={`text-sm font-semibold text-foreground ${!notif.isRead ? "text-primary" : ""}`}>
+                                                    <h4 className={`text-sm font-bold tracking-wide ${!notif.isRead ? "text-primary dark:text-[#95C8FF]" : "text-foreground"}`}>
                                                         {notif.title}
-                                                    </p>
+                                                    </h4>
                                                 </div>
-                                                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{notif.body}</p>
-                                                <div className="flex items-center gap-2 mt-2">
-                                                    <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
-                                                        {new Date(notif.createdAt).toLocaleString()}
-                                                    </p>
-                                                    {!notif.isRead && (
-                                                        <span className="text-[9px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded uppercase tracking-tighter">New</span>
-                                                    )}
-                                                </div>
+                                                <span className="text-[10px] uppercase font-bold text-muted-foreground/60 tracking-widest whitespace-nowrap">
+                                                    {new Date(notif.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                </span>
                                             </div>
+                                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mt-1">
+                                                {notif.body}
+                                            </p>
                                         </div>
                                     ))
                                 )}
                             </CardContent>
                         </Card>
 
-                        <h2 className="text-xl font-semibold text-foreground mt-6">Scan History</h2>
-                        <Card className="border-border bg-card">
-                            <CardContent className="p-4 space-y-4">
+                        <h2 className="text-xl font-bold text-foreground mt-8 px-2 tracking-tight">Scan History</h2>
+                        <Card className="rounded-[2rem] border-border bg-card/50 backdrop-blur-md">
+                            <CardContent className="p-6 flex flex-col gap-2">
                                 {recentActivity.length === 0 ? (
-                                    <p className="text-muted-foreground text-sm text-center py-4">No activity yet</p>
+                                    <p className="text-muted-foreground text-sm font-medium text-center py-6 opacity-50">No activity yet</p>
                                 ) : (
                                     recentActivity.map((activity: any) => (
-                                        <div key={activity.id} className="flex items-center gap-4 py-3 border-b border-border last:border-0 last:pb-0 group">
-                                            <div className="flex flex-col items-center">
-                                                <div className="w-1.5 h-10 bg-primary/20 rounded-full overflow-hidden">
-                                                    <div className="w-full h-1/2 bg-primary group-hover:h-full transition-all duration-500" />
+                                        <div key={activity.id} className="flex items-center gap-4 py-4 px-3 border-b border-white/5 last:border-0 last:pb-4 group hover:bg-white/5 rounded-xl transition-colors">
+                                            <div className="flex flex-col items-center justify-center">
+                                                <div className="w-1.5 h-10 bg-primary/20 rounded-full overflow-hidden relative">
+                                                    <div className="absolute bottom-0 w-full h-1/2 bg-primary group-hover:h-full transition-all duration-500" />
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-semibold text-foreground capitalize tracking-tight">
+                                                <p className="text-sm font-bold text-foreground capitalize tracking-wide">
                                                     {activity.actionType.toLowerCase().replace("_", " ")}
                                                 </p>
-                                                <p className="text-xs text-muted-foreground truncate font-medium">
+                                                <p className="text-xs text-muted-foreground truncate font-medium mt-0.5">
                                                     {activity.tag?.asset?.name}
                                                 </p>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-[10px] font-bold text-muted-foreground/50 tabular-nums">
+                                            <div className="text-right flex flex-col items-end">
+                                                <p className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase">
                                                     {new Date(activity.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                                </p>
+                                                <p className="text-[9px] text-muted-foreground/50 mt-1 font-semibold">
+                                                    {new Date(activity.timestamp).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
                                                 </p>
                                             </div>
                                         </div>
@@ -303,14 +311,25 @@ export default async function DashboardPage() {
     );
 }
 
-function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function StatCard({ icon, label, value, className = "", highlight = false }: { icon: React.ReactNode; label: string; value: string; className?: string; highlight?: boolean }) {
     return (
-        <Card className="border-border bg-card">
-            <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-primary/10 text-primary">{icon}</div>
+        <Card className={`relative overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] bg-card dark:bg-white/[0.02] dark:backdrop-blur-[40px] transition-transform duration-500 ease-out hover:-translate-y-1 group ${highlight ? 'dark:bg-white/[0.04] border-primary/20 dark:border-white/10 dark:hover:border-[#2113FF]/60 shadow-lg dark:shadow-[0_8px_30px_rgba(33,19,255,0.15)] dark:hover:shadow-[0_8px_40px_rgba(33,19,255,0.25)]' : 'dark:bg-[#08090a]/50 border-border dark:border-white/5 hover:border-primary/20 dark:hover:border-[#2113FF]/20 shadow-sm dark:shadow-lg'} ${className}`}>
+
+            {/* Glowing blur injected directly INSIDE the card - DARK MODE ONLY */}
+            <div className={`absolute -inset-10 rounded-full mix-blend-screen filter blur-[50px] pointer-events-none transition-all duration-700 hidden dark:block ${highlight ? 'bg-[#0F00FFD4] opacity-20 md:opacity-30 group-hover:opacity-40' : 'bg-[#2113FF] opacity-10 md:opacity-15 group-hover:opacity-20'}`} />
+
+            <CardContent className="p-5 md:p-6 flex items-center justify-between relative z-10 cursor-default">
                 <div>
-                    <p className="text-sm text-muted-foreground">{label}</p>
-                    <p className="text-2xl font-bold text-foreground">{value}</p>
+                    <p className={`text-[10px] md:text-[11px] font-bold uppercase tracking-widest mb-1 ${highlight ? 'text-primary dark:text-[#95C8FF] dark:drop-shadow-[0_0_8px_rgba(33,19,255,0.4)]' : 'text-zinc-500 tracking-wider'}`}>{label}</p>
+                    <p className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight drop-shadow-sm">{value}</p>
+                </div>
+                
+                <div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-all duration-300 md:group-hover:scale-105 ${
+                    highlight 
+                        ? 'bg-primary/10 dark:bg-gradient-to-br dark:from-[#0F00FFD4] dark:to-transparent border border-primary/20 dark:border-[#2113FF]/20 shadow-sm dark:shadow-[inset_0_0_12px_rgba(33,19,255,0.15)]'
+                        : 'bg-muted/50 dark:bg-white/5 border border-border dark:border-white/10 shadow-sm dark:shadow-[inset_0_0_15px_rgba(255,255,255,0.02)]'
+                }`}>
+                    {icon}
                 </div>
             </CardContent>
         </Card>

@@ -70,13 +70,13 @@ export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: Add
     return (
         <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset(); }}>
             <DialogTrigger asChild>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Asset
+                <Button size="lg" className="bg-gradient-to-r from-[#0F00FFD4] to-[#2113FF] hover:from-[#2113FF] hover:to-[#3326FF] text-white transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-[0_8px_25px_rgba(33,19,255,0.4)] shadow-[0_4px_15px_rgba(33,19,255,0.25)] border-none rounded-xl font-medium text-base px-6">
+                    <Plus className="h-5 w-5 mr-2" />
+                    Add Tag
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-lg border-border bg-card">
-                <DialogHeader>
+            <DialogContent className="sm:max-w-lg rounded-[2rem] border-border bg-card/90 backdrop-blur-2xl shadow-2xl p-8">
+                <DialogHeader className="mb-4">
                     <DialogTitle className="text-foreground">
                         {step === 1 ? "Choose Asset Type" : `Add ${selectedType === "CAR" ? "Vehicle" : selectedType.charAt(0) + selectedType.slice(1).toLowerCase()}`}
                     </DialogTitle>

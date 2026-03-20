@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { NotificationToastContainer } from "./notification-toast";
 
 interface SSENotification {
@@ -74,6 +75,7 @@ function showBrowserNotification(notification: SSENotification) {
 }
 
 export function NotificationListener() {
+    const router = useRouter();
     const [toasts, setToasts] = useState<SSENotification[]>([]);
     const seenIdsRef = useRef<Set<string>>(new Set());
     const initialLoadRef = useRef(true);
@@ -128,6 +130,9 @@ export function NotificationListener() {
                 const currentBadge = document.getElementById("notification-badge");
                 const currentCount = parseInt(currentBadge?.textContent || "0", 10);
                 updateBadge(currentCount + 1);
+
+                // Instantly refresh active Server Components (like Dashboard)
+                router.refresh();
             } catch {
                 // Invalid JSON — skip
             }

@@ -32,60 +32,73 @@ export function AssetCard({ asset }: AssetCardProps) {
     const typeLabel = asset.type.charAt(0) + asset.type.slice(1).toLowerCase();
 
     return (
-        <Card className="border-border bg-card hover:border-primary/30 transition-colors">
-            <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-xl bg-muted relative">
-                            <Icon className="h-6 w-6 text-muted-foreground" />
+        <Card className="rounded-[2rem] border-border bg-card hover:-translate-y-1 hover:shadow-2xl hover:border-primary/40 transition-all duration-500 ease-out group overflow-hidden relative">
+            <CardContent className="p-8">
+                {/* Header: Title and Status */}
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <div className="flex items-center gap-3 mb-2">
+                            <h3 className="font-bold text-xl text-foreground tracking-wide">{asset.name}</h3>
                             {asset.isShared && (
-                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-card" title="Shared with you" />
+                                <span className="text-xs bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded font-medium flex items-center gap-1">
+                                    Shared
+                                </span>
                             )}
                         </div>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <h3 className="font-semibold text-foreground">{asset.name}</h3>
-                                {asset.isShared && (
-                                    <span className="text-[10px] bg-blue-500/10 text-blue-500 px-1.5 py-0.5 rounded font-medium flex items-center gap-1">
-                                        Shared
-                                    </span>
-                                )}
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                                {asset.isShared ? (
-                                    <span>Owner: {asset.owner?.name || asset.owner?.email.split('@')[0]} · </span>
-                                ) : asset.subtitle ? (
-                                    <span>{asset.subtitle} · </span>
-                                ) : null}
-                                {typeLabel} · {asset.tags.length} tag{asset.tags.length !== 1 ? "s" : ""}
-                            </p>
-                        </div>
+                        <p className="text-base text-muted-foreground flex items-center gap-2">
+                            <Icon className="h-5 w-5" />
+                            {asset.isShared ? `Owner: ${asset.owner?.name || asset.owner?.email.split('@')[0]} · ` : (asset.subtitle ? `${asset.subtitle} · ` : "")}
+                            {typeLabel}
+                        </p>
                     </div>
-                    {!asset.isShared && <DeleteVehicleButton vehicleId={asset.id} vehicleName={asset.name} />}
+                    {firstTag ? (
+                        <div className="bg-[#10B981]/15 text-[#10B981] text-xs font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+                            Active
+                        </div>
+                    ) : (
+                        <div className="bg-destructive/15 text-destructive text-xs font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                            No Tag
+                        </div>
+                    )}
                 </div>
+
+                {/* QR Code / Tag info */}
                 {firstTag && (
-                    <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">Tag: {firstTag.shortCode}</span>
-                        <div className="flex gap-2">
-                            <Link href={`/dashboard/vehicles/${asset.id}`}>
-                                <Button variant="outline" size="sm" className="text-xs">
-                                    History
-                                </Button>
-                            </Link>
-                            <Link href={`/dashboard/tags/${firstTag.id}`}>
-                                <Button variant="outline" size="sm" className="text-xs">
-                                    <QrCode className="h-3 w-3 mr-1" />
-                                    QR Code
-                                </Button>
-                            </Link>
-                            <Link href={`/t/${firstTag.shortCode}`}>
-                                <Button variant="ghost" size="sm" className="text-xs">
-                                    Preview
-                                </Button>
-                            </Link>
+                    <div className="flex items-center gap-5 mb-8 mt-4">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 dark:from-[#0F00FFD4] to-transparent flex items-center justify-center border border-primary/20 shadow-[inset_0_0_12px_rgba(33,19,255,0.15)] group-hover:from-primary/40 dark:group-hover:from-[#2113FF]/40 transition-colors duration-500">
+                            <QrCode className="h-8 w-8 text-primary dark:text-[#6C60FF] group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div>
+                            <p className="text-sm text-muted-foreground uppercase tracking-widest mb-1">Tag Code</p>
+                            <p className="text-foreground font-bold text-lg tracking-wide">{firstTag.shortCode}</p>
                         </div>
                     </div>
                 )}
+
+                {/* Footer Actions */}
+                <div className="flex items-center justify-between mt-6 pt-5 border-t border-border/50">
+                    <Link href={`/dashboard/assets/${asset.id}`} className="text-muted-foreground text-xs font-bold tracking-widest hover:text-foreground transition-colors uppercase">
+                        View History
+                    </Link>
+                    <div className="flex items-center gap-3">
+                        {!asset.isShared && <DeleteVehicleButton vehicleId={asset.id} vehicleName={asset.name} />}
+                        {firstTag && (
+                            <>
+                                <Link href={`/t/${firstTag.shortCode}`}>
+                                    <Button variant="ghost" size="sm" className="h-9 px-4 text-sm font-medium hover:bg-secondary/80 text-foreground transition-colors">
+                                        Preview
+                                    </Button>
+                                </Link>
+                                <Link href={`/dashboard/tags/${firstTag.id}`}>
+                                    <Button variant="ghost" size="sm" className="h-9 px-4 text-sm font-bold bg-primary/10 hover:bg-primary/20 text-primary dark:text-[#95C8FF] hover:text-primary rounded-xl transition-colors">
+                                        Options <span className="ml-1 opacity-70">&rarr;</span>
+                                    </Button>
+                                </Link>
+                            </>
+                        )}
+                    </div>
+                </div>
             </CardContent>
         </Card>
     );

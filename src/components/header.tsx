@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 
 import { Bell, Settings, LogOut } from "lucide-react";
 import { logout } from "@/app/actions/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface HeaderProps {
     variant?: "default" | "dashboard";
@@ -57,6 +58,7 @@ export function Header({ variant = "default", session, unreadCount = 0 }: Header
                         <span className="text-sm text-muted-foreground hidden sm:block mr-2">
                             {activeSession.user?.email}
                         </span>
+                        <ThemeToggle />
                         <Link href="/notifications">
                             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
                                 <Bell className="h-5 w-5" />
@@ -81,6 +83,7 @@ export function Header({ variant = "default", session, unreadCount = 0 }: Header
                     </nav>
                 ) : variant === "default" && !activeSession ? (
                     <nav className="flex items-center gap-4">
+                        <ThemeToggle />
                         <Link href="/login">
                             <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent">
                                 Login
@@ -93,7 +96,8 @@ export function Header({ variant = "default", session, unreadCount = 0 }: Header
                         </Link>
                     </nav>
                 ) : (
-                    <nav className="flex items-center gap-2">
+                    <nav className="flex items-center gap-3">
+                        <ThemeToggle />
                         <Link href="/dashboard">
                             <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-foreground">
                                 Dashboard
