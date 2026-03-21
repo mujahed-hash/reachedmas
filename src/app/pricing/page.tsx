@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import Link from "next/link";
+import Image from "next/image";
 import { Check, Shield, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,25 +38,25 @@ export default async function PricingPage() {
                     <Card className="flex flex-col border-primary/50 bg-primary/5 relative shadow-xl max-w-md w-full">
                         <CardHeader>
                             <CardTitle className="text-3xl text-primary text-center">Standard Plan</CardTitle>
-                            <CardDescription className="text-center text-md mt-2">Comprehensive vehicle privacy and instant alerts.</CardDescription>
+                            <CardDescription className="text-center text-md mt-2">Comprehensive privacy and instant alerts for any asset.</CardDescription>
+
                             <div className="mt-6 flex flex-col items-center">
                                 <div className="flex items-baseline text-6xl font-extrabold text-foreground">
                                     $24.99
                                 </div>
-                                <span className="mt-2 text-lg font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">first year</span>
-                                <p className="text-sm text-muted-foreground mt-3 font-medium">Then $4.99/mo starting the second year.</p>
+                                <span className="mt-2 text-lg font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">one-time activation</span>
+                                <p className="text-sm text-muted-foreground mt-3 font-medium text-center">Includes your physical Smart Tag &amp; first month of service.<br/>Then $4.99/mo starting after 30 days.</p>
                             </div>
                         </CardHeader>
                         <CardContent className="flex-1 mt-6">
                             <ul className="space-y-4">
                                 {[
-                                    "1 Vehicle Tag",
+                                    "1 Universal Smart Tag (Vehicle, Pet, Property)",
+                                    "Anonymous 2-Way Contact Relay",
                                     "Real-time In-App Alerts & Alarms",
-                                    "Browser Push Notifications",
-                                    "Email Notifications",
+                                    "Browser Push & Email Notifications",
                                     "Tag Ownership Control (Disable/Lock)",
-                                    "Scan History & Analytics",
-                                    "Tow Prevention Alerts",
+                                    "Instant Scan History & Analytics"
                                 ].map((feature) => (
                                     <li key={feature} className="flex items-center gap-3">
                                         <div className="bg-primary/20 p-1 rounded-full">
@@ -70,7 +71,7 @@ export default async function PricingPage() {
                             {session ? (
                                 <StripeCheckoutButton
                                     className="w-full h-12 text-lg"
-                                    priceId="price_1T8x43CJ2dpZsFD0nCXkS5h1"
+                                    priceId="price_1TDQFxCJ2dpZsFD0agN0OinK"
                                 />
                             ) : (
                                 <Link href="/register?redirect=/pricing" className="w-full">

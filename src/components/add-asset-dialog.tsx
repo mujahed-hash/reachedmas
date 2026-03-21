@@ -91,15 +91,15 @@ export function AddAssetDialog({ plan = "FREE", isFreeTagEligible = false }: Add
                             <Plus className="h-8 w-8 text-primary" />
                         </div>
                         <div className="space-y-2 max-w-sm">
-                            <h3 className="text-xl font-bold text-foreground">Subscription Required</h3>
+                            <h3 className="text-xl font-bold text-foreground">Activation Required</h3>
                             <p className="text-muted-foreground">
-                                To activate your first asset tag, you need to subscribe to the Standard Plan. 
-                                Protect your vehicles, pets, and home today for just $24.99/year.
+                                To protect your first asset, you need to purchase a Smart Tag and start your subscription. 
+                                One-time $24.99 activation, then $4.99/month starting after 30 days.
                             </p>
                         </div>
                         <Link href="/pricing" className="w-full">
                             <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all font-bold">
-                                Activate Protection ($24.99)
+                                Purchase Tag ($24.99)
                             </Button>
                         </Link>
                     </div>
