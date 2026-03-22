@@ -29,9 +29,18 @@ export function SignalLogo({ size = 36, color }: { size?: number; color?: string
                     <Stop offset="100%" stopColor={highlightColor} />
                 </SvgLinearGradient>
                 <SvgLinearGradient id="nfcStroke" x1="0" y1="0" x2="1" y2="1">
-                    <Stop offset="0%" stopColor="#15102a" />
-                    <Stop offset="55%" stopColor="#1e1a4a" />
-                    <Stop offset="100%" stopColor={highlightColor} />
+                    <Stop
+                        offset="0%"
+                        stopColor={isDark ? "#93C5FD" : "#15102a"}
+                    />
+                    <Stop
+                        offset="55%"
+                        stopColor={isDark ? "#60A5FA" : "#1e1a4a"}
+                    />
+                    <Stop
+                        offset="100%"
+                        stopColor={isDark ? "#A5B4FC" : highlightColor}
+                    />
                 </SvgLinearGradient>
             </Defs>
 

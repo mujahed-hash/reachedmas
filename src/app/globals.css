@@ -104,6 +104,11 @@
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #2113FF;
+
+  /* Signal Tag logo — NFC arcs (dark strokes read on light bg) */
+  --logo-nfc-stop-1: #15102a;
+  --logo-nfc-stop-2: #1e1a4a;
+  --logo-nfc-stop-3: #2113ff;
 }
 
 /* ============================================
@@ -146,6 +151,11 @@
   --border: rgba(255, 255, 255, 0.05);
   --input: rgba(255, 255, 255, 0.05);
   --ring: #2113FF;
+
+  /* NFC arcs — lighter blues so arcs don’t blend into #08090a */
+  --logo-nfc-stop-1: #93c5fd;
+  --logo-nfc-stop-2: #60a5fa;
+  --logo-nfc-stop-3: #a5b4fc;
 }
 
 @layer base {

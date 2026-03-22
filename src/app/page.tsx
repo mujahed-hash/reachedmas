@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Header } from "@/components/header";
+import { LandingHeroThemeToggle } from "@/components/landing-hero-theme-toggle";
 import { SignalTagLogo } from "@/components/signal-tag-logo";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -31,7 +32,7 @@ export default async function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary/20">
-      <Header session={session} />
+      <Header variant="landing" session={session} />
 
       <main className="flex-1">
         {/* ════════════════ Hero ════════════════ */}
@@ -47,6 +48,8 @@ export default async function Home() {
               <div className="flex justify-center mb-4 sm:mb-0 md:hidden">
                 <SignalTagLogo size={64} className="h-16 w-auto animate-in fade-in zoom-in duration-700" />
               </div>
+
+              <LandingHeroThemeToggle />
 
               <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs sm:text-sm font-medium text-primary backdrop-blur-md">
                 <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse" />

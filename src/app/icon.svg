@@ -1,4 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 180" fill="none" overflow="visible" shape-rendering="geometricPrecision">
+  <style type="text/css">
+    /* Rasterizers (e.g. Sharp) use inline stop-color below. Browsers override in dark OS theme. */
+    @media (prefers-color-scheme: dark) {
+      #nfcStroke1 stop:nth-child(1) { stop-color: #93c5fd !important; }
+      #nfcStroke1 stop:nth-child(2) { stop-color: #60a5fa !important; }
+      #nfcStroke1 stop:nth-child(3) { stop-color: #a5b4fc !important; }
+    }
+  </style>
   <defs>
     <linearGradient id="G1" x1="0" y1="0" x2="120" y2="180" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#95C8FF"/>

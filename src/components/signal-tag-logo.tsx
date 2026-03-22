@@ -41,11 +41,11 @@ export function SignalTagLogo({
                     <stop offset="0%" stopColor="#95C8FF" />
                     <stop offset="100%" stopColor="#2113FF" />
                 </linearGradient>
-                {/* NFC: darker than G1 — less “lit”, reads heavier on the tag */}
+                {/* NFC: theme via CSS vars — dark indigo on light bg; sky/indigo on dark bg */}
                 <linearGradient id={nfcStroke} x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#15102a" />
-                    <stop offset="55%" stopColor="#1e1a4a" />
-                    <stop offset="100%" stopColor="#2113FF" />
+                    <stop offset="0%" stopColor="var(--logo-nfc-stop-1)" />
+                    <stop offset="55%" stopColor="var(--logo-nfc-stop-2)" />
+                    <stop offset="100%" stopColor="var(--logo-nfc-stop-3)" />
                 </linearGradient>
                 <linearGradient id={shieldFill} x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
                     <stop offset="0%" stopColor="#60A5FA" />

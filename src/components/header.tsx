@@ -14,7 +14,8 @@ import { logout } from "@/app/actions/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 interface HeaderProps {
-    variant?: "default" | "dashboard";
+    /** `landing` = marketing home: no theme toggle in bar (toggle is in hero); full wordmark room */
+    variant?: "default" | "dashboard" | "landing";
     session?: Session | null;
     unreadCount?: number;
 }
@@ -47,9 +48,12 @@ export function Header({ variant = "default", session, unreadCount = 0 }: Header
             )}
         >
             <div className="container mx-auto flex min-h-[5rem] items-center justify-between gap-2 sm:gap-3 px-4 pt-2">
-                <Link href="/" className="flex items-center gap-1.5 sm:gap-2 md:gap-3 transition-opacity hover:opacity-80 shrink min-w-0">
+                <Link
+                    href="/"
+                    className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3 transition-opacity hover:opacity-80"
+                >
                     <SignalTagLogo size={48} className="h-12 sm:h-16 md:h-[72px] w-auto shrink-0" />
-                    <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground truncate">
+                    <span className="whitespace-nowrap text-lg font-bold tracking-tight text-foreground sm:text-xl md:text-2xl">
                         ReachMasked
                     </span>
                 </Link>
@@ -85,8 +89,8 @@ export function Header({ variant = "default", session, unreadCount = 0 }: Header
                         </form>
                     </nav>
                 ) : (
-                    <nav className="flex items-center gap-1.5 sm:gap-4 shrink-0">
-                        <ThemeToggle />
+                    <nav className="flex shrink-0 items-center gap-1.5 sm:gap-4">
+                        {variant !== "landing" && <ThemeToggle />}
                         <Link href="/login">
                             <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent h-9 px-3 sm:px-4">
                                 Login
