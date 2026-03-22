@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReachMasked — Compact Logos</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #2113FF;
+    --blue-v: #6C60FF;
+    --ice: #95C8FF;
+    --neon: #4DFFD2;
+    --bg: #07080a;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.06);
+    --muted: #525870;
+    --text: #e8eaf0;
+  }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 4rem 1.5rem 6rem;
+  }
+  .header { text-align: center; margin-bottom: 4rem; }
+  .header-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+    background: rgba(108,96,255,0.08); border: 1px solid rgba(108,96,255,0.2);
+    border-radius: 99px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--blue-v); margin-bottom: 1rem;
+  }
+  h1 {
+    font-size: 2.5rem; font-weight: 900; letter-spacing: -0.04em;
+    background: linear-gradient(160deg, #fff 30%, rgba(149,200,255,0.6));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.75rem;
+  }
+  .header p { color: var(--muted); font-size: 1.05rem; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .lockup-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .lockup-label {
+    position: absolute;
+    top: 1.5rem; left: 1.5rem;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* BASE WORDMARK */
+  .wm { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.04em; color: #fff; line-height: 1; }
+  .wm span { font-weight: 300; letter-spacing: 0.02em; color: var(--blue-v); }
+
+  /* ════════════════════════════════════════════
+     1. Compact Horizontal Lockup (The Core Node)
+  ════════════════════════════════════════════ */
+  .cd-relay-node {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), rgba(108,96,255,0.4));
+    border: 2px solid rgba(108,96,255,0.8);
+    box-shadow: 0 0 20px rgba(33,19,255,0.6), inset 0 0 10px rgba(108,96,255,0.3);
+    display: flex; align-items: center; justify-content: center; position: relative;
+  }
+  .cd-relay-node::before {
+    content: ''; position: absolute; inset: -6px; border-radius: 50%;
+    border: 1.5px dashed rgba(108,96,255,0.4); animation: spin 6s linear infinite;
+  }
+  .cd-mask-icon {
+    width: 20px; height: 12px; border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.8); position: relative;
+    display: flex; align-items: center; justify-content: center; gap: 3px;
+  }
+  .cd-mask-eye {
+    width: 4px; height: 4px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 5px rgba(149,200,255,0.8);
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  /* ════════════════════════════════════════════
+     2. Minimal 3-Dot Connection Lockup (o-O-o)
+  ════════════════════════════════════════════ */
+  .dots-icon {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .dot-sm {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--muted);
+  }
+  .dot-line { width: 12px; height: 2px; background: var(--border); }
+  .dot-lg {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--blue-v);
+    border: 2px solid rgba(149,200,255,0.8); box-shadow: 0 0 15px rgba(108,96,255,0.5);
+    display: flex; align-items: center; justify-content: center; gap: 2px;
+  }
+  .dot-eye { width: 3px; height: 3px; border-radius: 50%; background: #fff; }
+
+  /* Active line/dot */
+  .dots-icon-active .dot-sm:first-child { background: var(--ice); }
+  .dots-icon-active .dot-line:nth-child(2) { background: linear-gradient(90deg, var(--ice), var(--blue-v)); }
+
+  /* ════════════════════════════════════════════
+     3. App Icon (Square Lockup for Avatars)
+  ════════════════════════════════════════════ */
+  .app-icon {
+    width: 120px; height: 120px; border-radius: 28px;
+    background: linear-gradient(135deg, rgba(33,19,255,0.1), rgba(108,96,255,0.02));
+    border: 1px solid rgba(108,96,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 2px 10px rgba(255,255,255,0.05);
+  }
+  .app-icon .cd-relay-node { transform: scale(1.4); }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Concept D — Refined & Scalable</div>
+  <h1>Compact ReachMasked Logos</h1>
+  <p>You're right: diagrammatic logos are too wide. Here is the 'Relay Node' concept compacted gracefully down into standard software lockups and app icons.</p>
+</div>
+
+<div class="grid">
+  
+  <!-- 1. Horizontal Lockup -->
+  <div class="lockup-box" style="background: radial-gradient(ellipse 40% 50% at 30% 50%, rgba(33,19,255,0.08) 0%, transparent 100%);">
+    <div class="lockup-label">1. Primary Horizontal Lockup</div>
+    <div class="logo-row">
+      <div class="cd-relay-node">
+        <div class="cd-mask-icon"><div class="cd-mask-eye"></div><div class="cd-mask-eye"></div></div>
+      </div>
+      <div class="wm">Reach<span>Masked</span></div>
+    </div>
+  </div>
+
+  <!-- 2. Minimal Line Lockup -->
+  <div class="lockup-box">
+    <div class="lockup-label">2. Minimal Relay (3-Dot Model)</div>
+    <div class="logo-row">
+      <div class="dots-icon dots-icon-active">
+        <div class="dot-sm"></div>
+        <div class="dot-line"></div>
+        <div class="dot-lg"><div class="dot-eye"></div><div class="dot-eye"></div></div>
+        <div class="dot-line"></div>
+        <div class="dot-sm"></div>
+      </div>
+      <div class="wm">Reach<span>Masked</span></div>
+    </div>
+  </div>
+
+  <!-- 3. App Icon -->
+  <div class="lockup-box" style="flex-direction: row; gap: 4rem;">
+    <div class="lockup-label">3. App Icon / Favicon / Avatar</div>
+    <div class="app-icon">
+      <div class="cd-relay-node">
+        <div class="cd-mask-icon"><div class="cd-mask-eye"></div><div class="cd-mask-eye"></div></div>
+      </div>
+    </div>
+    <!-- Simple RM mark for comparison -->
+    <div class="app-icon" style="background: #0a0a0c;">
+      <div class="dots-icon dots-icon-active" style="transform: scale(2.5);">
+         <div class="dot-lg" style="box-shadow: none;"><div class="dot-eye"></div><div class="dot-eye"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

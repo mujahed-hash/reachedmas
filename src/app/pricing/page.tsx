@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import Image from "next/image";
-import { Check, Shield, ArrowLeft } from "lucide-react";
+import { Check, ArrowLeft } from "lucide-react";
+import { SignalTagLogo } from "@/components/signal-tag-logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import StripeCheckoutButton from "@/components/stripe-checkout-button";
@@ -16,7 +17,7 @@ export default async function PricingPage() {
                 <div className="container mx-auto flex h-16 items-center justify-between px-4">
                     <Link href="/dashboard" className="flex items-center gap-2 transition-opacity hover:opacity-80">
                         <ArrowLeft className="h-5 w-5 text-muted-foreground mr-1" />
-                        <Shield className="h-6 w-6 text-primary" />
+                        <SignalTagLogo size={28} className="h-7 w-auto" />
                         <span className="text-lg font-bold tracking-tight text-foreground">
                             ReachMasked
                         </span>

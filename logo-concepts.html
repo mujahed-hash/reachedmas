@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SmartSafe — Logo Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #2113FF;
+    --blue-bright: #6C60FF;
+    --blue-ice: #95C8FF;
+    --blue-dark: #0F00FFD4;
+    --bg: #08090a;
+    --bg2: #0d0e10;
+    --surface: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f0f8;
+    --muted: #6b7280;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  h1.page-title {
+    text-align: center;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff 40%, var(--blue-ice));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(33,19,255,0.4);
+  }
+
+  .card-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-info {
+    padding: 1.25rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-info h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+
+  .card-info p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 1 – Shield Glyph
+  ────────────────────────────────────────────── */
+  .c1-bg {
+    background: radial-gradient(ellipse at 60% 30%, rgba(33,19,255,0.25) 0%, transparent 70%);
+  }
+
+  .c1-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .c1-shield {
+    position: relative;
+    width: 64px;
+    height: 72px;
+  }
+
+  .c1-shield svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 18px rgba(33,19,255,0.8));
+  }
+
+  .c1-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  .c1-text span {
+    color: var(--blue-ice);
+  }
+
+  .c1-sub {
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    margin-top: -6px;
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 2 – Masked Ring
+  ────────────────────────────────────────────── */
+  .c2-bg {
+    background: radial-gradient(ellipse at 40% 70%, rgba(108,96,255,0.2) 0%, transparent 65%);
+  }
+
+  .c2-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .c2-icon {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(33,19,255,0.6), rgba(15,0,255,0.1));
+    border: 2px solid rgba(108,96,255,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 24px rgba(33,19,255,0.5), inset 0 0 14px rgba(33,19,255,0.15);
+  }
+
+  .c2-icon::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px dashed rgba(108,96,255,0.3);
+    animation: spin 8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .c2-icon svg { width: 26px; height: 26px; }
+
+  .c2-text-block { display: flex; flex-direction: column; gap: 1px; }
+
+  .c2-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .c2-wordmark em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--blue-bright), var(--blue-ice));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .c2-tagline {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 3 – Monogram Badge
+  ────────────────────────────────────────────── */
+  .c3-bg {
+    background: radial-gradient(ellipse at 50% 50%, rgba(33,19,255,0.15) 0%, transparent 70%);
+  }
+
+  .c3-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .c3-badge {
+    width: 68px;
+    height: 68px;
+    border-radius: 1.2rem;
+    background: linear-gradient(135deg, #2113FF, #0F00FFD4, #6C60FF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.04em;
+    box-shadow: 0 8px 30px rgba(33,19,255,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+    position: relative;
+  }
+
+  .c3-badge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.2rem;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .c3-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  .c3-wordmark strong {
+    background: linear-gradient(90deg, var(--blue-ice), var(--blue-bright));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 4 – Slash Geometry
+  ────────────────────────────────────────────── */
+  .c4-bg {
+    background: linear-gradient(135deg, rgba(33,19,255,0.1) 0%, transparent 60%);
+  }
+
+  .c4-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .c4-mark {
+    position: relative;
+    width: 52px;
+    height: 52px;
+  }
+
+  .c4-outer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(33,19,255,0.6);
+    box-shadow: 0 0 20px rgba(33,19,255,0.4);
+  }
+
+  .c4-slash {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-20deg);
+    width: 3px;
+    height: 32px;
+    background: linear-gradient(180deg, var(--blue-ice), var(--blue));
+    border-radius: 99px;
+    box-shadow: 0 0 10px rgba(149,200,255,0.6);
+  }
+
+  .c4-dot {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--blue-bright);
+    box-shadow: 0 0 12px rgba(108,96,255,0.8);
+  }
+
+  .c4-text-block { display: flex; flex-direction: column; }
+
+  .c4-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .c4-name span { color: var(--blue-bright); }
+
+  .c4-sub {
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 5 – Glassmorph Stack
+  ────────────────────────────────────────────── */
+  .c5-bg {
+    background: radial-gradient(ellipse at 70% 20%, rgba(149,200,255,0.1) 0%, rgba(33,19,255,0.1) 50%, transparent 80%);
+  }
+
+  .c5-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .c5-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    padding: 10px 22px 10px 14px;
+    border-radius: 99px;
+    box-shadow: 0 4px 20px rgba(33,19,255,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .c5-dot-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .c5-dot-row {
+    display: flex;
+    gap: 3px;
+  }
+
+  .c5-dot-row span {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--blue-bright);
+    box-shadow: 0 0 8px rgba(108,96,255,0.7);
+  }
+
+  .c5-dot-row span:first-child {
+    background: var(--blue-ice);
+    box-shadow: 0 0 8px rgba(149,200,255,0.7);
+  }
+
+  .c5-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .c5-name em {
+    font-style: normal;
+    color: var(--blue-ice);
+  }
+
+  .c5-caption {
+    margin-top: 8px;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(149,200,255,0.5);
+    font-weight: 500;
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 6 – Neon Outlined Wordmark
+  ────────────────────────────────────────────── */
+  .c6-bg {
+    background: radial-gradient(ellipse at 30% 80%, rgba(33,19,255,0.2) 0%, transparent 60%);
+  }
+
+  .c6-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .c6-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(108,96,255,0.9);
+    text-shadow:
+      0 0 20px rgba(33,19,255,0.5),
+      0 0 60px rgba(33,19,255,0.2);
+    position: relative;
+  }
+
+  .c6-wordmark::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: linear-gradient(180deg, #fff 0%, rgba(108,96,255,0.6) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0;
+    opacity: 0.15;
+  }
+
+  .c6-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .c6-line { width: 36px; height: 1px; background: linear-gradient(90deg, transparent, var(--blue-bright)); }
+  .c6-line.rev { background: linear-gradient(90deg, var(--blue-bright), transparent); }
+
+  .c6-sub {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    font-weight: 600;
+  }
+
+</style>
+</head>
+<body>
+
+<h1 class="page-title">SmartSafe — Logo Concepts</h1>
+<p class="subtitle">Six premium concepts matching the Titanium & Premium Blue identity</p>
+
+<div class="grid">
+
+  <!-- CONCEPT 1 -->
+  <div class="card">
+    <div class="card-preview c1-bg">
+      <div class="c1-logo">
+        <div class="c1-shield">
+          <svg viewBox="0 0 64 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 2L5 14v20c0 16 12 30 27 36 15-6 27-20 27-36V14L32 2z"
+              fill="url(#shield-grad)" stroke="rgba(108,96,255,0.7)" stroke-width="1.5"/>
+            <circle cx="32" cy="33" r="10" fill="none" stroke="rgba(149,200,255,0.9)" stroke-width="1.5"/>
+            <path d="M27 33l4 4 8-8" stroke="rgba(149,200,255,1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="shield-grad" x1="0" y1="0" x2="64" y2="72" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#2113FF" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#0F00FFD4" stop-opacity="0.3"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <div class="c1-text">Smart<span>Safe</span></div>
+          <div class="c1-sub">Contact without compromise</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 1 — Shield Mark</h2>
+      <p>A glowing blue shield icon with an inner circle verification check — emphasizes trust and protection. Timeless tech-safety feel.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 2 -->
+  <div class="card">
+    <div class="card-preview c2-bg">
+      <div class="c2-logo">
+        <div class="c2-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" fill="rgba(255,255,255,0.05)" stroke="rgba(149,200,255,0.5)" stroke-width="1.5"/>
+            <path d="M15.5 8.5c-1.5-1.5-4.5-1.5-6 0s-1.5 4.5 0 6l6-6z" fill="rgba(149,200,255,0.8)"/>
+            <path d="M8.5 15.5c1.5 1.5 4.5 1.5 6 0s1.5-4.5 0-6l-6 6z" fill="rgba(108,96,255,0.8)"/>
+          </svg>
+        </div>
+        <div class="c2-text-block">
+          <div class="c2-wordmark">Reach<em>Masked</em></div>
+          <div class="c2-tagline">Privacy-First Vehicle Contact</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 2 — Masked Orbit</h2>
+      <p>Spinning dashed ring around a dual-tone masked icon. Represents identity masking and the communication relay. Animated + dynamic.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 3 -->
+  <div class="card">
+    <div class="card-preview c3-bg">
+      <div class="c3-logo">
+        <div class="c3-badge">SS</div>
+        <div class="c3-wordmark">Smart<strong>Safe</strong></div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 3 — Monogram Badge</h2>
+      <p>Bold "SS" monogram on a rounded premium blue gradient tile. Clean, app-icon-ready. Works perfectly at small sizes as a favicon or app icon.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 4 -->
+  <div class="card">
+    <div class="card-preview c4-bg">
+      <div class="c4-logo">
+        <div class="c4-mark">
+          <div class="c4-outer"></div>
+          <div class="c4-slash"></div>
+          <div class="c4-dot"></div>
+        </div>
+        <div class="c4-text-block">
+          <div class="c4-name">Smart<span>Safe</span></div>
+          <div class="c4-sub">Vehicle Safety Platform</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 4 — Signal Mark</h2>
+      <p>A glowing ring with a keyline slash and dot — abstract yet meaningful. Feels like a GPS ping, QR signal, or secure broadcast. Futuristic.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 5 -->
+  <div class="card">
+    <div class="card-preview c5-bg">
+      <div class="c5-logo">
+        <div class="c5-pill">
+          <div class="c5-dot-group">
+            <div class="c5-dot-row"><span></span><span></span></div>
+            <div class="c5-dot-row"><span></span><span></span></div>
+          </div>
+          <div class="c5-name">Smart<em>Safe</em></div>
+        </div>
+        <div class="c5-caption">Contact without compromise</div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 5 — Glassmorphic Pill</h2>
+      <p>A frosted glass pill container with a dot grid icon. Very modern and matches the dashboard's glassmorphic cards perfectly. Soft and premium.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 6 -->
+  <div class="card">
+    <div class="card-preview c6-bg">
+      <div class="c6-logo">
+        <div class="c6-wordmark" data-text="SmartSafe">SmartSafe</div>
+        <div class="c6-bar">
+          <div class="c6-line rev"></div>
+          <div class="c6-sub">Reachmasked</div>
+          <div class="c6-line"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 6 — Neon Outline Wordmark</h2>
+      <p>Outlined glowing wordmark with a subtle gradient ghost fill. Cyberpunk/premium energy. Excellent as a splash screen treatment or header.</p>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:#2a2b35;margin-top:4rem;font-size:0.75rem;">SmartSafe — Logo Exploration · Titanium & Premium Blue Theme</p>
+
+</body>
+</html>

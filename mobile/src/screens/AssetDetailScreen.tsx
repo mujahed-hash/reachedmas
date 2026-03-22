@@ -151,7 +151,7 @@ export default function AssetDetailScreen({ route, navigation }: any) {
     if (loading) {
         return (
             <View style={[s.container, { justifyContent: "center", alignItems: "center" }]}>
-                <ActivityIndicator size="large" color={theme.primary} />
+                <ActivityIndicator size="large" color={theme.primaryOnSurface} />
             </View>
         );
     }
@@ -164,12 +164,12 @@ export default function AssetDetailScreen({ route, navigation }: any) {
         <SafeAreaView style={s.container} edges={["left", "right", "bottom"]}>
             <ScrollView
                 contentContainerStyle={s.scrollContent}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={theme.primary} />}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={theme.primaryOnSurface} />}
             >
                 {/* Asset Header */}
                 <View style={s.assetHeader}>
                     <View style={s.assetIconBox}>
-                        {getTypeIcon(asset?.type, 24, theme.primary)}
+                        {getTypeIcon(asset?.type, 24, theme.primaryOnSurface)}
                     </View>
                     <View>
                         <Text style={s.assetName}>{asset?.name}</Text>
@@ -183,8 +183,8 @@ export default function AssetDetailScreen({ route, navigation }: any) {
                 <View style={s.section}>
                     <View style={s.sectionHeader}>
                         <Text style={s.sectionTitle}>Auto-Replies</Text>
-                        <TouchableOpacity onPress={() => setShowAddReply(!showAddReply)}>
-                            <Text style={{ color: theme.primary, fontWeight: "600", fontSize: 14 }}>
+                        <TouchableOpacity onPress={() => setShowAddReply(!showAddReply)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                            <Text style={{ color: theme.primaryOnSurface, fontWeight: "700", fontSize: 14 }}>
                                 {showAddReply ? "Cancel" : "+ Add"}
                             </Text>
                         </TouchableOpacity>
@@ -234,7 +234,7 @@ export default function AssetDetailScreen({ route, navigation }: any) {
                                 key={reply.id}
                                 style={[
                                     s.replyCard,
-                                    reply.isActive && { borderColor: "rgba(99,102,241,0.3)", backgroundColor: isDark ? "rgba(99,102,241,0.05)" : "rgba(99,102,241,0.05)" },
+                                    reply.isActive && s.replyCardActive,
                                 ]}
                             >
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
@@ -246,7 +246,7 @@ export default function AssetDetailScreen({ route, navigation }: any) {
                                             </Text>
                                         </View>
                                         <TouchableOpacity onPress={() => handleToggleReply(reply.id, reply.isActive)}>
-                                            <Text style={{ color: theme.primary, fontSize: 13 }}>
+                                            <Text style={{ color: theme.primaryOnSurface, fontSize: 13, fontWeight: "600" }}>
                                                 {reply.isActive ? "Disable" : "Enable"}
                                             </Text>
                                         </TouchableOpacity>
@@ -273,7 +273,7 @@ export default function AssetDetailScreen({ route, navigation }: any) {
                         </View>
                     ) : (
                         interactions.map((interaction: any) => {
-                            const iconBg = getActionColor(interaction.actionType, isDark);
+                            const iconBg = getActionColor(interaction.actionType, isDark, theme.accentTint);
                             return (
                                 <View key={interaction.id} style={s.interactionCard}>
                                     <View style={[s.interactionIcon, { backgroundColor: iconBg }]}>
@@ -314,28 +314,30 @@ export default function AssetDetailScreen({ route, navigation }: any) {
     );
 }
 
-function getActionColor(type: string, isDark: boolean) {
+function getActionColor(type: string, isDark: boolean, accentTint: string) {
+    const brandTint = isDark ? `rgba(${accentTint}, 0.2)` : `rgba(${accentTint}, 0.08)`;
     const colors: Record<string, string> = {
         SCAN_VIEW: isDark ? "rgba(255,255,255,0.06)" : "#F1F5F9",
-        CONTACT_SMS: "rgba(99,102,241,0.1)",
-        CONTACT_CALL: "rgba(129,140,248,0.1)",
+        CONTACT_SMS: brandTint,
+        CONTACT_CALL: brandTint,
         TOW_ALERT: "rgba(245,158,11,0.1)",
         EMERGENCY: "rgba(239,68,68,0.1)",
-        DELIVERY_KNOCK: "rgba(99,102,241,0.1)",
+        DELIVERY_KNOCK: brandTint,
         FOUND_REPORT: "rgba(16,185,129,0.1)",
     };
     return colors[type] || (isDark ? "rgba(255,255,255,0.06)" : "#F1F5F9");
 }
 
-const createStyles = (theme: any, isDark: boolean) =>
-    StyleSheet.create({
+const createStyles = (theme: any, isDark: boolean) => {
+    const R = (opacity: number) => `rgba(${theme.accentTint},${opacity})`;
+    return StyleSheet.create({
         container: { flex: 1, backgroundColor: theme.background },
         scrollContent: { padding: 16, paddingBottom: 40 },
 
         assetHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 24 },
         assetIconBox: {
             width: 50, height: 50, borderRadius: 14,
-            backgroundColor: "rgba(99,102,241,0.1)",
+            backgroundColor: theme.primaryMutedBg,
             justifyContent: "center", alignItems: "center",
         },
         assetName: { fontSize: 20, fontWeight: "700", color: theme.text },
@@ -363,7 +365,7 @@ const createStyles = (theme: any, isDark: boolean) =>
             padding: 12, fontSize: 14, color: theme.text,
         },
         primaryBtn: {
-            backgroundColor: theme.primary, borderRadius: 10, paddingVertical: 12, alignItems: "center",
+            backgroundColor: theme.primarySoft, borderRadius: 10, paddingVertical: 12, alignItems: "center",
         },
         primaryBtnText: { color: "#fff", fontWeight: "700", fontSize: 14 },
 
@@ -371,6 +373,10 @@ const createStyles = (theme: any, isDark: boolean) =>
             backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#FFFFFF",
             borderRadius: 12, borderWidth: 1, borderColor: theme.border,
             padding: 14, marginBottom: 8,
+        },
+        replyCardActive: {
+            borderColor: isDark ? R(0.4) : R(0.35),
+            backgroundColor: theme.primaryMutedBg,
         },
         replyLabel: { fontSize: 14, fontWeight: "600", color: theme.text },
         replyMessage: { fontSize: 13, color: theme.textMuted, fontStyle: "italic" },
@@ -397,3 +403,4 @@ const createStyles = (theme: any, isDark: boolean) =>
         interactionMessage: { fontSize: 13, color: theme.textMuted, fontStyle: "italic", marginTop: 2 },
         interactionTime: { fontSize: 11, color: theme.textMuted },
     });
+};

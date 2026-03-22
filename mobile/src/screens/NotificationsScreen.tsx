@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
     View,
     Text,
@@ -36,16 +36,6 @@ const getNotificationIcon = (type: string, size = 18, color?: string) => {
     }
 };
 
-const typeColors: Record<string, { bg: string; text: string }> = {
-    SCAN: { bg: "rgba(148,163,184,0.1)", text: "#94A3B8" },
-    MESSAGE: { bg: "rgba(99,102,241,0.1)", text: "#6366F1" },
-    CALL: { bg: "rgba(129,140,248,0.1)", text: "#818CF8" },
-    TOW_ALERT: { bg: "rgba(245,158,11,0.1)", text: "#F59E0B" },
-    EMERGENCY: { bg: "rgba(239,68,68,0.1)", text: "#EF4444" },
-    DELIVERY_KNOCK: { bg: "rgba(99,102,241,0.1)", text: "#6366F1" },
-    FOUND_REPORT: { bg: "rgba(16,185,129,0.1)", text: "#10B981" },
-};
-
 const getAssetIcon = (type: string, size = 12, color?: string) => {
     switch (type) {
         case "CAR": return <Search size={size} color={color} />; // We can use more specific ones if needed, but keeping it simple
@@ -55,6 +45,19 @@ const getAssetIcon = (type: string, size = 12, color?: string) => {
 
 export default function NotificationsScreen({ navigation, onRead }: any) {
     const { theme, isDark } = useAppTheme();
+
+    const typeColors: Record<string, { bg: string; text: string }> = useMemo(() => {
+        const R = (o: number) => `rgba(${theme.accentTint},${o})`;
+        return {
+            SCAN: { bg: "rgba(148,163,184,0.1)", text: "#94A3B8" },
+            MESSAGE: { bg: R(0.14), text: theme.primarySoft },
+            CALL: { bg: R(0.14), text: theme.primaryOnSurface },
+            TOW_ALERT: { bg: "rgba(245,158,11,0.1)", text: "#F59E0B" },
+            EMERGENCY: { bg: "rgba(239,68,68,0.1)", text: "#EF4444" },
+            DELIVERY_KNOCK: { bg: R(0.14), text: theme.primarySoft },
+            FOUND_REPORT: { bg: "rgba(16,185,129,0.1)", text: "#10B981" },
+        };
+    }, [theme]);
     const [notifications, setNotifications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);

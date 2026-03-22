@@ -10,6 +10,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "ReachMasked - Contact without compromise",
   description: "Privacy-first vehicle contact platform. Scan to notify owners about parking, lights, or safety issues without exchanging numbers.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
+  },
 };
 
 import { Providers } from "@/components/providers/session-provider";

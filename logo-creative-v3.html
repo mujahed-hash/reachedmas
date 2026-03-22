@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReachMasked — Creative Logo Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #2113FF;
+    --blue-v: #6C60FF;
+    --ice: #95C8FF;
+    --neon: #4DFFD2;
+    --bg: #07080a;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.06);
+    --muted: #525870;
+    --text: #e8eaf0;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .header-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(108,96,255,0.08);
+    border: 1px solid rgba(108,96,255,0.2);
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--blue-v);
+    margin-bottom: 1.5rem;
+  }
+
+  .header-eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: linear-gradient(160deg, #fff 30%, rgba(149,200,255,0.6));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 400;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .concept-section {
+    max-width: 1160px;
+    margin: 0 auto 5rem;
+  }
+
+  .concept-section:last-of-type { margin-bottom: 0; }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 2rem;
+  }
+
+  .section-label span {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .section-label::before,
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .preview-stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 380px;
+  }
+
+  /* Wide single concept */
+  .preview-stage.full {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-pane {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    border-right: 1px solid var(--border);
+  }
+
+  .preview-pane:last-of-type { border-right: none; }
+
+  .info-pane {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .concept-number {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue-v);
+    margin-bottom: 0.75rem;
+  }
+
+  .concept-name {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+  }
+
+  .concept-story {
+    font-size: 0.92rem;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+
+  .concept-story strong { color: rgba(149,200,255,0.8); font-weight: 600; }
+
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid;
+  }
+
+  .pill-blue { background: rgba(33,19,255,0.12); color: var(--ice); border-color: rgba(149,200,255,0.2); }
+  .pill-neon { background: rgba(77,255,210,0.08); color: var(--neon); border-color: rgba(77,255,210,0.2); }
+  .pill-violet { background: rgba(108,96,255,0.1); color: var(--blue-v); border-color: rgba(108,96,255,0.25); }
+
+  /* ════════════════════════════════════════════
+     CONCEPT A — "The Phantom Tag"
+     App puts a physical NFC/QR tag on a vehicle.
+     The tag itself is the central mark — but it's
+     ghostly & translucent. Anonymous yet reachable.
+  ════════════════════════════════════════════ */
+  .ca-bg {
+    background:
+      radial-gradient(ellipse 60% 60% at 30% 50%, rgba(33,19,255,0.12) 0%, transparent 70%);
+  }
+
+  .ca-mark {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .ca-tag-wrap {
+    position: relative;
+    width: 68px;
+    height: 90px;
+  }
+
+  /* The NFC/luggage tag body */
+  .ca-tag-body {
+    position: absolute;
+    inset: 0;
+    top: 12px;
+    border: 2px solid rgba(108,96,255,0.6);
+    border-radius: 8px;
+    background: linear-gradient(155deg, rgba(33,19,255,0.08), rgba(108,96,255,0.03));
+    backdrop-filter: blur(4px);
+    box-shadow:
+      0 0 20px rgba(33,19,255,0.2),
+      inset 0 0 20px rgba(108,96,255,0.05);
+  }
+
+  /* Hole at top */
+  .ca-tag-hole {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(108,96,255,0.5);
+    background: var(--bg);
+    z-index: 2;
+  }
+
+  /* QR-like grid dots inside tag */
+  .ca-tag-inner {
+    position: absolute;
+    inset: 18px 8px 8px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 2px;
+  }
+
+  .ca-dot {
+    border-radius: 2px;
+    background: rgba(108,96,255,0.4);
+    box-shadow: 0 0 4px rgba(108,96,255,0.3);
+  }
+
+  .ca-dot.lit {
+    background: rgba(149,200,255,0.8);
+    box-shadow: 0 0 6px var(--ice);
+  }
+
+  /* NFC signal arc */
+  .ca-signal {
+    position: absolute;
+    top: 50%;
+    right: -28px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .ca-arc {
+    border: 2px solid transparent;
+    border-right-color: rgba(77,255,210,0.5);
+    border-radius: 50%;
+    box-shadow: 2px 0 10px rgba(77,255,210,0.2);
+  }
+
+  .ca-arc-1 { width: 10px; height: 10px; margin-left: 6px; opacity: 0.9; }
+  .ca-arc-2 { width: 18px; height: 18px; margin-left: 2px; opacity: 0.6; }
+  .ca-arc-3 { width: 26px; height: 26px; opacity: 0.3; }
+
+  .ca-wordmark {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #fff;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .ca-wordmark em {
+    font-style: normal;
+    color: var(--blue-v);
+    font-weight: 300;
+  }
+
+  /* ════════════════════════════════════════════
+     CONCEPT B — "Eye of Privacy"
+     A human eye formed from signal waves.
+     The iris is masked by a veil of scan rings.
+     We're always watching over you — privately.
+  ════════════════════════════════════════════ */
+  .cb-bg {
+    background: black;
+  }
+
+  .cb-mark {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .cb-eye-wrap {
+    position: relative;
+    width: 80px;
+    height: 50px;
+  }
+
+  .cb-eye-outer {
+    position: absolute;
+    inset: 0;
+  }
+
+  .cb-eye-inner {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(33,19,255,0.4) 30%, rgba(33,19,255,0.05) 100%);
+    border: 1.5px solid rgba(108,96,255,0.5);
+    box-shadow:
+      0 0 12px rgba(33,19,255,0.5),
+      0 0 30px rgba(33,19,255,0.2);
+    overflow: hidden;
+  }
+
+  .cb-iris {
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--blue) 0%, #0a00a0 100%);
+    overflow: hidden;
+  }
+
+  /* Horizontal scan lines across iris = "masked" */
+  .cb-scan-lines {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 2px;
+  }
+
+  .cb-scan-line {
+    height: 1px;
+    background: rgba(77,255,210,0.4);
+    border-radius: 1px;
+    animation: scan 3s ease-in-out infinite;
+  }
+
+  .cb-scan-line:nth-child(1) { animation-delay: 0s; width: 70%; }
+  .cb-scan-line:nth-child(2) { animation-delay: 0.2s; width: 100%; }
+  .cb-scan-line:nth-child(3) { animation-delay: 0.4s; width: 85%; }
+  .cb-scan-line:nth-child(4) { animation-delay: 0.6s; width: 100%; }
+  .cb-scan-line:nth-child(5) { animation-delay: 0.8s; width: 60%; }
+
+  @keyframes scan {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.7; }
+  }
+
+  .cb-pupil {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.9);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px rgba(77,255,210,0.5);
+  }
+
+  .cb-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .cb-reach {
+    font-size: 1.9rem;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    color: #fff;
+  }
+
+  .cb-masked {
+    font-size: 1.4rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--neon);
+    text-shadow: 0 0 15px rgba(77,255,210,0.4);
+    margin-top: -2px;
+  }
+
+  /* ════════════════════════════════════════════
+     CONCEPT C — "Quantum Signal" 
+     An abstract car silhouette made of signal dots.
+     The dots disperse outward (reach) but the center—
+     where the plate would be—is a pixellated blur (masked).
+  ════════════════════════════════════════════ */
+  .cc-bg {
+    background: radial-gradient(ellipse 80% 60% at center, rgba(33,19,255,0.08) 0%, transparent 70%);
+  }
+
+  .cc-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .cc-car {
+    position: relative;
+    width: 100px;
+    height: 60px;
+  }
+
+  .cc-car svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .cc-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+  }
+
+  .cc-wordmark .reach-part { color: #fff; }
+  .cc-wordmark .masked-part {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 400;
+    color: var(--blue-v);
+    letter-spacing: 0.02em;
+  }
+
+  /* ════════════════════════════════════════════
+     CONCEPT D — "The Relay" (Most Defining)
+     Shows TWO anonymous figures (silhouettes, no faces)
+     sending/receiving a signal through a privacy relay node.
+     The relay node glows — that IS ReachMasked.
+  ════════════════════════════════════════════ */
+  .cd-bg {
+    background:
+      radial-gradient(ellipse 50% 70% at 50% 50%, rgba(33,19,255,0.1) 0%, transparent 70%);
+  }
+
+  .cd-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .cd-relay-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  .cd-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.6;
+  }
+
+  .cd-figure-head {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(149,200,255,0.3);
+    border: 1.5px solid rgba(149,200,255,0.5);
+  }
+
+  .cd-figure-body {
+    width: 22px;
+    height: 20px;
+    border-radius: 6px 6px 2px 2px;
+    background: rgba(149,200,255,0.2);
+    border: 1.5px solid rgba(149,200,255,0.4);
+  }
+
+  .cd-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(149,200,255,0.2), rgba(33,19,255,0.8));
+    position: relative;
+    width: 50px;
+    align-self: flex-start;
+    margin-top: 14px;
+  }
+
+  .cd-line.rev {
+    background: linear-gradient(90deg, rgba(33,19,255,0.8), rgba(149,200,255,0.2));
+  }
+
+  .cd-line-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ice);
+    top: -2px;
+    animation: travel 2s linear infinite;
+  }
+
+  .cd-line.rev .cd-line-dot {
+    animation: travel-rev 2s linear infinite;
+    animation-delay: 1s;
+  }
+
+  @keyframes travel {
+    0% { left: 0; opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  @keyframes travel-rev {
+    0% { right: 0; left: auto; opacity: 0; }
+    100% { right: 100%; left: auto; opacity: 1; }
+  }
+
+  .cd-relay-node {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), rgba(108,96,255,0.4));
+    border: 2px solid rgba(108,96,255,0.6);
+    box-shadow:
+      0 0 30px rgba(33,19,255,0.6),
+      0 0 60px rgba(33,19,255,0.2),
+      inset 0 0 15px rgba(108,96,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .cd-relay-node::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px dashed rgba(108,96,255,0.25);
+    animation: spin 6s linear infinite;
+  }
+
+  .cd-relay-node::after {
+    content: '';
+    position: absolute;
+    inset: -16px;
+    border-radius: 50%;
+    border: 1px dashed rgba(108,96,255,0.12);
+    animation: spin 10s linear infinite reverse;
+  }
+
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  /* Mask icon inside relay node */
+  .cd-mask-icon {
+    width: 24px;
+    height: 14px;
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.6);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .cd-mask-eye {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 5px rgba(149,200,255,0.8);
+  }
+
+  .cd-rm-wordmark {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #fff;
+  }
+
+  .cd-rm-wordmark span {
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: var(--blue-v);
+  }
+
+  .cd-rm-tagline {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Brand Identity v3 — Conceptually Grounded</div>
+  <h1>ReachMasked</h1>
+  <p>Each logo concept is derived directly from what the product <em>does</em>: a stranger scans your vehicle's tag to contact you — privately, without exposing a single number.</p>
+</div>
+
+<!-- CONCEPT A -->
+<div class="concept-section">
+  <div class="section-label"><span>Concept A</span></div>
+  <div class="preview-stage">
+    <div class="preview-pane ca-bg">
+      <div class="ca-mark">
+        <div class="ca-tag-wrap">
+          <div class="ca-tag-hole"></div>
+          <div class="ca-tag-body">
+            <div class="ca-tag-inner">
+              <!-- 4 × 5 = 20 dots. "lit" ones simulate a QR scan glow -->
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot"></div>
+              <div class="ca-dot lit"></div>
+              <div class="ca-dot"></div>
+            </div>
+          </div>
+          <!-- NFC signal arcs emanating right from tag -->
+          <div class="ca-signal">
+            <div class="ca-arc ca-arc-3"></div>
+            <div class="ca-arc ca-arc-2"></div>
+            <div class="ca-arc ca-arc-1"></div>
+          </div>
+        </div>
+        <div class="ca-wordmark">Reach<em>Masked</em></div>
+      </div>
+    </div>
+    <div class="info-pane">
+      <div class="concept-number">Concept A · The Phantom Tag</div>
+      <div class="concept-name">The Physical Tag<br />Made Digital</div>
+      <div class="concept-story">
+        The product's most literal physical object — the <strong>NFC/QR sticker tag</strong> placed on a vehicle — rendered as the logo mark itself. The tag is hauntingly transparent (the mask), with glowing QR-like data inside and live <strong>NFC signal arcs</strong> radiating outward (the reach). You immediately know: "tap or scan this."
+      </div>
+      <div class="pill-row">
+        <span class="pill pill-blue">Product-Literal</span>
+        <span class="pill pill-neon">NFC / QR Metaphor</span>
+        <span class="pill pill-violet">Glassmorphic</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT B -->
+<div class="concept-section">
+  <div class="section-label"><span>Concept B</span></div>
+  <div class="preview-stage">
+    <div class="preview-pane cb-bg">
+      <div class="cb-mark">
+        <div class="cb-eye-wrap">
+          <svg class="cb-eye-outer" viewBox="0 0 80 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Eyelid contour paths -->
+            <path d="M4 25 Q40 -5 76 25" stroke="rgba(108,96,255,0.6)" stroke-width="1.5" fill="none"/>
+            <path d="M4 25 Q40 55 76 25" stroke="rgba(108,96,255,0.6)" stroke-width="1.5" fill="none"/>
+            <!-- Subtle corner glows -->
+            <circle cx="4" cy="25" r="2" fill="rgba(149,200,255,0.3)"/>
+            <circle cx="76" cy="25" r="2" fill="rgba(149,200,255,0.3)"/>
+          </svg>
+          <div class="cb-eye-inner">
+            <div class="cb-iris">
+              <div class="cb-scan-lines">
+                <div class="cb-scan-line"></div>
+                <div class="cb-scan-line"></div>
+                <div class="cb-scan-line"></div>
+                <div class="cb-scan-line"></div>
+                <div class="cb-scan-line"></div>
+              </div>
+            </div>
+            <div class="cb-pupil"></div>
+          </div>
+        </div>
+        <div class="cb-text">
+          <div class="cb-reach">Reach</div>
+          <div class="cb-masked">Masked</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-pane">
+      <div class="concept-number">Concept B · The Eye of Privacy</div>
+      <div class="concept-name">Always Watching.<br />Never Exposed.</div>
+      <div class="concept-story">
+        An eye — the universal symbol of awareness, watching, reaching. But the iris is <strong>overlaid with live scan lines</strong>, a visual "masking" of identity. The eye sees everything, but its own identity is obscured. The animated scan lines breathe life into the mark and convey active, <strong>real-time privacy monitoring</strong>.
+      </div>
+      <div class="pill-row">
+        <span class="pill pill-violet">Highly Symbolic</span>
+        <span class="pill pill-neon">Animated</span>
+        <span class="pill pill-blue">Awareness + Privacy</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT C -->
+<div class="concept-section">
+  <div class="section-label"><span>Concept C</span></div>
+  <div class="preview-stage">
+    <div class="preview-pane cc-bg">
+      <div class="cc-mark">
+        <div class="cc-car">
+          <svg viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Car body outline — sleek SVG path -->
+            <path d="M15 38 Q15 44 22 44 L78 44 Q85 44 85 38 L85 32 Q85 28 80 26 L70 22 Q64 16 52 16 L36 16 Q28 16 23 22 L15 32 Z"
+              fill="rgba(33,19,255,0.06)"
+              stroke="rgba(108,96,255,0.4)"
+              stroke-width="1.5"
+              stroke-linecap="round"/>
+            <!-- Windshield -->
+            <path d="M36 16 L28 28 L68 28 L64 16 Z"
+              fill="rgba(149,200,255,0.06)"
+              stroke="rgba(149,200,255,0.25)"
+              stroke-width="1"/>
+            <!-- Wheels -->
+            <circle cx="30" cy="44" r="7" fill="rgba(8,9,10,1)" stroke="rgba(108,96,255,0.5)" stroke-width="1.5"/>
+            <circle cx="70" cy="44" r="7" fill="rgba(8,9,10,1)" stroke="rgba(108,96,255,0.5)" stroke-width="1.5"/>
+            <circle cx="30" cy="44" r="3" fill="rgba(108,96,255,0.3)"/>
+            <circle cx="70" cy="44" r="3" fill="rgba(108,96,255,0.3)"/>
+
+            <!-- License plate area — shown as a pixelated blur (masked!) -->
+            <rect x="38" y="33" width="24" height="9" rx="2" fill="rgba(33,19,255,0.3)" stroke="rgba(108,96,255,0.5)" stroke-width="1"/>
+            <!-- Pixel blocks on plate to show "blur/mask" -->
+            <rect x="39" y="34" width="4" height="3" fill="rgba(149,200,255,0.5)" rx="0.5"/>
+            <rect x="44" y="34" width="4" height="3" fill="rgba(77,255,210,0.3)" rx="0.5"/>
+            <rect x="49" y="34" width="4" height="3" fill="rgba(149,200,255,0.4)" rx="0.5"/>
+            <rect x="54" y="34" width="4" height="3" fill="rgba(108,96,255,0.5)" rx="0.5"/>
+            <rect x="39" y="38" width="7" height="3" fill="rgba(108,96,255,0.3)" rx="0.5"/>
+            <rect x="47" y="38" width="7" height="3" fill="rgba(149,200,255,0.3)" rx="0.5"/>
+            <rect x="55" y="38" width="6" height="3" fill="rgba(77,255,210,0.2)" rx="0.5"/>
+
+            <!-- Signal waves from above the car (NFC/QR tag scan) pointing down -->
+            <path d="M50 6 Q56 3 62 6" stroke="rgba(77,255,210,0.6)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M50 10 Q59 5.5 68 10" stroke="rgba(77,255,210,0.35)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <circle cx="50" cy="13" r="1.5" fill="rgba(77,255,210,0.8)"/>
+
+            <!-- Headlight glows -->
+            <ellipse cx="83" cy="33" rx="3" ry="2" fill="rgba(149,200,255,0.6)"/>
+            <ellipse cx="17" cy="33" rx="3" ry="2" fill="rgba(149,200,255,0.3)"/>
+          </svg>
+        </div>
+        <div class="cc-wordmark">
+          <span class="reach-part">Reach</span><span class="masked-part">Masked</span>
+        </div>
+      </div>
+    </div>
+    <div class="info-pane">
+      <div class="concept-number">Concept C · The Pixelated Plate</div>
+      <div class="concept-name">Your Car, Contactable.<br />Your Plate, Hidden.</div>
+      <div class="concept-story">
+        A sleek vehicle icon where the license plate area is deliberately <strong>pixelated like a blur/mask</strong> — referencing both data censoring and the privacy core of the product. A scan-signal arc above the roof represents the <strong>QR/NFC tap event</strong>. This logo literally answers: "What does ReachMasked do?" with a single image.
+      </div>
+      <div class="pill-row">
+        <span class="pill pill-blue">Vehicle-Literal</span>
+        <span class="pill pill-neon">Pixelated Privacy</span>
+        <span class="pill pill-violet">Most Explanatory</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT D -->
+<div class="concept-section">
+  <div class="section-label"><span>Concept D — Recommended</span></div>
+  <div class="preview-stage">
+    <div class="preview-pane cd-bg">
+      <div class="cd-mark">
+        <div class="cd-relay-diagram">
+          <!-- Person 1 (the stranger, scanner) -->
+          <div class="cd-figure">
+            <div class="cd-figure-head"></div>
+            <div class="cd-figure-body"></div>
+          </div>
+
+          <!-- Signal going TO relay node -->
+          <div class="cd-line">
+            <div class="cd-line-dot"></div>
+          </div>
+
+          <!-- THE RELAY NODE — This IS ReachMasked -->
+          <div class="cd-relay-node">
+            <div class="cd-mask-icon">
+              <div class="cd-mask-eye"></div>
+              <div class="cd-mask-eye"></div>
+            </div>
+          </div>
+
+          <!-- Signal going FROM relay node to owner -->
+          <div class="cd-line rev">
+            <div class="cd-line-dot"></div>
+          </div>
+
+          <!-- Person 2 (the owner) -->
+          <div class="cd-figure">
+            <div class="cd-figure-head"></div>
+            <div class="cd-figure-body"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div class="cd-rm-wordmark">Reach<span>Masked</span></div>
+          <div class="cd-rm-tagline">Contact without compromise</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-pane">
+      <div class="concept-number">Concept D · The Relay Node</div>
+      <div class="concept-name">The Signal.<br />The Shield.<br />The Service.</div>
+      <div class="concept-story">
+        The defining concept. Two anonymous silhouettes (the stranger and the owner) pass a <strong>live signal through a glowing central relay node</strong>. The relay node — the ReachMasked product itself — bears a <strong>mask symbol</strong>. It says in one diagram: "We are the privacy-preserving relay between two parties who should never have to share their numbers." The orbital rings on the relay node suggest <em>always-on, always-safe.</em>
+      </div>
+      <div class="pill-row">
+        <span class="pill pill-violet">Story-Led</span>
+        <span class="pill pill-neon">Animated Live Signal</span>
+        <span class="pill pill-blue">Most Defining</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

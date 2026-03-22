@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { Shield, LayoutDashboard, Users, QrCode, BarChart3, Settings, LogOut, Printer } from "lucide-react";
+import { LayoutDashboard, Users, QrCode, BarChart3, Settings, LogOut, Printer } from "lucide-react";
+import { SignalTagLogo } from "@/components/signal-tag-logo";
 import { Button } from "@/components/ui/button";
 
 export default async function AdminLayout({
@@ -48,11 +49,11 @@ export default async function AdminLayout({
         <div className="min-h-screen bg-[#0B1120] text-slate-200 selection:bg-indigo-500/30">
             {/* Admin Header */}
             <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0B1120]/80 backdrop-blur-xl">
-                <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                    <div className="flex items-center gap-8">
-                        <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-                            <Shield className="h-6 w-6 text-indigo-500" />
-                            <span className="text-lg font-bold tracking-tight text-white">
+                <div className="container mx-auto flex min-h-[5rem] items-center justify-between gap-3 px-4 pt-2">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                        <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+                            <SignalTagLogo size={72} className="h-[72px] w-auto shrink-0" />
+                            <span className="text-xl font-bold tracking-tight text-white sm:text-2xl">
                                 ReachMasked <span className="text-indigo-400 font-medium">Command</span>
                             </span>
                         </Link>

@@ -52,10 +52,21 @@ export async function GET(req: NextRequest) {
             },
         });
 
-        const activeTags = assets.reduce(
-            (sum, a) => sum + a.tags.filter((t) => t.status === "ACTIVE").length,
-            0
-        );
+        // Match web dashboard: "Active Tags" stat = assets that have at least one tag
+        const activeTagsCount = assets.filter((a) => a.tags.length > 0).length;
+
+        const recentActivity = await prisma.interaction.findMany({
+            where: {
+                tag: {
+                    asset: { ownerId: userId },
+                },
+            },
+            include: {
+                tag: { include: { asset: { select: { name: true } } } },
+            },
+            orderBy: { timestamp: "desc" },
+            take: 5,
+        });
 
         const user = await prisma.user.findUnique({
             where: { id: userId },
@@ -67,10 +78,11 @@ export async function GET(req: NextRequest) {
             vehicles: assets,
             assets,
             recentNotifications,
+            recentActivity,
             plan: user?.plan || "FREE",
             stats: {
                 totalScans,
-                activeTags,
+                activeTags: activeTagsCount,
                 vehicleCount: assets.length,
                 assetCount: assets.length,
             },

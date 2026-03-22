@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReachMasked — Defining Logos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #2113FF;
+    --blue-bright: #6C60FF;
+    --blue-ice: #95C8FF;
+    --blue-dark: #0F00FFD4;
+    --blue-neon: #00f0ff;
+    --bg: #08090a;
+    --surface: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f0f8;
+    --muted: #6b7280;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  h1.page-title {
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff 40%, var(--blue-ice));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 4rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.75rem;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(33,19,255,0.5);
+  }
+
+  .card-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-info {
+    padding: 1.5rem 2rem 2rem;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
+    background: rgba(8, 9, 10, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  .card-info h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-info p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  
+  .logic-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    background: rgba(149,200,255,0.1);
+    color: var(--blue-ice);
+    border: 1px solid rgba(149,200,255,0.2);
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 1 – The Ghost Bubble (Abstract Masked Reach)
+  ────────────────────────────────────────────── */
+  .c1-bg {
+    background: radial-gradient(circle at center, rgba(33,19,255,0.15) 0%, transparent 70%);
+  }
+
+  .c1-logo {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .c1-mark {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .c1-bubble {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--blue-bright), var(--blue));
+    border-radius: 50% 50% 50% 10%;
+    box-shadow: 0 10px 30px rgba(33,19,255,0.5);
+  }
+
+  .c1-mask {
+    position: absolute;
+    width: 48px;
+    height: 24px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+
+  .c1-mask span {
+    width: 5px;
+    height: 5px;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: pulse 1.5s infinite alternate;
+  }
+  .c1-mask span:nth-child(2) { animation-delay: 0.5s; }
+  .c1-mask span:nth-child(3) { animation-delay: 1s; }
+
+  @keyframes pulse {
+    0% { opacity: 0.3; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .c1-wordmark {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .c1-wordmark span {
+    font-weight: 400;
+    color: var(--blue-ice);
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 2 – The Eclipse (The Premium Mask)
+  ────────────────────────────────────────────── */
+  .c2-bg {
+    background: black;
+  }
+
+  .c2-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .c2-mark {
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  
+  /* The glowing "Reach" corona */
+  .c2-corona {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue-neon), var(--blue));
+    filter: blur(12px);
+    opacity: 0.8;
+  }
+
+  /* The solid "Masking" eclipse */
+  .c2-eclipse {
+    position: absolute;
+    inset: 4px;
+    background: #08090a;
+    border-radius: 50%;
+    box-shadow: inset 0 0 20px rgba(0,0,0,1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .c2-eclipse-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--blue-neon);
+    border-top-color: transparent;
+    border-radius: 50%;
+    transform: rotate(45deg);
+  }
+
+  .c2-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(33,19,255,0.8);
+  }
+  
+  .c2-wordmark span {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--blue-neon);
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 3 – Dynamic Signal Shield (Modern Tech)
+  ────────────────────────────────────────────── */
+  .c3-bg {
+    background: radial-gradient(ellipse at 50% 50%, rgba(108,96,255,0.1) 0%, transparent 60%);
+  }
+
+  .c3-logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .c3-mark {
+    position: relative;
+    width: 58px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .c3-shield-base {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 0%, 100% 20%, 100% 70%, 50% 100%, 0% 70%, 0% 20%);
+    background: linear-gradient(180deg, rgba(33,19,255,0.2), rgba(33,19,255,0));
+    border: 2px solid var(--blue-bright);
+    box-shadow: 0 0 20px rgba(108,96,255,0.4);
+  }
+
+  .c3-signal-waves {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-top: -10px;
+  }
+
+  .c3-wave-1 { width: 24px; height: 3px; background: var(--blue-ice); border-radius: 4px; box-shadow: 0 0 10px var(--blue-ice); }
+  .c3-wave-2 { width: 16px; height: 3px; background: var(--blue-neon); border-radius: 4px; box-shadow: 0 0 10px var(--blue-neon); opacity: 0.7;}
+  .c3-wave-3 { width: 8px; height: 3px; background: var(--blue-bright); border-radius: 4px; box-shadow: 0 0 10px var(--blue-bright); opacity: 0.4;}
+
+  .c3-wordmark {
+    display: flex;
+    flex-direction: column;
+    line-height: 0.9;
+  }
+
+  .c3-wordmark-top {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #fff, var(--blue-ice));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .c3-wordmark-bot {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--blue-bright);
+  }
+
+  /* ──────────────────────────────────────────────
+     CONCEPT 4 – The Split Monogram (RM Cipher)
+  ────────────────────────────────────────────── */
+  .c4-bg {
+    background: radial-gradient(circle at 70% 30%, rgba(33,19,255,0.2) 0%, transparent 70%);
+  }
+
+  .c4-logo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .c4-mark {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(33,19,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .c4-mark::before {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    background: conic-gradient(transparent, transparent, transparent, var(--blue-bright));
+    animation: rotate 4s linear infinite;
+    opacity: 0.3;
+  }
+  
+  @keyframes rotate { 100% { transform: rotate(360deg); } }
+
+  .c4-rm {
+    position: relative;
+    z-index: 2;
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #fff;
+    display: flex;
+    letter-spacing: -4px;
+  }
+
+  .c4-r { color: #fff; }
+  .c4-m { color: var(--blue-bright); mix-blend-mode: screen; transform: translateX(-4px); }
+
+  .c4-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #fff;
+  }
+  .c4-wordmark em {
+    font-style: normal;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+</style>
+</head>
+<body>
+
+<h1 class="page-title">ReachMasked — Identity Redefined</h1>
+<p class="subtitle">These concepts explicitly define the brand <strong>ReachMasked</strong>. They focus heavily on the dual meanings of "relevance/connection" (Reach) and "privacy/anonymity/blur" (Masked), establishing a highly premium, modern software identity.</p>
+
+<div class="grid">
+
+  <!-- CONCEPT 1 -->
+  <div class="card">
+    <div class="card-preview c1-bg">
+      <div class="c1-logo">
+        <div class="c1-mark">
+          <div class="c1-bubble"></div>
+          <div class="c1-mask">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="c1-wordmark">Reach<span>Masked</span></div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 1: The Frosted Bubble <span class="logic-tag">Literal Masking</span></h2>
+      <p>A vibrant, physical chat/communication bubble (<strong>Reach</strong>) whose center is physically obscured by a frosted glass strip containing an active typing indicator (<strong>Masked</strong>). Immediately conveys the product's core functional value in one glance.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 2 -->
+  <div class="card">
+    <div class="card-preview c2-bg">
+      <div class="c2-logo">
+        <div class="c2-mark">
+          <div class="c2-corona"></div>
+          <div class="c2-eclipse"><div class="c2-eclipse-icon"></div></div>
+        </div>
+        <div class="c2-wordmark">Reach<span>Masked</span></div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 2: The Eclipse <span class="logic-tag">Premium Stealth</span></h2>
+      <p>A glowing cyan/blue corona completely eclipsed by a pitch-black core. This represents powerful underlying connectivity securely masked behind a dark shield. It feels incredibly premium, secure, and cyberpunk.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 3 -->
+  <div class="card">
+    <div class="card-preview c3-bg">
+      <div class="c3-logo">
+        <div class="c3-mark">
+          <div class="c3-shield-base"></div>
+          <div class="c3-signal-waves">
+            <div class="c3-wave-1"></div>
+            <div class="c3-wave-2"></div>
+            <div class="c3-wave-3"></div>
+          </div>
+        </div>
+        <div class="c3-wordmark">
+          <div class="c3-wordmark-top">Reach</div>
+          <div class="c3-wordmark-bot">Masked</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 3: Signal Shield <span class="logic-tag">Tech & SaaS</span></h2>
+      <p>Radar/broadcast waves transmitting outward, but safely enclosed within a geometric software shield outline. It directly couples "broadcasting a signal" with "secure containment". Bold, stacked typography.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 4 -->
+  <div class="card">
+    <div class="card-preview c4-bg">
+      <div class="c4-logo">
+        <div class="c4-mark">
+          <div class="c4-rm">
+            <div class="c4-r">R</div>
+            <div class="c4-m">M</div>
+          </div>
+        </div>
+        <div class="c4-wordmark">Reach<em>Masked</em></div>
+      </div>
+    </div>
+    <div class="card-info">
+      <h2>Concept 4: Cipher Monogram <span class="logic-tag">App Icon Priority</span></h2>
+      <p>A stylized 'RM' cipher locked inside a glowing, scanning square. Perfect standalone app icon. The interlocking letters overlap to create a visual "masking" puzzle. Highly recognizable at tiny favicon sizes.</p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

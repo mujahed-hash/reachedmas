@@ -1,4 +1,5 @@
-import { Shield, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { SignalTagLogo } from "@/components/signal-tag-logo";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 
@@ -18,7 +19,7 @@ export default function TermsPage() {
                     </Link>
                     <Separator orientation="vertical" className="h-5" />
                     <Link href="/" className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-primary" />
+                        <SignalTagLogo size={24} className="h-6 w-auto" />
                         <span className="font-bold text-foreground">ReachMasked</span>
                     </Link>
                 </div>

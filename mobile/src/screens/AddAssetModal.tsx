@@ -81,9 +81,10 @@ export default function AddAssetModal({ navigation, route }: any) {
                             <View style={s.premiumBadge}>
                                 <CreditCard size={48} color={theme.primary} />
                             </View>
-                            <Text style={s.purchaseTitle}>Subscription Required</Text>
+                            <Text style={s.purchaseTitle}>Activation Required</Text>
                             <Text style={s.purchaseDesc}>
-                                To activate your first asset tag, you need to subscribe to the Standard Plan ($24.99/year).
+                                To protect your first asset, you need to purchase a Smart Tag and start your subscription. 
+                                One-time $24.99 activation, then $4.99/month starting after 30 days.
                             </Text>
                             <TouchableOpacity 
                                 style={s.upgradeBtn}
@@ -92,7 +93,7 @@ export default function AddAssetModal({ navigation, route }: any) {
                                     navigation.navigate("Purchase");
                                 }}
                             >
-                                <Text style={s.upgradeText}>Activate Protection ($24.99)</Text>
+                                <Text style={s.upgradeText}>Purchase Tag ($24.99)</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
                                 <Text style={s.backText}>Maybe Later</Text>
@@ -207,12 +208,12 @@ const createStyles = (theme: any, isDark: boolean) =>
         typeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 24 },
         typeCard: {
             width: "31%",
-            backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#F1F5F9",
+            backgroundColor: isDark ? "rgba(255,255,255,0.02)" : "#F1F5F9",
             borderRadius: 12,
             paddingVertical: 12,
             alignItems: "center",
             borderWidth: 1,
-            borderColor: "transparent",
+            borderColor: isDark ? "rgba(255,255,255,0.04)" : "transparent",
         },
         typeCardActive: {
             borderColor: theme.primary,
@@ -223,11 +224,11 @@ const createStyles = (theme: any, isDark: boolean) =>
 
         field: { marginBottom: 16 },
         input: {
-            backgroundColor: isDark ? "rgba(15,23,42,0.5)" : "#F1F5F9",
-            borderRadius: 10,
+            backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "#F1F5F9",
+            borderRadius: 12,
             borderWidth: 1,
-            borderColor: theme.border,
-            padding: 14,
+            borderColor: isDark ? "rgba(255,255,255,0.05)" : theme.border,
+            padding: 16,
             fontSize: 15,
             color: theme.text,
         },
@@ -244,11 +245,16 @@ const createStyles = (theme: any, isDark: boolean) =>
         submitBtn: {
             flex: 1,
             backgroundColor: theme.primary,
-            borderRadius: 10,
-            paddingVertical: 14,
+            borderRadius: 12,
+            paddingVertical: 16,
             alignItems: "center",
+            shadowColor: theme.primary,
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.9,
+            shadowRadius: 30,
+            elevation: 15,
         },
-        submitText: { color: "#fff", fontWeight: "700" },
+        submitText: { color: "#fff", fontWeight: "800", letterSpacing: -0.3 },
         successBox: {
             flex: 1,
             justifyContent: "center",
@@ -282,8 +288,13 @@ const createStyles = (theme: any, isDark: boolean) =>
             paddingVertical: 16,
             alignItems: "center",
             marginBottom: 12,
+            shadowColor: theme.primary,
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.9,
+            shadowRadius: 30,
+            elevation: 15,
         },
-        upgradeText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+        upgradeText: { color: "#fff", fontSize: 16, fontWeight: "800", letterSpacing: -0.3 },
         backBtn: { padding: 12 },
         backText: { color: theme.textMuted, fontSize: 14, fontWeight: "600" },
     });

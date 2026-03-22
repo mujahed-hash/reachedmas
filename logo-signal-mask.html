@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReachMasked — The Mark</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #07080a;
+      color: #e8eaf0;
+      min-height: 100vh;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #525870;
+      margin-bottom: 4rem;
+    }
+
+    /* ── SIZING GRID ──────────────────────────────────────────────── */
+    .sizes-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 5rem;
+    }
+
+    .size-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .size-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #525870;
+      font-weight: 600;
+    }
+
+    /* ── THE MARK SVG (inline, re-usable) ────────────────────────── */
+    /* Mark construction:
+     - Top: 3 concentric signal arcs (facing down like a broadcast tower)
+     - Bottom: those arcs transition into the eye cutouts of a mask
+     - The outer mask silhouette is an oval/visor shape
+     - RESULT: One shape = signal + mask simultaneously
+  */
+
+    /* ── LOCKUP VARIATIONS ───────────────────────────────────────── */
+    .lockup-section {
+      max-width: 960px;
+      margin: 0 auto 5rem;
+    }
+
+    .sec-title {
+      text-align: center;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #525870;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .sec-title::before,
+    .sec-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-label {
+      position: absolute;
+      top: 1.25rem;
+      left: 1.5rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #525870;
+    }
+
+    .logo-hz {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .wordmark {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #fff;
+      line-height: 1;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .wordmark .masked {
+      font-weight: 300;
+      color: #6C60FF;
+      letter-spacing: 0.02em;
+    }
+
+    /* App icon container */
+    .app-icon-wrap {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-end;
+    }
+
+    .app-icon {
+      background: linear-gradient(145deg, rgba(33, 19, 255, 0.15), rgba(8, 8, 12, 1));
+      border: 1px solid rgba(108, 96, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.04);
+      flex-shrink: 0;
+    }
+
+    /* Light background version */
+    .card-light {
+      background: #f0f2f8;
+    }
+
+    .card-light .wordmark {
+      color: #0d0f1a;
+    }
+
+    .card-light .wordmark .masked {
+      color: #2113FF;
+    }
+
+    .card-light .size-label {
+      color: #9ba0b8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="title">ReachMasked · The Signal Mask · A unified mark where reach & privacy are the same shape</div>
+
+  <!-- ── SIZES PREVIEW ────────────────────────────────────────────────── -->
+  <div class="sizes-row">
+
+    <!-- Icon only — 16px favicon simulation -->
+    <div class="size-item">
+      <svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="48" height="48" rx="12" fill="#2113FF" />
+        <!-- The Signal Mask Mark (minimal) -->
+        <path d="M24 12 C15 12 9 18 9 26 C9 34 15 38 24 38 C33 38 39 34 39 26 C39 18 33 12 24 12Z" fill="white"
+          opacity="0.9" />
+        <ellipse cx="18" cy="28" rx="4" ry="3" fill="#2113FF" />
+        <ellipse cx="30" cy="28" rx="4" ry="3" fill="#2113FF" />
+        <line x1="22" y1="28" x2="26" y2="28" stroke="white" stroke-width="1.5" />
+      </svg>
+      <span class="size-label">16px</span>
+    </div>
+
+    <!-- 32px -->
+    <div class="size-item">
+      <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="#2113FF" />
+        <path d="M24 12 C15 12 9 18 9 26 C9 34 15 38 24 38 C33 38 39 34 39 26 C39 18 33 12 24 12Z" fill="white"
+          opacity="0.9" />
+        <ellipse cx="18" cy="28" rx="4" ry="3" fill="#2113FF" />
+        <ellipse cx="30" cy="28" rx="4" ry="3" fill="#2113FF" />
+        <line x1="22" y1="28" x2="26" y2="28" stroke="white" stroke-width="1.5" />
+      </svg>
+      <span class="size-label">32px</span>
+    </div>
+
+    <!-- Main icon 64px -->
+    <div class="size-item">
+      <svg width="64" height="64" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="#2113FF" />
+        <path d="M24 12 C15 12 9 18 9 26 C9 34 15 38 24 38 C33 38 39 34 39 26 C39 18 33 12 24 12Z" fill="white"
+          opacity="0.9" />
+        <ellipse cx="18" cy="28" rx="4" ry="3" fill="#2113FF" />
+        <ellipse cx="30" cy="28" rx="4" ry="3" fill="#2113FF" />
+        <line x1="22" y1="28" x2="26" y2="28" stroke="white" stroke-width="1.5" />
+      </svg>
+      <span class="size-label">64px</span>
+    </div>
+
+  </div>
+
+  <!-- ── PRIMARY HORIZONTAL ON DARK ─────────────────────────────────── -->
+  <div class="lockup-section">
+    <div class="sec-title">Primary Lockup — Dark</div>
+
+    <div class="card"
+      style="background: radial-gradient(ellipse at 25% 50%, rgba(33,19,255,0.08) 0%, transparent 60%);">
+      <div class="card-label">Horizontal / Full Color</div>
+      <div class="logo-hz">
+        <!-- THE SIGNAL MASK MARK — full detail -->
+        <svg width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#6C60FF" stop-opacity="0.3" />
+              <stop offset="100%" stop-color="#2113FF" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6C60FF" />
+              <stop offset="100%" stop-color="#2113FF" />
+            </linearGradient>
+            <filter id="glow-filter">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <!-- Outer glow halo -->
+          <circle cx="50" cy="55" r="45" fill="url(#glow)" />
+
+          <!-- Signal arcs at top — 3 concentric, descending -->
+          <!-- Arc 3 (outermost) -->
+          <path d="M18 42 Q50 8 82 42" stroke="url(#icon-grad)" stroke-width="4" stroke-linecap="round" fill="none"
+            filter="url(#glow-filter)" opacity="0.5" />
+          <!-- Arc 2 -->
+          <path d="M26 46 Q50 20 74 46" stroke="url(#icon-grad)" stroke-width="4" stroke-linecap="round" fill="none"
+            opacity="0.75" />
+          <!-- Arc 1 (innermost, strongest) -->
+          <path d="M34 50 Q50 31 66 50" stroke="url(#icon-grad)" stroke-width="4" stroke-linecap="round" fill="none" />
+
+          <!-- The Mask body — an inverted visor/oval  -->
+          <!-- Mask outer shape -->
+          <path d="M20 55 Q18 75 30 82 Q40 88 50 88 Q60 88 70 82 Q82 75 80 55 Q66 50 50 50 Q34 50 20 55Z"
+            fill="url(#icon-grad)" opacity="0.9" />
+
+          <!-- Left eye hole (negative space — darker bg shows through) -->
+          <ellipse cx="36" cy="68" rx="8" ry="6" fill="#07080a" />
+          <!-- Right eye hole -->
+          <ellipse cx="64" cy="68" rx="8" ry="6" fill="#07080a" />
+
+          <!-- Nose bridge bar connecting eyes -->
+          <rect x="44" y="66" width="12" height="3" rx="1.5" fill="#07080a" />
+
+          <!-- Subtle inner glow on mask -->
+          <path d="M20 55 Q18 75 30 82 Q40 88 50 88 Q60 88 70 82 Q82 75 80 55 Q66 50 50 50 Q34 50 20 55Z" fill="none"
+            stroke="rgba(149,200,255,0.25)" stroke-width="1" />
+        </svg>
+
+        <div class="wordmark">Reach<span class="masked">Masked</span></div>
+      </div>
+    </div>
+
+    <!-- Wordmark only / small lockup -->
+    <div class="card" style="padding: 2rem; background: transparent; border: 1px dashed rgba(255,255,255,0.06);">
+      <div class="card-label">Small / Navbar Scale</div>
+      <div class="logo-hz">
+        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+          <path d="M18 42 Q50 8 82 42" stroke="#6C60FF" stroke-width="5" stroke-linecap="round" fill="none"
+            opacity="0.5" />
+          <path d="M26 46 Q50 20 74 46" stroke="#6C60FF" stroke-width="5" stroke-linecap="round" fill="none"
+            opacity="0.75" />
+          <path d="M34 50 Q50 31 66 50" stroke="#6C60FF" stroke-width="5" stroke-linecap="round" fill="none" />
+          <path d="M20 55 Q18 75 30 82 Q40 88 50 88 Q60 88 70 82 Q82 75 80 55 Q66 50 50 50 Q34 50 20 55Z" fill="#6C60FF"
+            opacity="0.9" />
+          <ellipse cx="36" cy="68" rx="8" ry="6" fill="#07080a" />
+          <ellipse cx="64" cy="68" rx="8" ry="6" fill="#07080a" />
+          <rect x="44" y="66" width="12" height="3" rx="1.5" fill="#07080a" />
+        </svg>
+        <div class="wordmark" style="font-size: 1.2rem;">Reach<span class="masked">Masked</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── APP ICON ────────────────────────────────────────────────────── -->
+  <div class="lockup-section">
+    <div class="sec-title">App Icon</div>
+    <div class="card">
+      <div class="card-label">App Icon — Various Sizes</div>
+      <div class="app-icon-wrap">
+
+        <!-- 512 px -->
+        <div class="size-item">
+          <div class="app-icon" style="width:120px; height:120px; border-radius: 28px;">
+            <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+              <path d="M18 42 Q50 8 82 42" stroke="url(#icon-grad2)" stroke-width="5" stroke-linecap="round" fill="none"
+                opacity="0.5" />
+              <path d="M26 46 Q50 20 74 46" stroke="url(#icon-grad2)" stroke-width="5" stroke-linecap="round"
+                fill="none" opacity="0.75" />
+              <path d="M34 50 Q50 31 66 50" stroke="url(#icon-grad2)" stroke-width="5" stroke-linecap="round"
+                fill="none" />
+              <path d="M20 55 Q18 75 30 82 Q40 88 50 88 Q60 88 70 82 Q82 75 80 55 Q66 50 50 50 Q34 50 20 55Z"
+                fill="url(#icon-grad2)" opacity="0.9" />
+              <ellipse cx="36" cy="68" rx="8" ry="6" fill="#07080a" />
+              <ellipse cx="64" cy="68" rx="8" ry="6" fill="#07080a" />
+              <rect x="44" y="66" width="12" height="3" rx="1.5" fill="#07080a" />
+              <defs>
+                <linearGradient id="icon-grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#95C8FF" />
+                  <stop offset="100%" stop-color="#6C60FF" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="size-label">Mobile App</span>
+        </div>
+
+        <!-- 64px -->
+        <div class="size-item">
+          <div class="app-icon" style="width:64px; height:64px; border-radius: 16px;">
+            <svg width="42" height="42" viewBox="0 0 100 100" fill="none">
+              <path d="M26 46 Q50 20 74 46" stroke="#95C8FF" stroke-width="6" stroke-linecap="round" fill="none"
+                opacity="0.7" />
+              <path d="M34 50 Q50 31 66 50" stroke="#95C8FF" stroke-width="6" stroke-linecap="round" fill="none" />
+              <path d="M20 55 Q18 75 30 82 Q40 88 50 88 Q60 88 70 82 Q82 75 80 55 Q66 50 50 50 Q34 50 20 55Z"
+                fill="#6C60FF" />
+              <ellipse cx="36" cy="68" rx="8" ry="6" fill="#07080a" />
+              <ellipse cx="64" cy="68" rx="8" ry="6" fill="#07080a" />
+              <rect x="44" y="66" width="12" height="3" rx="1.5" fill="#07080a" />
+            </svg>
+          </div>
+          <span class="size-label">64px</span>
+        </div>
+
+        <!-- 32px favicon -->
+        <div class="size-item">
+          <div class="app-icon" style="width:40px; height:40px; border-radius: 10px;">
+            <svg width="26" height="26" viewBox="0 0 100 100" fill="none">
+              <path d="M34 50 Q50 31 66 50" stroke="#95C8FF" stroke-width="7" stroke-linecap="round" fill="none" />
+              <path d="M20 55 Q18 75 30 82 Q40 88 50 88 Q60 88 70 82 Q82 75 80 55 Q66 50 50 50 Q34 50 20 55Z"
+                fill="#6C60FF" />
+              <ellipse cx="36" cy="68" rx="9" ry="6.5" fill="#07080a" />
+              <ellipse cx="64" cy="68" rx="9" ry="6.5" fill="#07080a" />
+              <rect x="44" y="66" width="12" height="3" rx="1.5" fill="#07080a" />
+            </svg>
+          </div>
+          <span class="size-label">Favicon</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LIGHT BACKGROUND ────────────────────────────────────────────── -->
+  <div class="lockup-section">
+    <div class="sec-title">Light Background</div>
+    <div class="card card-light">
+      <div class="card-label" style="color: #9ba0b8;">On Light / White</div>
+      <div class="logo-hz">
+        <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+          <path d="M18 42 Q50 8 82 42" stroke="#2113FF" stroke-width="5" stroke-linecap="round" fill="none"
+            opacity="0.3" />
+          <path d="M26 46 Q50 20 74 46" stroke="#2113FF" stroke-width="5" stroke-linecap="round" fill="none"
+            opacity="0.6" />
+          <path d="M34 50 Q50 31 66 50" stroke="#2113FF" stroke-width="5" stroke-linecap="round" fill="none" />
+          <path d="M20 55 Q18 75 30 82 Q40 88 50 88 Q60 88 70 82 Q82 75 80 55 Q66 50 50 50 Q34 50 20 55Z"
+            fill="#2113FF" />
+          <ellipse cx="36" cy="68" rx="8" ry="6" fill="#f0f2f8" />
+          <ellipse cx="64" cy="68" rx="8" ry="6" fill="#f0f2f8" />
+          <rect x="44" y="66" width="12" height="3" rx="1.5" fill="#f0f2f8" />
+        </svg>
+        <div class="wordmark" style="color: #0d0f1a; font-size: 1.8rem;">Reach<span
+            style="color:#2113FF; font-weight:300;">Masked</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THE CONCEPT ─────────────────────────────────────────────────── -->
+  <div style="max-width:680px; margin: 0 auto; text-align:center; padding: 2rem 0;">
+    <p style="font-size: 0.82rem; color: #525870; line-height: 1.8;">
+      <strong style="color:#95C8FF;">The Signal Mask:</strong> Three concentric signal arcs broadcast outward from the
+      top — representing <em>Reach</em>.
+      Those same arcs curve downward and become the upper edge of a masquerade mask — representing <em>Masked</em>.
+      The eye cutouts complete the mask. One mark, both words, instantly understood.
+    </p>
+  </div>
+
+</body>
+
+</html>

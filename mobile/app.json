@@ -5,15 +5,23 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0B1120"
+      "backgroundColor": "#08090a",
+      "dark": {
+        "image": "./assets/splash-icon-dark.png",
+        "backgroundColor": "#08090a"
+      }
     },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.reachmasked.app",
+      "icon": {
+        "any": "./assets/icon.png",
+        "dark": "./assets/icon-dark.png"
+      },
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
@@ -27,7 +35,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundColor": "#0B1120"
+        "monochromeImage": "./assets/android-icon-monochrome.png",
+        "backgroundColor": "#08090a"
       },
       "package": "com.reachmasked.app",
       "usesCleartextTraffic": true
@@ -37,13 +46,19 @@
         "expo-notifications",
         {
           "icon": "./assets/icon.png",
-          "color": "#6366F1"
+          "color": "#2113FF"
         }
       ],
       "expo-asset",
       "expo-web-browser",
       "expo-audio",
-      "@stripe/stripe-react-native"
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.reachmasked.app",
+          "enableGooglePay": false
+        }
+      ]
     ],
     "extra": {
       "eas": {

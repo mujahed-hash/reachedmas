@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { Shield, ArrowLeft, BellOff, CheckCheck } from "lucide-react";
+import { ArrowLeft, BellOff, CheckCheck } from "lucide-react";
+import { SignalTagLogo } from "@/components/signal-tag-logo";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -74,7 +75,7 @@ export default async function NotificationsPage() {
                     </Link>
                     <Separator orientation="vertical" className="h-5" />
                     <Link href="/" className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-primary" />
+                        <SignalTagLogo size={24} className="h-6 w-auto" />
                         <span className="font-bold text-foreground">ReachMasked</span>
                     </Link>
                 </div>

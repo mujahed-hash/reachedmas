@@ -47,9 +47,9 @@ export default function PurchaseScreen({ navigation }: any) {
                 colors: {
                     primary: theme.primary,
                     background: theme.background,
-                    componentBackground: isDark ? "rgba(255,255,255,0.05)" : "#F8FAFC",
-                    componentBorder: theme.border,
-                    componentDivider: theme.border,
+                    componentBackground: isDark ? "#121418" : "#F8FAFC",
+                    componentBorder: isDark ? "#2A2A2A" : "#E2E8F0",
+                    componentDivider: isDark ? "#2A2A2A" : "#E2E8F0",
                     primaryText: theme.text,
                     secondaryText: theme.textMuted,
                     placeholderText: theme.textMuted,
@@ -101,12 +101,12 @@ export default function PurchaseScreen({ navigation }: any) {
     const s = createStyles(theme, isDark);
 
     const features = [
-        "1 Premium Asset Tag",
-        "Real-time Personal Alerts",
-        "Unlimited Interaction History",
-        "Tow Prevention Mode",
-        "Custom Auto-Replies",
-        "Detailed NFC Programming Guide",
+        "1 Universal Smart Tag (Vehicle, Pet, Property)",
+        "Anonymous 2-Way Contact Relay",
+        "Real-time In-App Alerts & Alarms",
+        "Browser Push & Email Notifications",
+        "Tag Ownership Control (Disable/Lock)",
+        "Instant Scan History & Analytics"
     ];
 
     return (
@@ -121,13 +121,13 @@ export default function PurchaseScreen({ navigation }: any) {
                 </View>
 
                 <View style={s.pricingCard}>
-                    <Text style={s.priceLabel}>Annual Subscription</Text>
+                    <Text style={s.priceLabel}>One-time Activation</Text>
                     <View style={s.priceRow}>
                         <Text style={s.currency}>$</Text>
                         <Text style={s.price}>24.99</Text>
-                        <Text style={s.period}>/year</Text>
                     </View>
-                    <Text style={s.renewalInfo}>Then $4.99/mo starting the second year.</Text>
+                    <Text style={s.renewalInfo}>Includes your physical Smart Tag & first month of service.</Text>
+                    <Text style={[s.renewalInfo, { marginTop: 4 }]}>Then $4.99/mo starting after 30 days.</Text>
                 </View>
 
                 <View style={s.featuresList}>

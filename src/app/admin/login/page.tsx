@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, Loader2, Lock } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
+import { SignalTagLogo } from "@/components/signal-tag-logo";
 import Link from "next/link";
 import { adminLogin } from "@/app/actions/auth";
 
@@ -29,7 +30,7 @@ export default function AdminLoginPage() {
         <div className="flex min-h-screen items-center justify-center bg-[#0B1120] p-4 text-white selection:bg-indigo-500/30">
             <div className="absolute top-8 left-8 flex items-center gap-2">
                 <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-                    <Shield className="h-6 w-6 text-indigo-500" />
+                    <SignalTagLogo size={28} className="h-7 w-auto" />
                     <span className="text-lg font-bold tracking-tight">ReachMasked <span className="text-indigo-400 font-medium">Admin</span></span>
                 </Link>
             </div>

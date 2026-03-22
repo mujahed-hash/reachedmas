@@ -10,6 +10,8 @@ import { useNotificationRealtime } from "./src/useNotificationRealtime";
 import TagDetailScreen from "./src/screens/TagDetailScreen";
 import PurchaseScreen from "./src/screens/PurchaseScreen";
 import { ThemeProvider, useAppTheme } from "./src/ThemeProvider";
+import { SignalLogo } from "./src/components/SignalLogo";
+import { Image } from "react-native";
 
 import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
@@ -95,7 +97,24 @@ function MainTabs() {
         },
       })}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: "ReachMasked", tabBarLabel: "Home" }} />
+      <Tab.Screen 
+        name="Dashboard" 
+        component={DashboardScreen} 
+        options={{ 
+          headerTitle: () => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Image 
+                source={require("./assets/signal-tag-mark.png")} 
+                style={{ width: 48, height: 65.6, resizeMode: "contain" }} 
+              />
+              <Text style={{ marginLeft: 10, fontSize: 20, fontWeight: "800", color: theme.text, letterSpacing: -0.8 }}>
+                ReachMasked
+              </Text>
+            </View>
+          ),
+          tabBarLabel: "Home" 
+        }} 
+      />
       <Tab.Screen name="Family" component={FamilyScreen} options={{ title: "Family Hub", tabBarLabel: "Family" }} />
       <Tab.Screen
         name="Notifications"

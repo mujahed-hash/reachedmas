@@ -21,13 +21,13 @@ import {
     updateNotificationPrefs,
     changePassword,
 } from "../api";
-import { Sun, Moon, Monitor, User, Phone, Bell, Lock, Palette, LogOut } from "lucide-react-native";
+import { Sun, Moon, Monitor, User, Phone, Bell, Lock, Palette, LogOut, Droplets } from "lucide-react-native";
 
 type Section = "profile" | "phone" | "notifs" | "password" | null;
 
 export default function SettingsScreen() {
     const { logout } = useAuth();
-    const { theme, isDark, mode, setMode } = useAppTheme();
+    const { theme, isDark, mode, setMode, darkAccent, setDarkAccent } = useAppTheme();
     const [settings, setSettings] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState<Section>(null);
@@ -137,7 +137,7 @@ export default function SettingsScreen() {
     if (loading) {
         return (
             <View style={[s.container, { justifyContent: "center", alignItems: "center" }]}>
-                <ActivityIndicator size="large" color={theme.primary} />
+                <ActivityIndicator size="large" color={theme.primaryOnSurface} />
             </View>
         );
     }
@@ -157,7 +157,7 @@ export default function SettingsScreen() {
                 {/* Profile */}
                 <View style={s.card}>
                     <View style={s.cardHeader}>
-                        <User size={18} color={theme.primary} />
+                        <User size={18} color={theme.primaryOnSurface} />
                         <Text style={s.cardTitle}>Profile</Text>
                     </View>
                     <FeedbackBadge section="profile" />
@@ -177,7 +177,7 @@ export default function SettingsScreen() {
                 {/* Phone */}
                 <View style={s.card}>
                     <View style={s.cardHeader}>
-                        <Phone size={18} color={theme.primary} />
+                        <Phone size={18} color={theme.primaryOnSurface} />
                         <Text style={s.cardTitle}>Phone Number</Text>
                     </View>
                     <FeedbackBadge section="phone" />
@@ -196,7 +196,7 @@ export default function SettingsScreen() {
                 {/* Notification Prefs */}
                 <View style={s.card}>
                     <View style={s.cardHeader}>
-                        <Bell size={18} color={theme.primary} />
+                        <Bell size={18} color={theme.primaryOnSurface} />
                         <Text style={s.cardTitle}>Notification Preferences</Text>
                     </View>
                     <FeedbackBadge section="notifs" />
@@ -226,7 +226,7 @@ export default function SettingsScreen() {
                 {/* Theme */}
                 <View style={s.card}>
                     <View style={s.cardHeader}>
-                        <Palette size={18} color={theme.primary} />
+                        <Palette size={18} color={theme.primaryOnSurface} />
                         <Text style={s.cardTitle}>Appearance</Text>
                     </View>
                     <View style={s.themeRow}>
@@ -236,9 +236,9 @@ export default function SettingsScreen() {
                                 style={[s.themeOption, mode === m && s.themeOptionActive]}
                                 onPress={() => setMode(m)}
                             >
-                                {m === "system" ? <Monitor size={18} color={mode === m ? theme.primary : theme.textMuted} /> :
-                                 m === "light" ? <Sun size={18} color={mode === m ? theme.primary : theme.textMuted} /> :
-                                 <Moon size={18} color={mode === m ? theme.primary : theme.textMuted} />}
+                                {m === "system" ? <Monitor size={18} color={mode === m ? theme.primaryOnSurface : theme.textMuted} /> :
+                                 m === "light" ? <Sun size={18} color={mode === m ? theme.primaryOnSurface : theme.textMuted} /> :
+                                 <Moon size={18} color={mode === m ? theme.primaryOnSurface : theme.textMuted} />}
                                 <Text style={[s.themeOptionText, mode === m && s.themeOptionTextActive, { marginTop: 4 }]}>
                                     {m.charAt(0).toUpperCase() + m.slice(1)}
                                 </Text>
@@ -247,10 +247,43 @@ export default function SettingsScreen() {
                     </View>
                 </View>
 
+                {/* Dark mode accent (sky vs deep blue) */}
+                <View style={s.card}>
+                    <View style={s.cardHeader}>
+                        <Droplets size={18} color={theme.primaryOnSurface} />
+                        <Text style={s.cardTitle}>Dark theme color</Text>
+                    </View>
+                    <Text style={s.themeAccentHint}>
+                        For dark mode only — buttons and highlights. Light theme keeps the app brand blue.
+                    </Text>
+                    <View style={s.themeRow}>
+                        <TouchableOpacity
+                            style={[s.themeOption, darkAccent === "sky" && s.themeOptionActive]}
+                            onPress={() => setDarkAccent("sky")}
+                            activeOpacity={0.75}
+                        >
+                            <Text style={[s.themeOptionText, darkAccent === "sky" && s.themeOptionTextActive, { marginTop: 2 }]}>
+                                Sky
+                            </Text>
+                            <Text style={s.themeAccentDesc}>Fresh sky blue</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[s.themeOption, darkAccent === "deepBlue" && s.themeOptionActive]}
+                            onPress={() => setDarkAccent("deepBlue")}
+                            activeOpacity={0.75}
+                        >
+                            <Text style={[s.themeOptionText, darkAccent === "deepBlue" && s.themeOptionTextActive, { marginTop: 2 }]}>
+                                Deep blue
+                            </Text>
+                            <Text style={s.themeAccentDesc}>Deeper blue, not light purple</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
                 {/* Password */}
                 <View style={s.card}>
                     <View style={s.cardHeader}>
-                        <Lock size={18} color={theme.primary} />
+                        <Lock size={18} color={theme.primaryOnSurface} />
                         <Text style={s.cardTitle}>Change Password</Text>
                     </View>
                     <FeedbackBadge section="password" />
@@ -323,14 +356,28 @@ const createStyles = (theme: any, isDark: boolean) =>
             paddingVertical: 12, alignItems: "center",
         },
         themeOptionActive: {
-            borderColor: theme.primary,
-            backgroundColor: "rgba(99,102,241,0.1)",
+            borderColor: theme.primaryOnSurface,
+            backgroundColor: theme.primaryMutedBg,
         },
         themeOptionText: { fontSize: 13, color: theme.textMuted, fontWeight: "600" },
-        themeOptionTextActive: { color: theme.primary },
+        themeOptionTextActive: { color: theme.primaryOnSurface },
+
+        themeAccentHint: {
+            fontSize: 13,
+            color: theme.textMuted,
+            marginBottom: 12,
+            lineHeight: 18,
+        },
+        themeAccentDesc: {
+            fontSize: 11,
+            color: theme.textMuted,
+            marginTop: 4,
+            textAlign: "center",
+            lineHeight: 14,
+        },
 
         saveBtn: {
-            backgroundColor: theme.primary, borderRadius: 10, paddingVertical: 12,
+            backgroundColor: theme.primarySoft, borderRadius: 10, paddingVertical: 12,
             alignItems: "center", marginTop: 4,
         },
         saveBtnText: { color: "#fff", fontWeight: "700", fontSize: 14 },

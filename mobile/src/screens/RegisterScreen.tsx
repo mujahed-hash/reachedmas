@@ -15,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../auth";
 import { useAppTheme } from "../ThemeProvider";
 import { registerAccount, login as apiLogin, saveToken } from "../api";
+import { SignalLogo } from "../components/SignalLogo";
 
 export default function RegisterScreen({ navigation }: any) {
     const { login } = useAuth();
@@ -73,8 +74,8 @@ export default function RegisterScreen({ navigation }: any) {
                 <ScrollView contentContainerStyle={s.scrollContent} keyboardShouldPersistTaps="handled">
                     {/* Logo */}
                     <View style={s.logoRow}>
-                        <Text style={s.logoIcon}>🛡️</Text>
-                        <Text style={s.logoText}>ReachMasked</Text>
+                        <SignalLogo size={36} color={theme.primary} />
+                        <Text style={[s.logoText, { marginLeft: 10 }]}>ReachMasked</Text>
                     </View>
 
                     {/* Card */}
@@ -204,22 +205,24 @@ const createStyles = (theme: any, isDark: boolean) =>
             letterSpacing: -0.5,
         },
         card: {
-            backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "#FFFFFF",
-            borderRadius: 16,
+            backgroundColor: isDark ? "rgba(255,255,255,0.02)" : "#FFFFFF",
+            borderRadius: 20,
             borderWidth: 1,
-            borderColor: theme.border,
+            borderColor: isDark ? "rgba(255,255,255,0.05)" : theme.border,
             padding: 24,
         },
         title: {
-            fontSize: 24,
-            fontWeight: "700",
+            fontSize: 26,
+            fontWeight: "800",
             color: theme.text,
-            marginBottom: 4,
+            marginBottom: 6,
+            letterSpacing: -0.5,
         },
         subtitle: {
-            fontSize: 14,
+            fontSize: 15,
             color: theme.textMuted,
-            marginBottom: 20,
+            marginBottom: 24,
+            lineHeight: 22,
         },
         errorBox: {
             backgroundColor: "rgba(239,68,68,0.1)",
@@ -245,11 +248,11 @@ const createStyles = (theme: any, isDark: boolean) =>
             color: theme.textMuted,
         },
         input: {
-            backgroundColor: isDark ? "rgba(15,23,42,0.5)" : "#F1F5F9",
-            borderRadius: 10,
+            backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "#F1F5F9",
+            borderRadius: 12,
             borderWidth: 1,
-            borderColor: theme.border,
-            padding: 14,
+            borderColor: isDark ? "rgba(255,255,255,0.05)" : theme.border,
+            padding: 16,
             fontSize: 15,
             color: theme.text,
         },
@@ -260,15 +263,15 @@ const createStyles = (theme: any, isDark: boolean) =>
         },
         button: {
             backgroundColor: theme.primary,
-            borderRadius: 10,
-            paddingVertical: 14,
+            borderRadius: 12,
+            paddingVertical: 16,
             alignItems: "center",
-            marginTop: 8,
+            marginTop: 12,
             shadowColor: theme.primary,
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 12,
-            elevation: 6,
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.9,
+            shadowRadius: 30,
+            elevation: 15,
         },
         buttonDisabled: {
             opacity: 0.6,
@@ -276,7 +279,8 @@ const createStyles = (theme: any, isDark: boolean) =>
         buttonText: {
             color: "#FFFFFF",
             fontSize: 16,
-            fontWeight: "700",
+            fontWeight: "800",
+            letterSpacing: -0.3,
         },
         linkRow: {
             marginTop: 20,

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { SignalTagLogo } from "@/components/signal-tag-logo";
 import Link from "next/link";
 import { register } from "@/app/actions/auth";
 
@@ -30,7 +31,7 @@ export default function RegisterPage() {
         <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground selection:bg-primary/20">
             <div className="absolute top-8 left-8 flex items-center gap-2">
                 <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-                    <Shield className="h-6 w-6 text-primary" />
+                    <SignalTagLogo size={28} className="h-7 w-auto" />
                     <span className="text-lg font-bold tracking-tight text-foreground">ReachMasked</span>
                 </Link>
             </div>

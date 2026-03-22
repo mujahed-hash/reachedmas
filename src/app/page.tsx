@@ -5,7 +5,6 @@ import {
   MessageSquare,
   Lock,
   Truck,
-  Shield,
   ChevronRight,
   Phone,
   Eye,
@@ -19,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Header } from "@/components/header";
+import { SignalTagLogo } from "@/components/signal-tag-logo";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -35,20 +35,25 @@ export default async function Home() {
 
       <main className="flex-1">
         {/* ════════════════ Hero ════════════════ */}
-        <section className="relative overflow-hidden pt-24 pb-32">
+        <section className="relative overflow-hidden pt-12 sm:pt-20 md:pt-24 pb-16 sm:pb-24 md:pb-32">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl opacity-20 pointer-events-none">
             <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full blur-[128px]" />
             <div className="absolute bottom-20 right-10 w-80 h-80 bg-emerald-500 rounded-full blur-[128px]" />
           </div>
 
           <div className="container relative mx-auto px-4 text-center">
-            <div className="mx-auto max-w-3xl space-y-6">
-              <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary backdrop-blur-md">
+            <div className="mx-auto max-w-3xl space-y-4 sm:space-y-6">
+              {/* Logo for mobile hero */}
+              <div className="flex justify-center mb-4 sm:mb-0 md:hidden">
+                <SignalTagLogo size={64} className="h-16 w-auto animate-in fade-in zoom-in duration-700" />
+              </div>
+
+              <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs sm:text-sm font-medium text-primary backdrop-blur-md">
                 <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse" />
                 Now available in the US
               </div>
 
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-foreground">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground">
                 Protect What Matters.
                 <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400">
@@ -56,7 +61,7 @@ export default async function Home() {
                 </span>
               </h1>
 
-              <p className="mx-auto max-w-2xl text-lg text-muted-foreground leading-relaxed">
+              <p className="mx-auto max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed px-4 sm:px-0">
                 Smart NFC/QR tags for your car, pet, home, kids, and valuables.
                 Get notified instantly when someone scans —{" "}
                 <span className="text-foreground font-semibold">
@@ -64,21 +69,21 @@ export default async function Home() {
                 </span>
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <Link href="/register">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4 px-4 sm:px-0">
+                <Link href="/register" className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    className="h-12 px-8 text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_30px_-5px_rgba(99,102,241,0.5)]"
+                    className="w-full sm:w-auto h-11 sm:h-12 px-6 sm:px-8 text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_30px_-5px_rgba(99,102,241,0.5)]"
                   >
                     Get Your Tag
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </Link>
-                <a href="#how-it-works">
+                <a href="#how-it-works" className="w-full sm:w-auto">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="h-12 px-8 text-base border-border bg-card/50 text-foreground hover:bg-accent"
+                    className="w-full sm:w-auto h-11 sm:h-12 px-6 sm:px-8 text-base border-border bg-card/50 text-foreground hover:bg-accent"
                   >
                     Learn How it Works
                   </Button>
@@ -89,71 +94,71 @@ export default async function Home() {
         </section>
 
         {/* ════════════════ Feature Grid ════════════════ */}
-        <section className="container mx-auto px-4 pb-24">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="container mx-auto px-4 pb-16 sm:pb-24">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             <FeatureCard
-              icon={<QrCode className="h-8 w-8 text-emerald-500 dark:text-emerald-400" />}
+              icon={<QrCode className="h-6 sm:h-8 w-6 sm:w-8 text-emerald-500 dark:text-emerald-400" />}
               title="Instant Scan"
               description="No app required. Anyone can scan your tag — car, pet collar, front door — and notify you instantly."
             />
             <FeatureCard
-              icon={<Lock className="h-8 w-8 text-primary" />}
+              icon={<Lock className="h-6 sm:h-8 w-6 sm:w-8 text-primary" />}
               title="100% Private"
               description="Your phone number is AES-256 encrypted. Calls and messages use a masked relay. Nobody sees your real number."
             />
             <FeatureCard
-              icon={<Truck className="h-8 w-8 text-amber-500 dark:text-amber-400" />}
+              icon={<Truck className="h-6 sm:h-8 w-6 sm:w-8 text-amber-500 dark:text-amber-400" />}
               title="Tow Prevention"
               description="Enable tow-prevention mode and get an urgent call + SMS before your car gets towed."
             />
           </div>
 
           {/* Asset type showcase */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-12">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mt-8 sm:mt-12">
             {[
-              { icon: <Truck className="h-6 w-6" />, label: "Vehicles", desc: "Parking, tow alerts" },
-              { icon: <Dog className="h-6 w-6" />, label: "Pets", desc: "Lost pet recovery" },
-              { icon: <HomeIcon className="h-6 w-6" />, label: "Homes", desc: "Delivery notifications" },
-              { icon: <User className="h-6 w-6" />, label: "People", desc: "Kids & elderly safety" },
-              { icon: <Package className="h-6 w-6" />, label: "Assets", desc: "Bikes, luggage, devices" },
+              { icon: <Truck className="h-5 sm:h-6 w-5 sm:w-6" />, label: "Vehicles", desc: "Parking, tow alerts" },
+              { icon: <Dog className="h-5 sm:h-6 w-5 sm:w-6" />, label: "Pets", desc: "Lost pet recovery" },
+              { icon: <HomeIcon className="h-5 sm:h-6 w-5 sm:w-6" />, label: "Homes", desc: "Delivery notifications" },
+              { icon: <User className="h-5 sm:h-6 w-5 sm:w-6" />, label: "People", desc: "Kids & elderly safety" },
+              { icon: <Package className="h-5 sm:h-6 w-5 sm:w-6" />, label: "Assets", desc: "Bikes, luggage, devices" },
             ].map((item) => (
-              <div key={item.label} className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-card/50 hover:border-primary/30 transition-colors">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">{item.icon}</div>
-                <span className="text-sm font-semibold text-foreground">{item.label}</span>
-                <span className="text-xs text-muted-foreground text-center">{item.desc}</span>
+              <div key={item.label} className="flex flex-col items-center gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-xl border border-border bg-card/50 hover:border-primary/30 transition-colors">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 text-primary">{item.icon}</div>
+                <span className="text-xs sm:text-sm font-semibold text-foreground">{item.label}</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground text-center leading-tight">{item.desc}</span>
               </div>
             ))}
           </div>
         </section>
 
         {/* ════════════════ How It Works ════════════════ */}
-        <section id="how-it-works" className="py-24 border-t border-border">
+        <section id="how-it-works" className="py-16 sm:py-24 border-t border-border">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
                 How It Works
               </h2>
-              <p className="mt-3 text-muted-foreground text-lg max-w-xl mx-auto">
+              <p className="mt-3 text-muted-foreground text-base sm:text-lg max-w-xl mx-auto px-4 sm:px-0">
                 Three simple steps. No apps to download. Privacy built in.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
               <StepCard
                 number="1"
-                icon={<QrCode className="h-6 w-6" />}
+                icon={<QrCode className="h-5 sm:h-6 w-5 sm:w-6" />}
                 title="Place Your Tag"
                 description="Stick the NFC/QR tag on your car, pet collar, front door, or valuables. Register in 30 seconds."
               />
               <StepCard
                 number="2"
-                icon={<Eye className="h-6 w-6" />}
+                icon={<Eye className="h-5 sm:h-6 w-5 sm:w-6" />}
                 title="Someone Scans"
                 description="A neighbor, tow driver, or passerby scans the tag with their phone. No app needed."
               />
               <StepCard
                 number="3"
-                icon={<Phone className="h-6 w-6" />}
+                icon={<Phone className="h-5 sm:h-6 w-5 sm:w-6" />}
                 title="You Get Notified"
                 description="You receive an instant alert via email or SMS. Your auto-reply is shown to the scanner."
               />
@@ -254,7 +259,7 @@ export default async function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
+              <SignalTagLogo size={24} className="h-6 w-auto" />
               <span className="font-bold text-foreground">ReachMasked</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -288,10 +293,10 @@ export default async function Home() {
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
     <Card className="border-border bg-card backdrop-blur-sm transition-all hover:bg-accent hover:border-primary/20">
-      <CardContent className="p-6 space-y-4">
-        <div className="p-3 w-fit rounded-xl bg-muted ring-1 ring-border">{icon}</div>
-        <h3 className="text-xl font-semibold text-foreground">{title}</h3>
-        <p className="text-muted-foreground leading-relaxed">{description}</p>
+      <CardContent className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+        <div className="p-2 sm:p-3 w-fit rounded-xl bg-muted ring-1 ring-border">{icon}</div>
+        <h3 className="text-lg sm:text-xl font-semibold text-foreground">{title}</h3>
+        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{description}</p>
       </CardContent>
     </Card>
   );
@@ -299,14 +304,14 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
 
 function StepCard({ number, icon, title, description }: { number: string; icon: React.ReactNode; title: string; description: string }) {
   return (
-    <div className="text-center space-y-4">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20 text-primary">
+    <div className="text-center space-y-3 sm:space-y-4 px-4 sm:px-0">
+      <div className="mx-auto flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20 text-primary">
         {icon}
       </div>
       <div className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
         Step {number}
       </div>
-      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      <h3 className="text-base sm:text-lg font-semibold text-foreground">{title}</h3>
       <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
     </div>
   );
