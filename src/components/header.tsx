@@ -46,10 +46,10 @@ export function Header({ variant = "default", session, unreadCount = 0 }: Header
                     : "bg-transparent border-b border-transparent"
             )}
         >
-            <div className="container mx-auto flex min-h-[5rem] items-center justify-between gap-3 px-4 pt-2">
-                <Link href="/" className="flex items-center gap-2 sm:gap-3 transition-opacity hover:opacity-80">
+            <div className="container mx-auto flex min-h-[5rem] items-center justify-between gap-2 sm:gap-3 px-4 pt-2">
+                <Link href="/" className="flex items-center gap-1.5 sm:gap-2 md:gap-3 transition-opacity hover:opacity-80 shrink min-w-0">
                     <SignalTagLogo size={48} className="h-12 sm:h-16 md:h-[72px] w-auto shrink-0" />
-                    <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground">
+                    <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground truncate">
                         ReachMasked
                     </span>
                 </Link>
@@ -85,15 +85,15 @@ export function Header({ variant = "default", session, unreadCount = 0 }: Header
                         </form>
                     </nav>
                 ) : (
-                    <nav className="flex items-center gap-2 sm:gap-4">
+                    <nav className="flex items-center gap-1.5 sm:gap-4 shrink-0">
                         <ThemeToggle />
                         <Link href="/login">
-                            <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent">
+                            <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent h-9 px-3 sm:px-4">
                                 Login
                             </Button>
                         </Link>
                         <Link href="/register">
-                            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-[0_0_20px_-5px_rgba(99,102,241,0.5)]">
+                            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-[0_0_20px_-5px_rgba(99,102,241,0.5)] h-9 px-3 sm:px-4 whitespace-nowrap">
                                 <span className="hidden sm:inline">Get Tags</span>
                                 <span className="sm:hidden">Sign Up</span>
                             </Button>
